@@ -1,0 +1,10 @@
+<SUBJ>%resp_name% - Bon Voyage!</SUBJ>
+<MSG>Hello,
+
+You are now unsubscribed from %resp_name%.
+
+Sorry to see you go. Feel free to visit us again.
+Our URL: %SiteURL%
+
+Take care,
+%resp_ownername% (%resp_owneremail%)</MSG>

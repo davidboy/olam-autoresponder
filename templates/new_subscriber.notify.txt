@@ -1,0 +1,10 @@
+<SUBJ>%resp_name% - New Subscriber!</SUBJ>
+<MSG>You have a new subscriber!
+
+Name: %subr_firstname% %subr_lastname%
+
+Email: %subr_emailaddy%
+
+IP: %subr_ipaddy%
+
+Source: %subr_referralsource%</MSG>

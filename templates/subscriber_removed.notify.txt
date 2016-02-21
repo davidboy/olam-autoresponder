@@ -1,0 +1,7 @@
+<SUBJ>Subscriber Removed!</SUBJ>
+<MSG>A subscriber was removed due to a bounced message...
+
+Name: %subr_firstname% %subr_lastname%
+Email: %subr_emailaddy%
+IP: %subr_ipaddy%
+Source: %subr_referralsource%</MSG>

@@ -1,0 +1,16 @@
+<SUBJ>%resp_name% - Please confirm.</SUBJ>
+<MSG>Hi,
+
+Sorry to see you go. In order to keep others from removing you
+without your consent you'll need to confirm the request.
+
+If you did not unsubscribe or did so by accident, just ignore this
+email. Otherwise you will need to confirm your unsubscription by
+clicking here: %unsub_conf_url%
+
+If your email software cannot handle hyperlinks then you will need
+to copy and paste the following into your browser:
+%unsub_conf_url%
+
+Thanks,
+%resp_ownername% (%resp_owneremail%)</MSG>

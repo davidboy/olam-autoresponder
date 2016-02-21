@@ -1,0 +1,23 @@
+<SUBJ>%resp_name% - Welcome!</SUBJ>
+<MSG>Hello!
+
+You are now subscribed to %resp_name%.
+
+If you do not start receiving your subscription on time please
+check your spam settings before contacting the owner. Many times 
+ISPs will mistake these messages as spam and block them. You may
+need to specifically whitelist these messages.
+
+If you need help with this contact your ISP or request a message
+resend from %resp_ownername% at %resp_owneremail%.
+
+If you need to unsubscribe you can do so at any time by
+clicking here:
+%unsub_url%
+
+If your email software cannot handle hyperlinks then you will need
+to copy and paste the following into your browser:
+%unsub_url%
+
+Sincerely,
+%resp_ownername% (%resp_owneremail%)</MSG>

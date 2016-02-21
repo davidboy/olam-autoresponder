@@ -1,0 +1,7 @@
+<SUBJ>%resp_name% - Subscriber Left!</SUBJ>
+<MSG>A subscriber just left...
+
+Name: %subr_firstname% %subr_lastname%
+Email: %subr_emailaddy%
+IP: %subr_ipaddy%
+Source: %subr_referralsource%</MSG>
