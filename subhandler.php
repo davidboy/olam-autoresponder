@@ -1,4 +1,4 @@
-<?php 
+<?php
 # ------------------------------------------------
 # License and copyright:
 # See license.txt for license information.
@@ -8,14 +8,13 @@
 $req = "";
 $init = FALSE;
 foreach ($_REQUEST as $key => $value) {
-     $value = urlencode(stripslashes($value));
-     if (!($init)) {
+    $value = urlencode(stripslashes($value));
+    if (!($init)) {
         $req .= "?$key=$value";
         $init = TRUE;
-     }
-     else {
+    } else {
         $req .= "&$key=$value";
-     }
+    }
 }
 
 # Redirect
