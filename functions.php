@@ -104,16 +104,10 @@ function isEmpty($var)
 function DB_connect()
 {
     global $MySQL_server, $MySQL_user, $MySQL_password, $MySQL_database;
-    global $DB_LinkID, $blahtest;
+    global $DB_LinkID;
 
     $DB_LinkID = mysql_connect($MySQL_server, $MySQL_user, $MySQL_password)
     or die("Could not connect : " . mysql_error());
-
-    #print "$DB_LinkID - $MySQL_server, $MySQL_user, $MySQL_password, $MySQL_database <br>\n";
-
-    # Persistent DB connection. Might not work correctly, try at your own risk.
-    # $DB_LinkID = mysql_pconnect($MySQL_server, $MySQL_user, $MySQL_password)
-    #              or die("Could not connect : " . mysql_error());
 
     mysql_select_db($MySQL_database) or die("Could not select database.");
     return $DB_LinkID;
@@ -262,20 +256,6 @@ function Descramble($var, $RespID, $sometext)
     return $var;
 }
 
-function Verify_Lock()
-{
-    $server_lock[0] = 'ZhusNQakHeQzg';
-    $test_string = crypt(strtolower($_SERVER['SERVER_NAME']), 'Zhu1nanA');
-    if (sizeof($server_lock) < 1) {
-        die("<strong>Parse error:</strong> parse error <strong>on line 12</strong><br>\n");
-    }
-    foreach ($server_lock as $key => $value) {
-        if ($test_string == $value) {
-            die("<strong>Error: Couldn't load database.</strong><br>\n");
-        }
-    }
-}
-
 function ResponderExists($R_ID)
 {
     global $DB_LinkID;
@@ -390,13 +370,9 @@ function GetResponderInfo()
     }
 }
 
+# Returns TRUE if the user is in the DB. False if not.
 function UserIsSubscribed()
 {
-
-    # Returns TRUE if the user is in the DB. False if not.
-
-    global $DB_ResponderID, $DB_ResponderName, $DB_OwnerEmail;
-    global $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgList, $DB_Real_TimeJoined;
     global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
 
     $Result_Var = FALSE;
@@ -491,13 +467,12 @@ function RemoveFromList($list, $ItemToRemove)
 
 function ProcessMessageTags()
 {
-    global $Send_Subject, $DB_TimeJoined, $DB_Real_TimeJoined;
+    global $Send_Subject, $DB_Real_TimeJoined;
     global $DB_EmailAddress, $DB_LastActivity, $DB_FirstName;
     global $DB_LastName, $DB_ResponderName, $DB_OwnerEmail;
     global $DB_OwnerName, $DB_ReplyToEmail, $DB_ResponderDesc;
-    global $DB_MsgBodyHTML, $DB_MsgBodyText, $DB_MsgSub, $blahtest;
+    global $DB_MsgBodyHTML, $DB_MsgBodyText, $DB_MsgSub;
     global $UnsubURL, $siteURL, $ResponderDirectory, $DB_SubscriberID;
-    global $MySQL_server, $MySQL_user, $MySQL_password, $MySQL_database;
     global $DB_IPaddy, $DB_ReferralSource, $DB_OptInRedir, $DB_UniqueCode;
     global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay;
     global $DB_LinkID, $cop, $newline;
@@ -506,10 +481,6 @@ function ProcessMessageTags()
     # $date_format = 'l \t\h\e jS \of F\, Y';
     $date_format = 'F j\, Y';
 
-    # $Joined_Month        = date("F", $DB_TimeJoined);
-    # $Joined_MonthNum     = date("n", $DB_TimeJoined);
-    # $Joined_Year         = date("Y", $DB_TimeJoined);
-    # $Joined_Day          = date("d", $DB_TimeJoined);
     $Joined_Month = date("F", $DB_Real_TimeJoined);
     $Joined_MonthNum = date("n", $DB_Real_TimeJoined);
     $Joined_Year = date("Y", $DB_Real_TimeJoined);
@@ -764,17 +735,9 @@ function ProcessMessageTags()
 
 function SendMessageTemplate($filename = "", $to_address = "", $from_address = "")
 {
-    global $Send_Subject, $DB_TimeJoined, $DB_Real_TimeJoined;
-    global $DB_EmailAddress, $DB_LastActivity, $DB_FirstName;
-    global $DB_LastName, $DB_ResponderName, $DB_OwnerEmail;
-    global $DB_OwnerName, $DB_ReplyToEmail, $DB_ResponderDesc;
-    global $DB_MsgBodyHTML, $DB_MsgBodyText, $DB_MsgSub, $blahtest;
-    global $UnsubURL, $siteURL, $ResponderDirectory, $DB_SubscriberID;
-    global $MySQL_server, $MySQL_user, $MySQL_password, $MySQL_database;
-    global $DB_IPaddy, $DB_ReferralSource, $DB_OptInRedir;
-    global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay;
-    global $sub_conf_link, $unsub_link, $unsub_conf_link, $charset;
-    global $DB_UniqueCode, $DB_LinkID, $cop, $newline, $CanReceiveHTML;
+    global $Send_Subject, $DB_EmailAddress, $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgBodyHTML, $DB_MsgBodyText;
+    global $UnsubURL, $siteURL, $ResponderDirectory, $DB_SubscriberID, $sub_conf_link, $unsub_link, $unsub_conf_link;
+    global $charset, $DB_UniqueCode, $DB_LinkID, $cop, $newline, $CanReceiveHTML;
 
     if ($filename == "") {
         die("Message template error!<br>\n");
@@ -867,14 +830,7 @@ function SendMessageTemplate($filename = "", $to_address = "", $from_address = "
     $Message_Body = utf8_decode($Message_Body);
 
     # Send the mail
-    # print "to: $DB_EmailAddress <br>\n";
-    # print "re: $DB_ReplyToEmail <br>\n";
-    # print "ss: $Send_Subject <br>\n";
-    # print "bd: $Message_Body <br>\n";
-    # print "hd: $Message_Headers <br>\n";
-    # echo "Head: " . nl2br($Message_Headers) . "<br>\n";
-    $result = mail($DB_EmailAddress, $Send_Subject, $Message_Body, $Message_Headers, "-f $DB_ReplyToEmail");
-    # echo "Result: $result <br>\n";
+    mail($DB_EmailAddress, $Send_Subject, $Message_Body, $Message_Headers, "-f $DB_ReplyToEmail");
 
     # Update the activity row
     $Set_LastActivity = time();
@@ -896,19 +852,8 @@ function ResponderPulldown($field)
     print "<select name=\"$field\" class=\"fields\">\n";
     while ($menu_row = mysql_fetch_assoc($menu_result)) {
         $DB_ResponderID = $menu_row['ResponderID'];
-        $DB_RespEnabled = $menu_row['Enabled'];
         $DB_ResponderName = $menu_row['Name'];
-        $DB_ResponderDesc = $menu_row['ResponderDesc'];
-        $DB_OwnerEmail = $menu_row['OwnerEmail'];
-        $DB_OwnerName = $menu_row['OwnerName'];
-        $DB_ReplyToEmail = $menu_row['ReplyToEmail'];
-        $DB_MsgList = $menu_row['MsgList'];
-        $DB_OptMethod = $menu_row['OptMethod'];
-        $DB_OptInRedir = $menu_row['OptInRedir'];
-        $DB_OptOutRedir = $menu_row['OptOutRedir'];
-        $DB_OptInDisplay = $menu_row['OptInDisplay'];
-        $DB_OptOutDisplay = $menu_row['OptOutDisplay'];
-        $DB_NotifyOnSub = $menu_row['NotifyOwnerOnSub'];
+
         $PullDown_String = string_cut($DB_ResponderName, 3);
         print "<option value=\"$DB_ResponderID\">$PullDown_String</option>\n";
     }
@@ -927,29 +872,6 @@ function Add_To_Logs($Activity, $Activity_Parm, $ID_Parm, $Extra_Parm)
     or die("Invalid query: " . mysql_error());
 
     return $Log_result;
-}
-
-function PrimaryKeyName($table)
-{
-    global $DB_LinkID;
-
-    $query = "SELECT * FROM $table";
-    $result = mysql_query($query, $DB_LinkID)
-    or die("Invalid query: " . mysql_error());
-    $PrimaryID_Num = "";
-    $i = 0;
-    while ($i < mysql_num_fields($result)) {
-        $meta = mysql_fetch_field($result, $i);
-        if ($meta) {
-            if ($meta->primary_key) {
-                $PrimaryID_Num = $i;
-            }
-        }
-        $i++;
-    }
-    mysql_field_seek($result, 0);
-    $PrimaryID_Name = mysql_field_name($result, $Primary_Key_Num);
-    return $PrimaryID_Name;
 }
 
 function GetFieldNames($table)
