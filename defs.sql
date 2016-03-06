@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_customfields` (
    `hours` varchar (99) NOT NULL default '',
    `source` varchar (255) NOT NULL default '',
    `variation` varchar (255) NOT NULL default ''
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_messages` (
    `absHours` int NOT NULL default '0',
    `BodyText` text NOT NULL,
    `BodyHTML` text NOT NULL
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_responders` (
    `OptInDisplay` text NOT NULL,
    `OptOutDisplay` text NOT NULL,
    `NotifyOwnerOnSub` tinyint(1) NOT NULL default '1'
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -71,14 +71,14 @@ CREATE TABLE IF NOT EXISTS `InfResp_subscribers` (
    `ReferralSource` varchar(255) NOT NULL default '',
    `UniqueCode` varchar(255) NOT NULL default '',
    `Confirmed` tinyint(1) NOT NULL default '0'
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
 CREATE TABLE IF NOT EXISTS `InfResp_blacklist` (
    `Blacklist_ID` bigint(32) NOT NULL auto_increment PRIMARY KEY,
    `EmailAddress` varchar(100) NOT NULL default ''
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_POP3` (
    `Spam_Header` varchar(100) NOT NULL default '***SPAM***',
    `Concat_Middle` tinyint(1) NOT NULL default '1',
    `Mail_Type` varchar(20) NOT NULL default 'pop3'
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_mail` (
    `HTML_msg` text NOT NULL,
    `Time_To_Send` bigint(32) NOT NULL default '0',
    `Time_Sent` bigint(32) NOT NULL default '0'
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_mail_cache` (
    `SubscriberID` bigint(32) NOT NULL default '0',
    `Status` varchar(255) NOT NULL default 'queued',
    `LastActivity` bigint(32) NOT NULL default '0'
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_Logs` (
    `Activity_Parameter` text NOT NULL,
    `ID_Parameter` text NOT NULL,
    `Extra_Parameter` text NOT NULL
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -148,14 +148,14 @@ CREATE TABLE IF NOT EXISTS `InfResp_Bouncers` (
    `DeleteLevel` int NOT NULL default '1',
    `SpamHeader` varchar(100) NOT NULL default '***SPAM***',
    `NotifyOwner` tinyint(1) NOT NULL default '1'
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
 CREATE TABLE IF NOT EXISTS `InfResp_BounceRegs` (
    `BounceRegexpID` bigint(32) NOT NULL auto_increment PRIMARY KEY,
    `RegX` text NOT NULL
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_config` (
    `daily_limit` int NOT NULL default '50000',
    `daily_count` int NOT NULL default '0',
    `daily_reset` bigint(32) NOT NULL default '0'
-) TYPE=InnoDB CHARACTER SET utf8;
+) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
 -- Start command --
