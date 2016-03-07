@@ -10,8 +10,4 @@ $MySQL_user     = 'autoresponder';
 $MySQL_password = 'autoresponder';
 $MySQL_database = 'autoresponder';
 
-# ------------------------------------------------
-
-# Get the rest of the config auto-magically
-include("get_config_vars.php");
 ?>

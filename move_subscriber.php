@@ -28,7 +28,7 @@ $responder_list[20] = "20";
 # Set stuff up
 if ($config_init != TRUE) {
     $config_init = TRUE;
-    include('config.php');
+    include('common.php');
 }
 
 # ---------------------------------------------------------

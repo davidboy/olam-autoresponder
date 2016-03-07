@@ -4,7 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-include_once('config.php');
+include_once('common.php');
 
 # ------------------------------------------------
 

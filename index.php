@@ -1,5 +1,5 @@
 <?php
-    include('config.php');
+    include('common.php');
     $redir_URL = $siteURL.$ResponderDirectory.'/admin.php';
     header("Location: $redir_URL");
     print "<br>\n";

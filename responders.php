@@ -11,7 +11,7 @@ if ($silent == "1") {
     $silent = FALSE;
 }
 
-include('config.php');
+include('common.php');
 
 # Reset some variables
 $DB_ResponderID = 0;

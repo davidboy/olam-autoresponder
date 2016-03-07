@@ -4,7 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-include_once('config.php');
+include_once('common.php');
 
 $Is_Auth = User_Auth();
 if (empty($config['admin_pass'])) {

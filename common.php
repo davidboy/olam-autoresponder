@@ -4,6 +4,8 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
+include_once('config.php');
+
 # Check config.php vars
 if ($MySQL_server == '') {
     die('$MySQL_server not set in config.php');

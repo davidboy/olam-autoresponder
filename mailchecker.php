@@ -4,7 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-include_once('config.php');
+include_once('common.php');
 
 # Start checking the mail...
 $query = "SELECT * FROM InfResp_POP3 WHERE username != 'username' AND password != 'password'";

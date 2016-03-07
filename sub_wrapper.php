@@ -1,6 +1,6 @@
 <?php
 
-include('config.php');
+include('common.php');
 /*
    Before using this, make sure you read the entry about it in manual.txt!
   

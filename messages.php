@@ -4,7 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-include('config.php');
+include('common.php');
 
 # Grab the data
 $Responder_ID = MakeSafe($_REQUEST['r_ID']);
