@@ -47,12 +47,6 @@ function makeSafe($UnsafeSource)
     return myaddslashes(htmlspecialchars(removeEvilTags(trim($UnsafeSource)), ENT_QUOTES));
 }
 
-function makeSuperSafe($UnsafeSource)
-{
-    global $charset;
-    return myaddslashes(htmlentities(removeEvilTags(trim($UnsafeSource)), ENT_QUOTES, $charset));
-}
-
 function makeSemiSafe($UnsafeSource)
 {
     return myaddslashes(removeEvilTags(trim($UnsafeSource)));

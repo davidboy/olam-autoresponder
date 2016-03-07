@@ -238,24 +238,6 @@ function webDecrypt($str, $key)
     return $result;
 }
 
-function scramble($var, $RespID, $sometext)
-{
-    global $Responder_ID;
-
-    $var = xEncrypt($var, $RespID);
-    $var = xEncrypt($var, $sometext);
-    return $var;
-}
-
-function descramble($var, $RespID, $sometext)
-{
-    global $Responder_ID;
-
-    $var = xDecrypt($var, $sometext);
-    $var = xDecrypt($var, $RespID);
-    return $var;
-}
-
 function responderExists($R_ID)
 {
     global $DB_LinkID;
