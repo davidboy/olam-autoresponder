@@ -8,7 +8,7 @@ include_once('common.php');
 
 # ------------------------------------------------
 
-function bouncer_exists($bouncer_id)
+function bouncerExists($bouncer_id)
 {
     global $DB_LinkID;
 
@@ -33,7 +33,7 @@ function bouncer_exists($bouncer_id)
     }
 }
 
-function bouncer_address_exists($address)
+function bouncerAddressExists($address)
 {
     global $DB_LinkID;
 
@@ -50,7 +50,7 @@ function bouncer_address_exists($address)
     }
 }
 
-function unassigned_addy_pulldown()
+function unassignedAddressPulldown()
 {
     # Make a hash of currently assigned bouncer addresses
     $assigned = array();
@@ -69,7 +69,7 @@ function unassigned_addy_pulldown()
     while ($data = mysql_fetch_assoc($DB_result)) {
         foreach ($data as $key => $value) {
             $addy = strtolower(trim($value));
-            if ((!(IsInArray($unassigned, $addy))) && ($assigned[$addy] != TRUE)) {
+            if ((!(isInArray($unassigned, $addy))) && ($assigned[$addy] != TRUE)) {
                 $found_some = TRUE;
                 $unassigned[] = $addy;
             }
@@ -98,14 +98,14 @@ $X_login = $_REQUEST['login'];
 $X_pass = $_REQUEST['pword'];
 
 # Get and verify input
-$Responder_ID = MakeSafe($_REQUEST['r_ID']);
-$action = MakeSafe($_REQUEST['action']);
+$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$action = makeSafe($_REQUEST['action']);
 if (!(is_numeric($Responder_ID))) {
     $Responder_ID = "";
 }
 
 # Check authentication
-$Is_Auth = User_Auth();
+$Is_Auth = userAuth();
 if ($Is_Auth) {
     # Top template
     include('templates/open.page.php');
@@ -118,14 +118,14 @@ if ($Is_Auth) {
     include('templates/bounce_regexps.bouncers.php');
 
     # Check the bouncer ID
-    $bouncer_id = MakeSafe($_REQUEST['b_ID']);
+    $bouncer_id = makeSafe($_REQUEST['b_ID']);
     if ((!(is_numeric($bouncer_id))) || (empty($bouncer_id)) || ($bouncer_id == "")) {
         $bouncer_id = "0";
     }
 
     if ($action == "create") {
         # Did we pass an email?
-        $data['EmailAddy'] = strtolower(MakeSafe($_REQUEST['EmailAddy']));
+        $data['EmailAddy'] = strtolower(makeSafe($_REQUEST['EmailAddy']));
         if (!(isEmail($data['EmailAddy']))) {
             $data['EmailAddy'] = "user@domain";
         }
@@ -151,7 +151,7 @@ if ($Is_Auth) {
         $submit_action = "do_create";
         include('templates/edit_create.bouncers.php');
         include('templates/back_button.bouncers.php');
-    } elseif (($action == "edit") && (bouncer_exists($bouncer_id))) {
+    } elseif (($action == "edit") && (bouncerExists($bouncer_id))) {
         # Query DB - We already know there's a row for it.
         $query = "SELECT * FROM InfResp_Bouncers WHERE BouncerID = '$bouncer_id'";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -163,7 +163,7 @@ if ($Is_Auth) {
         $submit_action = "do_edit";
         include('templates/edit_create.bouncers.php');
         include('templates/back_button.bouncers.php');
-    } elseif (($action == "delete") && (bouncer_exists($bouncer_id))) {
+    } elseif (($action == "delete") && (bouncerExists($bouncer_id))) {
         # Query DB - We already know there's a row for it.
         $query = "SELECT * FROM InfResp_Bouncers WHERE BouncerID = '$bouncer_id'";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -174,13 +174,13 @@ if ($Is_Auth) {
         include('templates/delete.bouncers.php');
         include('templates/back_button.bouncers.php');
     } else {
-        if (($action == "do_edit") && (bouncer_exists($bouncer_id))) {
+        if (($action == "do_edit") && (bouncerExists($bouncer_id))) {
             # Grab and clean form data
-            $fields = get_db_fields('InfResp_Bouncers');
+            $fields = dbGetFields('InfResp_Bouncers');
             foreach ($_REQUEST as $name => $value) {
                 $name = strtolower($name);
                 if ($fields['hash'][$name] == TRUE) {
-                    $form[$name] = MakeSafe($value);
+                    $form[$name] = makeSafe($value);
                 }
             }
             unset($form['bouncerid']);
@@ -217,17 +217,17 @@ if ($Is_Auth) {
             }
 
             # Update the row
-            DB_Update_Array('InfResp_Bouncers', $form, "BouncerID = '$bouncer_id'");
+            dbUpdateArray('InfResp_Bouncers', $form, "BouncerID = '$bouncer_id'");
 
             # Done! Take us back...
             print "<p class=\"big_header\">Bouncer changed!</p>\n";
         } elseif ($action == "do_create") {
             # Grab and clean form data
-            $fields = get_db_fields('InfResp_Bouncers');
+            $fields = dbGetFields('InfResp_Bouncers');
             foreach ($_REQUEST as $name => $value) {
                 $name = strtolower($name);
                 if ($fields['hash'][$name] == TRUE) {
-                    $form[$name] = MakeSafe($value);
+                    $form[$name] = makeSafe($value);
                 }
             }
             unset($form['bouncerid']);
@@ -263,17 +263,17 @@ if ($Is_Auth) {
                 $form['enabled'] = 0;
             }
 
-            if (bouncer_address_exists($form['emailaddy'])) {
+            if (bouncerAddressExists($form['emailaddy'])) {
                 # Done! Take us back...
                 print "<p class=\"big_header\">That address is already assigned!</p>\n";
             } else {
                 # Insert the row
-                DB_Insert_Array('InfResp_Bouncers', $form);
+                dbInsertArray('InfResp_Bouncers', $form);
 
                 # Done! Take us back...
                 print "<p class=\"big_header\">Bouncer added!</p>\n";
             }
-        } elseif (($action == "do_delete") && (bouncer_exists($bouncer_id))) {
+        } elseif (($action == "do_delete") && (bouncerExists($bouncer_id))) {
             # Delete from the bouncer table
             $query = "DELETE FROM InfResp_Bouncers WHERE BouncerID = '$bouncer_id'";
             $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -321,8 +321,8 @@ if ($Is_Auth) {
     copyright();
     include('templates/close.page.php');
 } else {
-    admin_redirect();
+    adminRedirect();
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

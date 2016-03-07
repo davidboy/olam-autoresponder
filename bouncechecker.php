@@ -56,9 +56,9 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
                     $bounced_address = str_replace('>', "", $bounced_address);
 
                     # Add the email address into the array if it's not there.
-                    if (!(IsInArray($bounced_addy_array, $bounced_address))) {
+                    if (!(isInArray($bounced_addy_array, $bounced_address))) {
                         # echo "bounced: $bounced_address <br>\n";
-                        $bounced_addy_array[] = MakeSafe($bounced_address);
+                        $bounced_addy_array[] = makeSafe($bounced_address);
                     }
                 }
 
@@ -111,7 +111,7 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
                 if ($bouncer['NotifyOwner'] == "1") {
                     # print "Got a bounce, assigned email: " . $bouncer['EmailAddy'] . "<br>\n";
                     # print "sending notify...<br>\n";
-                    SendMessageTemplate('templates/subscriber_removed.notify.txt', $bouncer['EmailAddy'], $bouncer['EmailAddy']);
+                    sendMessageTemplate('templates/subscriber_removed.notify.txt', $bouncer['EmailAddy'], $bouncer['EmailAddy']);
                 }
             }
         }
@@ -120,6 +120,6 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
 
 # Should we disconnect from the DB?
 if ($included != TRUE) {
-    DB_disconnect();
+    dbDisconnect();
 }
 ?>

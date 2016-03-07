@@ -98,7 +98,7 @@ if ((empty($passed['FIRST'])) || (empty($passed['LAST']))) {
 
 # Create the safe data array
 foreach ($passed as $key => $value) {
-    $safe[$key] = MakeSafe($value);
+    $safe[$key] = makeSafe($value);
 }
 
 if (!(isInBlacklist($safe['EMAIL']))) {
@@ -175,7 +175,7 @@ if (!(isInBlacklist($safe['EMAIL']))) {
         $user_data['LastName'] = $safe['LAST'];
         $user_data['IP_Addy'] = $safe['IP'];
         $user_data['ReferralSource'] = 'Added w/ Move Subscriber';
-        $user_data['UniqueCode'] = generate_unique_code();
+        $user_data['UniqueCode'] = generateUniqueCode();
         $user_data['Confirmed'] = '1';
     }
 
@@ -221,5 +221,5 @@ if (!(isInBlacklist($safe['EMAIL']))) {
     }
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

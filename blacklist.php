@@ -7,13 +7,13 @@
 include('common.php');
 
 # Grab passed
-$Responder_ID = MakeSafe($_REQUEST['r_ID']);
-$Message_ID = MakeSafe($_REQUEST['m_ID']);
-$action = strtolower(MakeSafe($_REQUEST['action']));
+$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$Message_ID = makeSafe($_REQUEST['m_ID']);
+$action = strtolower(makeSafe($_REQUEST['action']));
 
 # Not logged in?
-if (!($Is_Auth = User_Auth())) {
-    admin_redirect();
+if (!($Is_Auth = userAuth())) {
+    adminRedirect();
 }
 
 # Top template
@@ -24,7 +24,7 @@ $help_section = "blacklist";
 include('templates/controlpanel.php');
 
 # Set address
-$address = MakeSafe($_REQUEST['address']);
+$address = makeSafe($_REQUEST['address']);
 
 # Process actions
 if (($action == "add") && (isEmail($address))) {
@@ -102,5 +102,5 @@ if (($action == "add") && (isEmail($address))) {
 copyright();
 include('templates/close.page.php');
 
-DB_disconnect();
+dbDisconnect();
 ?>

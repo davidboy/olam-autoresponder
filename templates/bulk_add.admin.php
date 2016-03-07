@@ -25,7 +25,7 @@
       <td width="440">
          <font size="4" color="#330000">Select Responder:<br></font>
          <center>
-            <?php ResponderPulldown('r_ID'); ?>
+            <?php responderPulldown('r_ID'); ?>
          </center>
       </td>
       <td width="250">

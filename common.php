@@ -55,7 +55,7 @@ if (strtoupper(substr(PHP_OS, 0, 3) == 'WIN')) {
 
 # Connect to the DB
 $DB_LinkID = 0;
-DB_connect();
+dbConnect();
 
 # Ensure UTF8
 mysql_query("SET NAMES 'utf8'");
@@ -69,8 +69,8 @@ $result = mysql_query($query) or die("Invalid query: " . mysql_error());
 if (mysql_num_rows($result) < 1) {
     # Grab the vars
     $now = time();
-    $str1 = generate_random_block();
-    $str2 = generate_random_block();
+    $str1 = generateRandomBlock();
+    $str2 = generateRandomBlock();
 
     # Setup the array
     $config['Max_Send_Count'] = '500';
@@ -93,7 +93,7 @@ if (mysql_num_rows($result) < 1) {
     $config['daily_reset'] = $now;
 
     # Insert the data
-    DB_Insert_Array('InfResp_config', $config);
+    dbInsertArray('InfResp_config', $config);
 
     # Set flag
     $config_row_inserted = TRUE;

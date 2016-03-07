@@ -44,8 +44,8 @@ include('common.php');
   #-----------------------------------------------------------------------
   # These 2 variables do get MakeSafed in the s, but someone
   # could try to insert something nasty to mess with the img load.
-  $email = MakeSafe($_GET['e']);
-  $html  = MakeSafe($_GET['h']);
+  $email = makeSafe($_GET['e']);
+  $html  = makeSafe($_GET['h']);
 
   $options = "?e=$email&r=$resp_ID&a=sub&h=$html&s=$silent";
   $FullLink = $mydomain.$resp_dir.$resp_subfile.$options;

@@ -7,9 +7,9 @@
 include('common.php');
 
 # Grab the data
-$Responder_ID = MakeSafe($_REQUEST['r_ID']);
-$M_ID = MakeSafe($_REQUEST['MSG_ID']);
-$action = MakeSafe($_REQUEST['action']);
+$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$M_ID = makeSafe($_REQUEST['MSG_ID']);
+$action = makeSafe($_REQUEST['action']);
 
 if (!(is_numeric($Responder_ID))) {
     # A small bit of magic to filter out any screwy crackerness of the RespID
@@ -20,14 +20,14 @@ if (!(is_numeric($M_ID))) {
     $M_ID = NULL;
 }
 
-if ($Is_Auth = User_Auth()) {
+if ($Is_Auth = userAuth()) {
     # Template top
     include('templates/open.page.php');
     include_once('popup_js.php');
 
     # Check responder ID
-    if (!(ResponderExists($Responder_ID))) {
-        admin_redirect();
+    if (!(responderExists($Responder_ID))) {
+        adminRedirect();
     }
 
     # Action processing
@@ -40,7 +40,7 @@ if ($Is_Auth = User_Auth()) {
         # Display template
         include('templates/create.messages.php');
     } elseif ($action == "update") {
-        GetMsgInfo($M_ID);
+        getMsgInfo($M_ID);
 
         # Do the math
         $T_minutes = intval($DB_MsgSeconds / 60);
@@ -104,7 +104,7 @@ if ($Is_Auth = User_Auth()) {
         # Display template
         include('templates/update.messages.php');
     } elseif ($action == "delete") {
-        GetMsgInfo($M_ID);
+        getMsgInfo($M_ID);
 
         # gmp_mod and fmod aren't working on my host for some reason. :-(
         $T_minutes = intval($DB_MsgSeconds / 60);
@@ -121,17 +121,17 @@ if ($Is_Auth = User_Auth()) {
         include('templates/delete.messages.php');
     } elseif ($action == "do_create") {
         # Prep data
-        $P_subj = MakeSemiSafe($_REQUEST['subj']);
-        $P_bodytext = MakeSemiSafe($_REQUEST['bodytext']);
-        $P_bodyhtml = MakeSemiSafe($_REQUEST['bodyhtml']);
-        $P_months = MakeSafe($_REQUEST['months']);
-        $P_weeks = MakeSafe($_REQUEST['weeks']);
-        $P_days = MakeSafe($_REQUEST['days']);
-        $P_hours = MakeSafe($_REQUEST['hours']);
-        $P_min = MakeSafe($_REQUEST['min']);
-        $P_absday = MakeSafe($_REQUEST['abs_day']);
-        $P_abshours = MakeSafe($_REQUEST['abs_hours']);
-        $P_absmin = MakeSafe($_REQUEST['abs_min']);
+        $P_subj = makeSemiSafe($_REQUEST['subj']);
+        $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);
+        $P_bodyhtml = makeSemiSafe($_REQUEST['bodyhtml']);
+        $P_months = makeSafe($_REQUEST['months']);
+        $P_weeks = makeSafe($_REQUEST['weeks']);
+        $P_days = makeSafe($_REQUEST['days']);
+        $P_hours = makeSafe($_REQUEST['hours']);
+        $P_min = makeSafe($_REQUEST['min']);
+        $P_absday = makeSafe($_REQUEST['abs_day']);
+        $P_abshours = makeSafe($_REQUEST['abs_hours']);
+        $P_absmin = makeSafe($_REQUEST['abs_min']);
 
         if (!(is_numeric($P_months))) {
             $P_months = 0;
@@ -158,7 +158,7 @@ if ($Is_Auth = User_Auth()) {
             $P_absday = "";
         }
 
-        GetResponderInfo();
+        getResponderInfo();
 
         $TempDay_Seconds = (($P_weeks * 7) + $P_days) * 86400;
         $TempHour_Seconds = 3600 * $P_hours;
@@ -197,17 +197,17 @@ if ($Is_Auth = User_Auth()) {
         include('templates/back_button.messages.php');
     } elseif ($action == "do_update") {
         # Prep the data
-        $P_subj = MakeSemiSafe($_REQUEST['subj']);
-        $P_bodytext = MakeSemiSafe($_REQUEST['bodytext']);
-        $P_bodyhtml = MakeSemiSafe($_REQUEST['bodyhtml']);
-        $P_months = MakeSafe($_REQUEST['months']);
-        $P_weeks = MakeSafe($_REQUEST['weeks']);
-        $P_days = MakeSafe($_REQUEST['days']);
-        $P_hours = MakeSafe($_REQUEST['hours']);
-        $P_min = MakeSafe($_REQUEST['min']);
-        $P_absday = MakeSafe($_REQUEST['abs_day']);
-        $P_abshours = MakeSafe($_REQUEST['abs_hours']);
-        $P_absmin = MakeSafe($_REQUEST['abs_min']);
+        $P_subj = makeSemiSafe($_REQUEST['subj']);
+        $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);
+        $P_bodyhtml = makeSemiSafe($_REQUEST['bodyhtml']);
+        $P_months = makeSafe($_REQUEST['months']);
+        $P_weeks = makeSafe($_REQUEST['weeks']);
+        $P_days = makeSafe($_REQUEST['days']);
+        $P_hours = makeSafe($_REQUEST['hours']);
+        $P_min = makeSafe($_REQUEST['min']);
+        $P_absday = makeSafe($_REQUEST['abs_day']);
+        $P_abshours = makeSafe($_REQUEST['abs_hours']);
+        $P_absmin = makeSafe($_REQUEST['abs_min']);
 
         if (!(is_numeric($P_months))) {
             $P_months = 0;
@@ -279,11 +279,11 @@ if ($Is_Auth = User_Auth()) {
         include('templates/back_button.messages.php');
     } elseif ($action == "do_delete") {
 
-        if (!(ResponderExists($Responder_ID))) {
+        if (!(responderExists($Responder_ID))) {
             die("Responder $Responder_ID does not exist");
         }
 
-        GetResponderInfo();
+        getResponderInfo();
 
         $NewList = "";
         $MsgList_Array = explode(',', $DB_MsgList);
@@ -320,8 +320,8 @@ if ($Is_Auth = User_Auth()) {
     copyright();
     include('templates/close.page.php');
 } else {
-    admin_redirect();
+    adminRedirect();
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

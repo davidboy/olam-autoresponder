@@ -42,18 +42,18 @@ function myaddslashes($st)
     }
 }
 
-function MakeSafe($UnsafeSource)
+function makeSafe($UnsafeSource)
 {
     return myaddslashes(htmlspecialchars(removeEvilTags(trim($UnsafeSource)), ENT_QUOTES));
 }
 
-function MakeSuperSafe($UnsafeSource)
+function makeSuperSafe($UnsafeSource)
 {
     global $charset;
     return myaddslashes(htmlentities(removeEvilTags(trim($UnsafeSource)), ENT_QUOTES, $charset));
 }
 
-function MakeSemiSafe($UnsafeSource)
+function makeSemiSafe($UnsafeSource)
 {
     return myaddslashes(removeEvilTags(trim($UnsafeSource)));
 }

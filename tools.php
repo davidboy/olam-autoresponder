@@ -7,7 +7,7 @@
 include_once('common.php');
 
 # Logged in?
-if ($Is_Auth = User_Auth()) {
+if ($Is_Auth = userAuth()) {
     # Top template
     include('templates/open.page.php');
 
@@ -42,8 +42,8 @@ if ($Is_Auth = User_Auth()) {
     copyright();
     include('templates/close.page.php');
 } else {
-    admin_redirect();
+    adminRedirect();
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

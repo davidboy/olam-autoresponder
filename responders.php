@@ -23,9 +23,9 @@ $DB_MsgList = "";
 $DB_ResponderDesc = "";
 
 # Passed stuff
-$Responder_ID = MakeSafe($_REQUEST['r_ID']);
-$action = MakeSafe($_REQUEST['action']);
-$HandleHTML = MakeSafe($_REQUEST['h']);
+$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$action = makeSafe($_REQUEST['action']);
+$HandleHTML = makeSafe($_REQUEST['h']);
 
 # Bounds check
 if ($HandleHTML != 1) {
@@ -36,7 +36,7 @@ if (!(is_numeric($Responder_ID))) {
 }
 
 # Logged in?
-if ($Is_Auth = User_Auth()) {
+if ($Is_Auth = userAuth()) {
     # Top template
     if ($silent == FALSE) {
         include('templates/open.page.php');
@@ -93,10 +93,10 @@ if ($Is_Auth = User_Auth()) {
         # Display template
         include('templates/create.responders.php');
     } elseif ($action == "update") {
-        if (!(ResponderExists($Responder_ID))) {
-            admin_redirect();
+        if (!(responderExists($Responder_ID))) {
+            adminRedirect();
         }
-        GetResponderInfo();
+        getResponderInfo();
 
         # Display template
         include('templates/update_top.responders.php');
@@ -127,7 +127,7 @@ if ($Is_Auth = User_Auth()) {
 
             for ($i = 0; $i <= $Max_Index - 1; $i++) {
                 $M_ID = trim($MsgList_Array[$i]);
-                GetMsgInfo($M_ID);
+                getMsgInfo($M_ID);
 
                 # gmp_mod and fmod aren't working on my host for some reason. :-(
                 $T_minutes = intval($DB_MsgSeconds / 60);
@@ -152,27 +152,27 @@ if ($Is_Auth = User_Auth()) {
         # Display new msg template
         include('templates/new_msg.responders.php');
     } elseif ($action == "erase") {
-        if (!(ResponderExists($Responder_ID))) {
-            admin_redirect();
+        if (!(responderExists($Responder_ID))) {
+            adminRedirect();
         }
-        GetResponderInfo();
+        getResponderInfo();
 
         # Display template
         include('templates/erase.responders.php');
     } elseif ($action == "do_create") {
 
         $Resp_Enabled = '1';
-        $Resp_Name = MakeSemiSafe($_REQUEST['Resp_Name']);
-        $Resp_Desc = MakeSemiSafe($_REQUEST['Resp_Desc']);
-        $Reply_To = MakeSafe($_REQUEST['Reply_To']);
-        $Owner_Name = MakeSafe($_REQUEST['Owner_Name']);
-        $Owner_Email = MakeSafe($_REQUEST['Owner_Email']);
-        $OptMethod = MakeSafe($_REQUEST['OptMethod']);
-        $OptInRedir = MakeSafe($_REQUEST['OptInRedir']);
-        $OptOutRedir = MakeSafe($_REQUEST['OptOutRedir']);
-        $OptInDisp = MakeSemiSafe($_REQUEST['OptInDisplay']);
-        $OptOutDisp = MakeSemiSafe($_REQUEST['OptOutDisplay']);
-        $NotifyOwner = MakeSemiSafe($_REQUEST['NotifyOwner']);
+        $Resp_Name = makeSemiSafe($_REQUEST['Resp_Name']);
+        $Resp_Desc = makeSemiSafe($_REQUEST['Resp_Desc']);
+        $Reply_To = makeSafe($_REQUEST['Reply_To']);
+        $Owner_Name = makeSafe($_REQUEST['Owner_Name']);
+        $Owner_Email = makeSafe($_REQUEST['Owner_Email']);
+        $OptMethod = makeSafe($_REQUEST['OptMethod']);
+        $OptInRedir = makeSafe($_REQUEST['OptInRedir']);
+        $OptOutRedir = makeSafe($_REQUEST['OptOutRedir']);
+        $OptInDisp = makeSemiSafe($_REQUEST['OptInDisplay']);
+        $OptOutDisp = makeSemiSafe($_REQUEST['OptOutDisplay']);
+        $NotifyOwner = makeSemiSafe($_REQUEST['NotifyOwner']);
         if ($NotifyOwner != "1") {
             $NotifyOwner = "0";
         }
@@ -194,21 +194,21 @@ if ($Is_Auth = User_Auth()) {
         $return_action = "list";
         include('templates/back_button.responders.php');
     } elseif ($action == "do_update") {
-        if (!(ResponderExists($Responder_ID))) {
-            admin_redirect();
+        if (!(responderExists($Responder_ID))) {
+            adminRedirect();
         }
 
-        $Resp_Name = MakeSemiSafe($_REQUEST['Resp_Name']);
-        $Resp_Desc = MakeSemiSafe($_REQUEST['Resp_Desc']);
-        $Reply_To = MakeSafe($_REQUEST['Reply_To']);
-        $Owner_Name = MakeSafe($_REQUEST['Owner_Name']);
-        $Owner_Email = MakeSafe($_REQUEST['Owner_Email']);
-        $OptMethod = MakeSafe($_REQUEST['OptMethod']);
-        $OptInRedir = MakeSafe($_REQUEST['OptInRedir']);
-        $OptOutRedir = MakeSafe($_REQUEST['OptOutRedir']);
-        $OptInDisp = MakeSemiSafe($_REQUEST['OptInDisplay']);
-        $OptOutDisp = MakeSemiSafe($_REQUEST['OptOutDisplay']);
-        $NotifyOwner = MakeSemiSafe($_REQUEST['NotifyOwner']);
+        $Resp_Name = makeSemiSafe($_REQUEST['Resp_Name']);
+        $Resp_Desc = makeSemiSafe($_REQUEST['Resp_Desc']);
+        $Reply_To = makeSafe($_REQUEST['Reply_To']);
+        $Owner_Name = makeSafe($_REQUEST['Owner_Name']);
+        $Owner_Email = makeSafe($_REQUEST['Owner_Email']);
+        $OptMethod = makeSafe($_REQUEST['OptMethod']);
+        $OptInRedir = makeSafe($_REQUEST['OptInRedir']);
+        $OptOutRedir = makeSafe($_REQUEST['OptOutRedir']);
+        $OptInDisp = makeSemiSafe($_REQUEST['OptInDisplay']);
+        $OptOutDisp = makeSemiSafe($_REQUEST['OptOutDisplay']);
+        $NotifyOwner = makeSemiSafe($_REQUEST['NotifyOwner']);
         if ($OptMethod != "Double") {
             $OptMethod = "Single";
         }
@@ -239,10 +239,10 @@ if ($Is_Auth = User_Auth()) {
         $return_action = "list";
         include('templates/back_button.responders.php');
     } elseif ($action == "do_erase") {
-        if (!(ResponderExists($Responder_ID))) {
-            admin_redirect();
+        if (!(responderExists($Responder_ID))) {
+            adminRedirect();
         }
-        GetResponderInfo();
+        getResponderInfo();
 
         $DB_MsgList = trim($DB_MsgList, ",");
         $DB_MsgList = trim($DB_MsgList);
@@ -291,10 +291,10 @@ if ($Is_Auth = User_Auth()) {
         # Print pop3 screen
         # Save button, back button
 
-        if (!(ResponderExists($Responder_ID))) {
-            admin_redirect();
+        if (!(responderExists($Responder_ID))) {
+            adminRedirect();
         }
-        GetResponderInfo();
+        getResponderInfo();
 
         $query = "SELECT * FROM InfResp_POP3 WHERE Attached_Responder = '$Responder_ID' LIMIT 1";
         $DB_POP3_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
@@ -388,7 +388,7 @@ if ($Is_Auth = User_Auth()) {
         $DB_result = mysql_query($query)
         or die("Invalid query: " . mysql_error());
 
-        $CustomFieldsArray = GetFieldNames('InfResp_customfields');
+        $CustomFieldsArray = getFieldNames('InfResp_customfields');
         $fieldstr = "";
         foreach ($CustomFieldsArray as $key => $value) {
             $fieldstr .= "$value,";
@@ -407,26 +407,26 @@ if ($Is_Auth = User_Auth()) {
     } elseif ($action == "do_POP3") {
 
         # Test variable passing
-        if (!(ResponderExists($Responder_ID))) {
-            admin_redirect();
+        if (!(responderExists($Responder_ID))) {
+            adminRedirect();
         }
-        GetResponderInfo();
+        getResponderInfo();
 
-        $user = MakeSafe($_REQUEST['pop3_user']);
-        $pass = MakeSafe($_REQUEST['pop3_pw']);
-        $Mbox = MakeSafe($_REQUEST['pop3_box']);
-        $host = MakeSafe($_REQUEST['pop3_host']);
-        $port = MakeSafe($_REQUEST['pop3_port']);
-        $spam = MakeSafe($_REQUEST['pop3_spam']);
-        $cmid = MakeSafe($_REQUEST['pop3_cmid']);
-        $type = strtolower(MakeSafe($_REQUEST['pop3_type']));
-        $POP3_ID = MakeSafe($_REQUEST['pop3_ID']);
+        $user = makeSafe($_REQUEST['pop3_user']);
+        $pass = makeSafe($_REQUEST['pop3_pw']);
+        $Mbox = makeSafe($_REQUEST['pop3_box']);
+        $host = makeSafe($_REQUEST['pop3_host']);
+        $port = makeSafe($_REQUEST['pop3_port']);
+        $spam = makeSafe($_REQUEST['pop3_spam']);
+        $cmid = makeSafe($_REQUEST['pop3_cmid']);
+        $type = strtolower(makeSafe($_REQUEST['pop3_type']));
+        $POP3_ID = makeSafe($_REQUEST['pop3_ID']);
 
         # $HandleHTML, $deletemsgs, $confirmjoin, $enabled
 
-        $deletemsgs = MakeSafe($_REQUEST['pop3_deletemsgs']);
-        $confirmjoin = MakeSafe($_REQUEST['pop3_confirmjoin']);
-        $enabled = MakeSafe($_REQUEST['pop3_enabled']);
+        $deletemsgs = makeSafe($_REQUEST['pop3_deletemsgs']);
+        $confirmjoin = makeSafe($_REQUEST['pop3_confirmjoin']);
+        $enabled = makeSafe($_REQUEST['pop3_enabled']);
         if ($deletemsgs == 1) {
         } else {
             $deletemsgs = 0;
@@ -470,7 +470,7 @@ if ($Is_Auth = User_Auth()) {
         $return_action = "update";
         include('templates/back_button.responders.php');
     } else {
-        admin_redirect();
+        adminRedirect();
     }
 
     # Bottom template
@@ -479,8 +479,8 @@ if ($Is_Auth = User_Auth()) {
         include('templates/close.page.php');
     }
 } else {
-    admin_redirect();
+    adminRedirect();
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

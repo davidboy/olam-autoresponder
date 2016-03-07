@@ -8,7 +8,7 @@ include('common.php');
 
 # ------------------------------------------------
 
-function regexp_exists($regexp_id)
+function regexpExists($regexp_id)
 {
     global $DB_LinkID;
 
@@ -36,11 +36,11 @@ function regexp_exists($regexp_id)
 # ------------------------------------------------
 
 # Get the action var
-$action = strtolower(MakeSafe($_REQUEST['action']));
+$action = strtolower(makeSafe($_REQUEST['action']));
 
 # Not logged in?
-if (!($Is_Auth = User_Auth($X_login, $X_pass))) {
-    admin_redirect();
+if (!($Is_Auth = userAuth($X_login, $X_pass))) {
+    adminRedirect();
 }
 
 # Top template
@@ -51,11 +51,11 @@ $help_section = "regexps";
 include('templates/controlpanel.php');
 
 # Set address
-$address = MakeSafe($_REQUEST['address']);
+$address = makeSafe($_REQUEST['address']);
 
 # Process actions
 if ($action == "add") {
-    $regexp = MakeSafe($_REQUEST['regx']);
+    $regexp = makeSafe($_REQUEST['regx']);
     $query = "SELECT * FROM InfResp_BounceRegs WHERE RegX = '$regexp'";
     $result = mysql_query($query) or die("Invalid query: " . mysql_error());
     if (mysql_num_rows($result) > 0) {
@@ -70,8 +70,8 @@ if ($action == "add") {
         print "<p class=\"big_header\">Regexp Added!</p>\n";
     }
 } elseif ($action == "remove") {
-    $regexp_id = MakeSafe($_REQUEST['regx']);
-    if (regexp_exists($regexp_id)) {
+    $regexp_id = makeSafe($_REQUEST['regx']);
+    if (regexpExists($regexp_id)) {
         # Delete from the regexp table
         $query = "DELETE FROM InfResp_BounceRegs WHERE BounceRegexpID = '$regexp_id'";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -115,5 +115,5 @@ include('templates/admin_button.regexps.php');
 copyright();
 include('templates/close.page.php');
 
-DB_disconnect();
+dbDisconnect();
 ?>

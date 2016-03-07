@@ -9,7 +9,7 @@ $query = "SHOW TABLES LIKE 'InfResp_config'";
 $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
 if (mysql_num_rows($result) == 0) {
     # No, the defs aren't installed!
-    $contents = GrabFile('defs.sql');
+    $contents = grabFile('defs.sql');
     if ($contents == FALSE) {
         die("Could not find the defs.sql file!\n");
     }

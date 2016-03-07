@@ -8,18 +8,18 @@ include('common.php');
 
 # -------------------------------------------------------------------
 
-function AddCustomFields()
+function addCustomFields()
 {
     global $Email_Address, $Responder_ID;
     global $FirstName, $LastName, $DB_LinkID;
 
-    $CustomFieldsArray = GetFieldNames('InfResp_customfields');
+    $CustomFieldsArray = getFieldNames('InfResp_customfields');
     $CustomFieldsExist = FALSE;
     foreach ($CustomFieldsArray as $key => $value) {
         $blah = "cf_" . $value;
         $reqblah = trim($_REQUEST[$blah]);
         if (!(Empty($reqblah))) {
-            $CustomFieldsArray[$value] = MakeSafe($reqblah);
+            $CustomFieldsArray[$value] = makeSafe($reqblah);
             $CustomFieldsExist = TRUE;
         }
     }
@@ -50,7 +50,7 @@ function AddCustomFields()
         }
 
         # Insert new data
-        DB_Insert_Array("InfResp_customfields", $CustomFieldsArray);
+        dbInsertArray("InfResp_customfields", $CustomFieldsArray);
     }
 }
 
@@ -71,19 +71,19 @@ $Email_Address = str_replace("\\", "", $Email_Address);
 $Email_Address = str_replace('/', "", $Email_Address);
 $Email_Address = str_replace('..', "", $Email_Address);
 $Email_Address = str_replace('|', "", $Email_Address);
-$Email_Address = stripnl(MakeSafe($Email_Address));
-$Confirm_String = MakeSafe($_REQUEST['c']);
-$Subscriber_ID = MakeSafe($_REQUEST['sub_ID']);
-$HandleHTML = MakeSafe($_REQUEST['h']);
-$ReferralSrc = MakeSafe($_REQUEST['ref']);
+$Email_Address = stripNewlines(makeSafe($Email_Address));
+$Confirm_String = makeSafe($_REQUEST['c']);
+$Subscriber_ID = makeSafe($_REQUEST['sub_ID']);
+$HandleHTML = makeSafe($_REQUEST['h']);
+$ReferralSrc = makeSafe($_REQUEST['ref']);
 $IPaddy = $_SERVER['REMOTE_ADDR'];
 
 # Grab the name
 if (isEmpty($_REQUEST['n'])) {
-    $FirstName = MakeSafe($_REQUEST['f']);
-    $LastName = MakeSafe($_REQUEST['l']);
+    $FirstName = makeSafe($_REQUEST['f']);
+    $LastName = makeSafe($_REQUEST['l']);
 } else {
-    $FullName = MakeSafe($_REQUEST['n']);
+    $FullName = makeSafe($_REQUEST['n']);
     $names = explode(' ', $FullName);
     $FirstName = $names[0];
     $LastName = '';
@@ -95,16 +95,16 @@ if (isEmpty($_REQUEST['n'])) {
 
 # Grab the action var
 if (isEmpty($_REQUEST['a'])) {
-    $action = strtolower(MakeSafe($_REQUEST['action']));
+    $action = strtolower(makeSafe($_REQUEST['action']));
 } else {
-    $action = strtolower(MakeSafe($_REQUEST['a']));
+    $action = strtolower(makeSafe($_REQUEST['a']));
 }
 
 # Grab responder ID
 if (isset($_REQUEST['r'])) {
-    $Responder_ID = MakeSafe($_REQUEST['r']);
+    $Responder_ID = makeSafe($_REQUEST['r']);
 } else {
-    $Responder_ID = MakeSafe($_REQUEST['r_ID']);
+    $Responder_ID = makeSafe($_REQUEST['r_ID']);
 }
 
 # Bounds checking
@@ -121,12 +121,12 @@ if ($HandleHTML != "1") {
 # Actions from admin.php
 if (($action == "resend_unsub_conf") || ($action == "resend_sub_conf")) {
     # Pull info
-    if (!(ResponderExists($Responder_ID))) {
-        admin_redirect();
+    if (!(responderExists($Responder_ID))) {
+        adminRedirect();
     }
-    GetResponderInfo();
-    if ((GetSubscriberInfo($Subscriber_ID)) == FALSE) {
-        admin_redirect();
+    getResponderInfo();
+    if ((getSubscriberInfo($Subscriber_ID)) == FALSE) {
+        adminRedirect();
     }
 
     # Open template
@@ -136,12 +136,12 @@ if (($action == "resend_unsub_conf") || ($action == "resend_sub_conf")) {
 
     # Handle the action
     if ($action == "resend_sub_conf") {
-        SendMessageTemplate('templates/subscribe.confirm.txt');
+        sendMessageTemplate('templates/subscribe.confirm.txt');
         if ($SilentMode != 1) {
             print "<br />Subscription confirmation message sent!<br />\n";
         }
     } elseif ($action == "resend_unsub_conf") {
-        SendMessageTemplate('templates/unsubscribe.confirm.txt');
+        sendMessageTemplate('templates/unsubscribe.confirm.txt');
         if ($SilentMode != 1) {
             print "<br />Unsubscribe confirmation message sent!<br />\n";
         }
@@ -200,7 +200,7 @@ if (!(isEmpty($Confirm_String))) {
 
         # Grab the relevant responder data
         $Responder_ID = $DB_ResponderID;
-        if (!(ResponderExists($Responder_ID))) {
+        if (!(responderExists($Responder_ID))) {
             # Invalid code. Print it!
             if ($SilentMode != 1) {
                 include('templates/open.page.php');
@@ -210,7 +210,7 @@ if (!(isEmpty($Confirm_String))) {
             }
             die();
         }
-        GetResponderInfo();
+        getResponderInfo();
 
         # Emails, DB and redir/template
         if ($type == "s") {
@@ -220,12 +220,12 @@ if (!(isEmpty($Confirm_String))) {
             $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
 
             # Handle custom fields
-            AddCustomFields();
+            addCustomFields();
 
             # Send mail
-            SendMessageTemplate('templates/subscribe.complete.txt');
+            sendMessageTemplate('templates/subscribe.complete.txt');
             if ($DB_NotifyOnSub == "1") {
-                SendMessageTemplate('templates/new_subscriber.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
+                sendMessageTemplate('templates/new_subscriber.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
             }
 
             # Autocall sendmails on subscribe?
@@ -257,9 +257,9 @@ if (!(isEmpty($Confirm_String))) {
             }
         } elseif ($type == "u") {
             # Send mail
-            SendMessageTemplate('templates/unsubscribe.complete.txt');
+            sendMessageTemplate('templates/unsubscribe.complete.txt');
             if ($DB_NotifyOnSub == "1") {
-                SendMessageTemplate('templates/subscriber_left.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
+                sendMessageTemplate('templates/subscriber_left.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
             }
 
             # Delete from DB
@@ -373,7 +373,7 @@ if (!(isEmpty($Confirm_String))) {
         }
 
         # Get responder info.
-        if (!(ResponderExists($Responder_ID))) {
+        if (!(responderExists($Responder_ID))) {
             # Invalid code. Print it!
             if ($SilentMode != 1) {
                 include('templates/open.page.php');
@@ -383,7 +383,7 @@ if (!(isEmpty($Confirm_String))) {
             }
             die();
         }
-        GetResponderInfo();
+        getResponderInfo();
 
         # Is the email already on this responder?
         $query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND EmailAddress = '$Email_Address'";
@@ -418,7 +418,7 @@ if (!(isEmpty($Confirm_String))) {
                 die();
             } else {
                 # Send confirmation msg
-                SendMessageTemplate('templates/subscribe.confirm.txt');
+                sendMessageTemplate('templates/subscribe.confirm.txt');
 
                 # Display from the DB or the template
                 if ((trim($DB_OptInDisplay)) == "") {
@@ -455,7 +455,7 @@ if (!(isEmpty($Confirm_String))) {
         $DB_LastName = $LastName;
         $DB_IPaddy = $IPaddy;
         $DB_ReferralSource = $ReferralSrc;
-        $DB_UniqueCode = generate_unique_code();
+        $DB_UniqueCode = generateUniqueCode();
         $DB_Confirmed = "0";
 
         if ($DB_OptMethod == "Double") {
@@ -466,7 +466,7 @@ if (!(isEmpty($Confirm_String))) {
             $DB_SubscriberID = mysql_insert_id();
 
             # Send confirmation msg
-            SendMessageTemplate('templates/subscribe.confirm.txt');
+            sendMessageTemplate('templates/subscribe.confirm.txt');
 
             # Display from the DB or the template
             if ((trim($DB_OptInDisplay)) == "") {
@@ -497,12 +497,12 @@ if (!(isEmpty($Confirm_String))) {
             $DB_SubscriberID = mysql_insert_id();
 
             # Handle custom fields
-            AddCustomFields();
+            addCustomFields();
 
             # Send mail and notify
-            SendMessageTemplate('templates/subscribe.complete.txt');
+            sendMessageTemplate('templates/subscribe.complete.txt');
             if ($DB_NotifyOnSub == "1") {
-                SendMessageTemplate('templates/new_subscriber.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
+                sendMessageTemplate('templates/new_subscriber.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
             }
 
             # Autocall sendmails on subscribe?
@@ -544,5 +544,5 @@ if (!(isEmpty($Confirm_String))) {
     }
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

@@ -8,7 +8,7 @@ include_once('common.php');
 
 # ------------------------------------------------
 
-function mail_msg_exists($mail_id = "0")
+function mailMessageExists($mail_id = "0")
 {
     global $DB_LinkID;
 
@@ -35,7 +35,7 @@ function mail_msg_exists($mail_id = "0")
 
 # ------------------------------------------------
 
-function get_send_figures()
+function getSendFigures()
 {
     global $DB_LinkID, $mail_id;
 
@@ -74,30 +74,30 @@ function get_send_figures()
 # ------------------------------------------------
 
 # Get and verify input
-$Responder_ID = MakeSafe($_REQUEST['r_ID']);
-$action = MakeSafe($_REQUEST['action']);
+$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$action = makeSafe($_REQUEST['action']);
 if (!(is_numeric($Responder_ID))) {
     $Responder_ID = FALSE;
 }
 
 # Check authentication
-$Is_Auth = User_Auth();
+$Is_Auth = userAuth();
 if ($Is_Auth) {
     # Check the responder ID
     if (!($Responder_ID)) {
-        admin_redirect();
+        adminRedirect();
     }
-    if (!(ResponderExists($Responder_ID))) {
-        admin_redirect();
+    if (!(responderExists($Responder_ID))) {
+        adminRedirect();
     }
-    GetResponderInfo();
+    getResponderInfo();
 
     # Top template
     include('templates/open.page.php');
     include_once('popup_js.php');
 
     # Check the mail ID
-    $mail_id = MakeSafe($_REQUEST['m_ID']);
+    $mail_id = makeSafe($_REQUEST['m_ID']);
     if ((!(is_numeric($mail_id))) || (empty($mail_id)) || ($mail_id == "")) {
         $mail_id = "0";
     }
@@ -122,14 +122,14 @@ if ($Is_Auth) {
         include('templates/create.mailbursts.php');
     } elseif ($action == "do_create") {
         # Sanitize the input
-        $P_subj = MakeSemiSafe($_REQUEST['subj']);
-        $P_bodytext = MakeSemiSafe($_REQUEST['bodytext']);
-        $P_bodyhtml = MakeSemiSafe($_REQUEST['bodyhtml']);
-        $send_month = strtolower(MakeSafe($_REQUEST['send_month']));
-        $send_day = MakeSafe($_REQUEST['send_day']);
-        $send_year = MakeSafe($_REQUEST['send_year']);
-        $send_hour = MakeSafe($_REQUEST['send_hour']);
-        $send_min = MakeSafe($_REQUEST['send_min']);
+        $P_subj = makeSemiSafe($_REQUEST['subj']);
+        $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);
+        $P_bodyhtml = makeSemiSafe($_REQUEST['bodyhtml']);
+        $send_month = strtolower(makeSafe($_REQUEST['send_month']));
+        $send_day = makeSafe($_REQUEST['send_day']);
+        $send_year = makeSafe($_REQUEST['send_year']);
+        $send_hour = makeSafe($_REQUEST['send_hour']);
+        $send_min = makeSafe($_REQUEST['send_min']);
         if (!(is_numeric($send_day))) {
             $send_day = date('d', time());
         }
@@ -178,7 +178,7 @@ if ($Is_Auth) {
         $return_action = "list";
         print "<p class=\"big_header\">Burst added!</p>\n";
         include('templates/back_button.mailbursts.php');
-    } elseif (($action == "edit") && (mail_msg_exists($mail_id))) {
+    } elseif (($action == "edit") && (mailMessageExists($mail_id))) {
         # Query DB - We already know there's a row for it.
         $query = "SELECT * FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -206,20 +206,20 @@ if ($Is_Auth) {
         $return_action = "list";
 
         # Get the math numbers
-        $the_math = get_send_figures();
+        $the_math = getSendFigures();
 
         # Show the template
         include('templates/edit.mailbursts.php');
-    } elseif (($action == "do_edit") && (mail_msg_exists($mail_id))) {
+    } elseif (($action == "do_edit") && (mailMessageExists($mail_id))) {
         # Sanitize the input
-        $P_subj = MakeSemiSafe($_REQUEST['subj']);
-        $P_bodytext = MakeSemiSafe($_REQUEST['bodytext']);
-        $P_bodyhtml = MakeSemiSafe($_REQUEST['bodyhtml']);
-        $send_month = strtolower(MakeSafe($_REQUEST['send_month']));
-        $send_day = MakeSafe($_REQUEST['send_day']);
-        $send_year = MakeSafe($_REQUEST['send_year']);
-        $send_hour = MakeSafe($_REQUEST['send_hour']);
-        $send_min = MakeSafe($_REQUEST['send_min']);
+        $P_subj = makeSemiSafe($_REQUEST['subj']);
+        $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);
+        $P_bodyhtml = makeSemiSafe($_REQUEST['bodyhtml']);
+        $send_month = strtolower(makeSafe($_REQUEST['send_month']));
+        $send_day = makeSafe($_REQUEST['send_day']);
+        $send_year = makeSafe($_REQUEST['send_year']);
+        $send_hour = makeSafe($_REQUEST['send_hour']);
+        $send_min = makeSafe($_REQUEST['send_min']);
         if (!(is_numeric($send_day))) {
             $send_day = date('d', time());
         }
@@ -251,7 +251,7 @@ if ($Is_Auth) {
         $return_action = "list";
         print "<p class=\"big_header\">Burst changed!</p>\n";
         include('templates/back_button.mailbursts.php');
-    } elseif (($action == "pause") && (mail_msg_exists($mail_id))) {
+    } elseif (($action == "pause") && (mailMessageExists($mail_id))) {
         # Toggle pause
         $query = "SELECT * FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -271,7 +271,7 @@ if ($Is_Auth) {
             print $msg;
             include('templates/back_button.mailbursts.php');
         }
-    } elseif (($action == "delete") && (mail_msg_exists($mail_id))) {
+    } elseif (($action == "delete") && (mailMessageExists($mail_id))) {
         # Query DB - We already know there's a row for it.
         $query = "SELECT * FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -298,11 +298,11 @@ if ($Is_Auth) {
         $return_action = "list";
 
         # Get the math numbers
-        $the_math = get_send_figures();
+        $the_math = getSendFigures();
 
         # Show the template
         include('templates/delete.mailbursts.php');
-    } elseif (($action == "do_delete") && (mail_msg_exists($mail_id))) {
+    } elseif (($action == "do_delete") && (mailMessageExists($mail_id))) {
         # Delete from the mail table
         $query = "DELETE FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
@@ -370,8 +370,8 @@ if ($Is_Auth) {
     copyright();
     include('templates/close.page.php');
 } else {
-    admin_redirect();
+    adminRedirect();
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

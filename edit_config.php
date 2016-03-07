@@ -6,7 +6,7 @@
 
 include_once('common.php');
 
-$Is_Auth = User_Auth();
+$Is_Auth = userAuth();
 if (empty($config['admin_pass'])) {
     $auto_auth = TRUE;
     $Is_Auth = TRUE;
@@ -33,11 +33,11 @@ if (($Is_Auth) || ($auto_auth)) {
     print "<br>\n";
     if ($_REQUEST['action'] == "save") {
         # Clean the data
-        $config_fields = get_db_fields('InfResp_config');
+        $config_fields = dbGetFields('InfResp_config');
         foreach ($_REQUEST as $name => $value) {
             $name = strtolower($name);
             if ($config_fields['hash'][$name] == TRUE) {
-                $form[$name] = MakeSafe($value);
+                $form[$name] = makeSafe($value);
             }
         }
 
@@ -55,7 +55,7 @@ if (($Is_Auth) || ($auto_auth)) {
         }
 
         # Save the data
-        DB_Update_Array('InfResp_config', $form);
+        dbUpdateArray('InfResp_config', $form);
 
         # Grab the new data
         $query = "SELECT * FROM InfResp_config";
@@ -68,8 +68,8 @@ if (($Is_Auth) || ($auto_auth)) {
         $charset = $config['charset'];
 
         # Fix the session
-        $_SESSION['l'] = md5(WebEncrypt($config['admin_user'], $config['random_str_1']));
-        $_SESSION['p'] = md5(WebEncrypt($config['admin_pass'], $config['random_str_2']));
+        $_SESSION['l'] = md5(webEncrypt($config['admin_user'], $config['random_str_1']));
+        $_SESSION['p'] = md5(webEncrypt($config['admin_pass'], $config['random_str_2']));
 
         # Done!
         print "<center><H2>Changes Saved!</H2></center>\n";
@@ -90,8 +90,8 @@ if (($Is_Auth) || ($auto_auth)) {
     copyright();
     include('templates/close.page.php');
 } else {
-    admin_redirect();
+    adminRedirect();
 }
 
-DB_disconnect();
+dbDisconnect();
 ?>

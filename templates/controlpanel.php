@@ -23,7 +23,7 @@ include_once('popup_js.php');
           <form action="admin.php" method=POST> 
              <input type="hidden" name="action" value="Form_Gen">
              <input type="submit" name="submit" value="Code It!" class="cp_butt"> &nbsp; 
-             <?php ResponderPulldown('r_ID'); ?>
+             <?php responderPulldown('r_ID'); ?>
           </form>
        </td></tr></table>
     </td>

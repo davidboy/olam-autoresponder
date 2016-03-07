@@ -41,9 +41,9 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                     $mailHeader = imap_headerinfo($conn, $i);
                     $mail_body = imap_fetchbody($conn, $i, 0);
 
-                    $subject = MakeSafe($mailHeader->subject);
-                    $date = MakeSafe($mailHeader->date);
-                    $mail_body = MakeSafe($mail_body);
+                    $subject = makeSafe($mailHeader->subject);
+                    $date = makeSafe($mailHeader->date);
+                    $mail_body = makeSafe($mail_body);
 
                     $from = $mailHeader->from;
                     foreach ($from as $id => $object) {
@@ -56,8 +56,8 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                     $fromname = preg_replace("/\(.*\)/i", "", $fromname);
                     $fromname = preg_replace("/\[.*\]/i", "", $fromname);
                     $fromname = preg_replace("/<.*>/i", "", $fromname);
-                    $fromname = MakeSafe($fromname);
-                    $Email_Address = MakeSafe($fromaddress);
+                    $fromname = makeSafe($fromname);
+                    $Email_Address = makeSafe($fromaddress);
 
                     $IsEmail = eregi("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)+$", $fromname);
                     if ($IsEmail == 1) {
@@ -116,7 +116,7 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                             $spam_filtered = 1;
                         }
                     }
-                    if ((!(UserIsSubscribed())) && (!(isInBlacklist($Email_Address))) && ($spam_filtered == 0) AND (isEmail($Email_Address))) {
+                    if ((!(userIsSubscribed())) && (!(isInBlacklist($Email_Address))) && ($spam_filtered == 0) AND (isEmail($Email_Address))) {
                         if ($DB_HTML_YN == 1) {
                             $Set_HTML = 1;
                         } else {
@@ -124,7 +124,7 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                         }
 
                         # Get responder info
-                        GetResponderInfo();
+                        getResponderInfo();
 
                         # Setup the data
                         $DB_ResponderID = $Responder_ID;
@@ -138,7 +138,7 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                         $DB_LastName = $LastName;
                         $DB_IPaddy = $IPaddy;
                         $DB_ReferralSource = "email join";
-                        $DB_UniqueCode = generate_unique_code();
+                        $DB_UniqueCode = generateUniqueCode();
 
                         if ($DB_Confirm_Join == 1) {
                             # Add a non-confirmed row to the DB
@@ -149,7 +149,7 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                             $DB_SubscriberID = mysql_insert_id();
 
                             # Send confirmation msg
-                            SendMessageTemplate('templates/subscribe.confirm.txt');
+                            sendMessageTemplate('templates/subscribe.confirm.txt');
                         } else {
                             # Add a confirmed row to the DB
                             $DB_Confirmed = "1";
@@ -159,9 +159,9 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                             $DB_SubscriberID = mysql_insert_id();
 
                             # Send welcome and notification
-                            SendMessageTemplate('templates/subscribe.complete.txt');
+                            sendMessageTemplate('templates/subscribe.complete.txt');
                             if ($DB_NotifyOnSub == "1") {
-                                SendMessageTemplate('templates/new_subscriber.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
+                                sendMessageTemplate('templates/new_subscriber.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
                             }
                         }
                     }
@@ -175,6 +175,6 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
 
 # Should we disconnect from the DB?
 if ($included != TRUE) {
-    DB_disconnect();
+    dbDisconnect();
 }
 ?>

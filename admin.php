@@ -8,7 +8,7 @@ include_once('common.php');
 
 # ---------------------------------------------------------------------------------
 
-function Run_UserQuery($query)
+function runUserQuery($query)
 {
     global $DB_ResponderID, $DB_ResponderName, $DB_OwnerEmail;
     global $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgList, $DB_LastActivity;
@@ -51,7 +51,7 @@ function Run_UserQuery($query)
             $DB_Confirmed = $search_query_result['Confirmed'];
 
             $Responder_ID = $DB_ResponderID;
-            GetResponderInfo();
+            getResponderInfo();
 
             # User row template
             $alt = (!($alt));
@@ -102,14 +102,14 @@ $Add_List_Size = $config['add_sub_size'];
 $SubsPerPage = $config['subs_per_page'];
 
 # Init vars
-$action = MakeSafe($_REQUEST['action']);
-$Responder_ID = MakeSafe($_REQUEST['r_ID']);
-$Search_EmailAddress = MakeSafe($_REQUEST['email_addy']);
-$Subscriber_ID = MakeSafe($_REQUEST['sub_ID']);
-$HandleHTML = MakeSafe($_REQUEST['h']);
-$SearchCount = MakeSafe($_REQUEST['Search_Count']);
-$FirstName = MakeSafe($_REQUEST['firstname']);
-$LastName = MakeSafe($_REQUEST['lastname']);
+$action = makeSafe($_REQUEST['action']);
+$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$Search_EmailAddress = makeSafe($_REQUEST['email_addy']);
+$Subscriber_ID = makeSafe($_REQUEST['sub_ID']);
+$HandleHTML = makeSafe($_REQUEST['h']);
+$SearchCount = makeSafe($_REQUEST['Search_Count']);
+$FirstName = makeSafe($_REQUEST['firstname']);
+$LastName = makeSafe($_REQUEST['lastname']);
 
 # Bounds check
 if ($HandleHTML != 1) {
@@ -125,7 +125,7 @@ if (!(is_numeric($SearchCount))) {
 }
 
 # Are we authed?
-if ($Is_Auth = User_Auth()) {
+if ($Is_Auth = userAuth()) {
     # Template top
     include('templates/open.page.php');
 
@@ -135,7 +135,7 @@ if ($Is_Auth = User_Auth()) {
         include('templates/controlpanel.php');
 
         $DBquery = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' ORDER BY EmailAddress";
-        Run_UserQuery($DBquery);
+        runUserQuery($DBquery);
     } elseif ($action == "Email_Search") {
         # Panel top
         $help_section = "editusers";
@@ -147,7 +147,7 @@ if ($Is_Auth = User_Auth()) {
         }
 
         $DBquery = "SELECT * FROM InfResp_subscribers WHERE EmailAddress LIKE '%$Search_EmailAddress%' ORDER BY EmailAddress";
-        Run_UserQuery($DBquery);
+        runUserQuery($DBquery);
     } elseif ($action == "Form_Gen") {
         # Template
         include('templates/form_gen.admin.php');
@@ -177,8 +177,8 @@ if ($Is_Auth = User_Auth()) {
         $return_action = "list";
         include('templates/back_button.admin.php');
     } elseif ($action == "sub_edit") {
-        GetResponderInfo();
-        GetSubscriberInfo($Subscriber_ID);
+        getResponderInfo();
+        getSubscriberInfo($Subscriber_ID);
 
         $DB_SentMsgs = trim(trim($DB_SentMsgs), ",");
         $SentList_Array = explode(',', $DB_SentMsgs);
@@ -195,7 +195,7 @@ if ($Is_Auth = User_Auth()) {
         # Build option list
         $option_list = "";
         for ($i = 0; $i <= $Max_Index - 1; $i++) {
-            GetMsgInfo(trim($SentList_Array[$i]));
+            getMsgInfo(trim($SentList_Array[$i]));
             $option_list .= "     <option value=\"$DB_MsgID\">$DB_MsgSub</option>\n";
         }
 
@@ -207,9 +207,9 @@ if ($Is_Auth = User_Auth()) {
         $return_action = "edit_users";
         include('templates/back_button.admin.php');
     } elseif ($action == "sub_delete") {
-        GetSubscriberInfo($Subscriber_ID);
+        getSubscriberInfo($Subscriber_ID);
         $Responder_ID = $DB_ResponderID;
-        GetResponderInfo();
+        getResponderInfo();
         $JoinedStr = date("F j, Y, g:i a", $DB_TimeJoined);
         $LastActStr = date("F j, Y, g:i a", $DB_LastActivity);
         if ($CanReceiveHTML == 1) {
@@ -233,20 +233,20 @@ if ($Is_Auth = User_Auth()) {
             $FN_VAR = "firstname" . $i;
             $LN_VAR = "lastname" . $i;
 
-            $SendHTML[$i] = MakeSafe($_REQUEST["$SH_VAR"]);
-            $AddToResp[$i] = MakeSafe($_REQUEST["$AR_VAR"]);
-            $EmailToAdd[$i] = MakeSafe($_REQUEST["$EA_VAR"]);
-            $FirstNameArray[$i] = MakeSafe($_REQUEST["$FN_VAR"]);
-            $LastNameArray[$i] = MakeSafe($_REQUEST["$LN_VAR"]);
+            $SendHTML[$i] = makeSafe($_REQUEST["$SH_VAR"]);
+            $AddToResp[$i] = makeSafe($_REQUEST["$AR_VAR"]);
+            $EmailToAdd[$i] = makeSafe($_REQUEST["$EA_VAR"]);
+            $FirstNameArray[$i] = makeSafe($_REQUEST["$FN_VAR"]);
+            $LastNameArray[$i] = makeSafe($_REQUEST["$LN_VAR"]);
 
             $Responder_ID = $AddToResp[$i];
             $Email_Address = $EmailToAdd[$i];
 
-            if (UserIsSubscribed()) {
+            if (userIsSubscribed()) {
                 print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
             } else {
                 if (($EmailToAdd[$i] != "") AND ($EmailToAdd[$i] != NULL) AND (!(isInBlacklist($EmailToAdd[$i])))) {
-                    $uniq_code = generate_unique_code();
+                    $uniq_code = generateUniqueCode();
                     $Timestamper = time();
                     $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed)
                                          VALUES('$AddToResp[$i]','$Blank', '$EmailToAdd[$i]', '$Timestamper', '$Timestamper', '$SendHTML[$i]', '$Timestamper', '$FirstNameArray[$i]', '$LastNameArray[$i]', 'Added Manually', 'Manual Add', '$uniq_code', '1')";
@@ -262,16 +262,16 @@ if ($Is_Auth = User_Auth()) {
         include('templates/back_button.admin.php');
     } elseif ($action == "sub_edit_do") {
 
-        $Resend_Msg = MakeSafe($_REQUEST['msg_to_resend']);
-        $Reset_Time = MakeSafe($_REQUEST['Reset_Time']);
-        $Ref_Src = MakeSafe($_REQUEST['ReferralSource']);
-        $UniqueCode = MakeSafe($_REQUEST['UniqueCode']);
-        $Confirmed = MakeSafe($_REQUEST['Confirmed']);
+        $Resend_Msg = makeSafe($_REQUEST['msg_to_resend']);
+        $Reset_Time = makeSafe($_REQUEST['Reset_Time']);
+        $Ref_Src = makeSafe($_REQUEST['ReferralSource']);
+        $UniqueCode = makeSafe($_REQUEST['UniqueCode']);
+        $Confirmed = makeSafe($_REQUEST['Confirmed']);
 
-        GetSubscriberInfo($Subscriber_ID);
+        getSubscriberInfo($Subscriber_ID);
 
         if (($Resend_Msg != "") AND ($Resend_Msg != NULL) AND ($Resend_Msg != "none") AND ($Resend_Msg != "all")) {
-            $DB_SentMsgs = RemoveFromList($DB_SentMsgs, $Resend_Msg);
+            $DB_SentMsgs = removeFromList($DB_SentMsgs, $Resend_Msg);
         }
         if ($Confirmed != "1") {
             $Confirmed = "0";
@@ -357,14 +357,14 @@ if ($Is_Auth = User_Auth()) {
         }
 
         $file_text = str_replace(' ', '', $file_text);
-        $file_text = stripnl($file_text);
+        $file_text = stripNewlines($file_text);
         $file_text = trim(trim($file_text), ",");
-        $file_text = MakeSafe($file_text);
+        $file_text = makeSafe($file_text);
         $Comma_List = $_REQUEST['comma_list'];
         $Comma_List = str_replace(' ', '', $Comma_List);
-        $Comma_List = stripnl($Comma_List);
+        $Comma_List = stripNewlines($Comma_List);
         $Comma_List = trim(trim($Comma_List), ",");
-        $Comma_List = MakeSafe($Comma_List);
+        $Comma_List = makeSafe($Comma_List);
         $Complete_List = $file_text . "," . $Comma_List;
 
         $AddList_Array = explode(',', $Complete_List);
@@ -382,12 +382,12 @@ if ($Is_Auth = User_Auth()) {
 
         for ($i = 0; $i <= $List_Max - 1; $i++) {
             $Email_Address = $AddList_Array[$i];
-            if (UserIsSubscribed()) {
+            if (userIsSubscribed()) {
                 print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
             } else {
                 if (($Email_Address != "") AND ($Email_Address != NULL) AND (!(isInBlacklist($Email_Address)))) {
                     $Timestamper = time();
-                    $uniq_code = generate_unique_code();
+                    $uniq_code = generateUniqueCode();
                     $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed)
                                          VALUES('$Responder_ID','$Blank', '$Email_Address', '$Timestamper', '$Timestamper', '$HandleHTML', '$Timestamper', '$Blank', '$Blank', '$Blank', 'Bulk Add', '$uniq_code', '1')";
                     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
@@ -425,7 +425,7 @@ if ($Is_Auth = User_Auth()) {
             or die("Invalid query: " . mysql_error());
         }
 
-        $CustomFieldsArray = GetFieldNames('InfResp_customfields');
+        $CustomFieldsArray = getFieldNames('InfResp_customfields');
         $query = "SELECT * FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID' OR (resp_attached = '$Responder_ID' AND email_attached = '$Search_EmailAddress') LIMIT 1";
         $result = mysql_query($query)
         or die("Invalid query: " . mysql_error());
@@ -447,12 +447,12 @@ if ($Is_Auth = User_Auth()) {
         include('templates/back_button.admin.php');
     } elseif ($action == "custom_edit_do") {
         # Get the fields
-        $CustomFieldsArray = GetFieldNames('InfResp_customfields');
+        $CustomFieldsArray = getFieldNames('InfResp_customfields');
         foreach ($CustomFieldsArray as $key => $value) {
             $blah = "cf_" . $value;
             $reqblah = trim($_REQUEST[$blah]);
             if (!(Empty($reqblah))) {
-                $DBarray[$value] = MakeSafe($reqblah);
+                $DBarray[$value] = makeSafe($reqblah);
             }
         }
 
@@ -467,7 +467,7 @@ if ($Is_Auth = User_Auth()) {
         } else {
             $where = "resp_attached = '$Responder_ID' AND email_attached = '$Search_EmailAddress'";
         }
-        DB_Update_Array('InfResp_customfields', $DBarray, $where);
+        dbUpdateArray('InfResp_customfields', $DBarray, $where);
 
         # Done!
         print "<br> \n";
@@ -539,7 +539,7 @@ if ($Is_Auth = User_Auth()) {
 } else {
     if ($action == "do_login") {
         # Reset the user session
-        reset_user_session();
+        resetUserSession();
 
         # Was it good or no?
         $l = trim($_REQUEST['login']);
@@ -547,8 +547,8 @@ if ($Is_Auth = User_Auth()) {
         if (($l == $config['admin_user']) AND ($p == $config['admin_pass'])) {
             # Reset our randoms
             $now = time();
-            $str1 = generate_random_block();
-            $str2 = generate_random_block();
+            $str1 = generateRandomBlock();
+            $str2 = generateRandomBlock();
             $query = "UPDATE InfResp_config
                                 SET random_timestamp = '$now',
                                 random_str_1 = '$str1',
@@ -562,8 +562,8 @@ if ($Is_Auth = User_Auth()) {
             $_SESSION['initialized'] = TRUE;
             $_SESSION['timestamp'] = time();
             $_SESSION['last_IP'] = $_SERVER['REMOTE_ADDR'];
-            $_SESSION['l'] = md5(WebEncrypt($l, $config['random_str_1']));
-            $_SESSION['p'] = md5(WebEncrypt($p, $config['random_str_2']));
+            $_SESSION['l'] = md5(webEncrypt($l, $config['random_str_1']));
+            $_SESSION['p'] = md5(webEncrypt($p, $config['random_str_2']));
 
             # Redirect
             $redir_URL = $siteURL . $ResponderDirectory . '/admin.php?action=list';
@@ -602,5 +602,5 @@ if ($Is_Auth = User_Auth()) {
 copyright();
 include('templates/close.page.php');
 
-DB_disconnect();
+dbDisconnect();
 ?>

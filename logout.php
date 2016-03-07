@@ -9,11 +9,11 @@ include_once('common.php');
 # ------------------------------------------------
 
 # Check authentication
-$Is_Auth = User_Auth();
+$Is_Auth = userAuth();
 if ($Is_Auth) {
     $now = time();
-    $str1 = generate_random_block();
-    $str2 = generate_random_block();
+    $str1 = generateRandomBlock();
+    $str2 = generateRandomBlock();
     $query = "UPDATE InfResp_config
               SET random_timestamp = '$now',
               random_str_1 = '$str1',
@@ -24,11 +24,11 @@ if ($Is_Auth) {
     $config['random_str_2'] = $str2;
 
     # Reset the user session
-    reset_user_session();
+    resetUserSession();
 }
 
 # Redirect to the login panel
-admin_redirect();
+adminRedirect();
 
-DB_disconnect();
+dbDisconnect();
 ?>

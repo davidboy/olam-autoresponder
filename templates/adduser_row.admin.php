@@ -7,7 +7,7 @@
            <input type="RADIO" name="send_html<?php echo $i; ?>" value="0" checked="checked"> No<br>
       </td>
       <td width="300">
-         <?php ResponderPulldown("chosen_resp$i"); ?>
+         <?php responderPulldown("chosen_resp$i"); ?>
       </td>
    </tr>
    <tr>

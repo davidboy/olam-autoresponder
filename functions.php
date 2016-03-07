@@ -4,7 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-function string_cut($string, $cut_size)
+function cutString($string, $cut_size)
 {
     $StringArray = explode(" ", $string);
     $SizeCount = sizeof($StringArray);
@@ -22,7 +22,7 @@ function string_cut($string, $cut_size)
     return $return_str;
 }
 
-function str_makerand($minlength, $maxlength, $useupper, $usespecial, $usenumbers)
+function makeRandomString($minlength, $maxlength, $useupper, $usespecial, $usenumbers)
 {
     $charset = "abcdefghijklmnopqrstuvwxyz";
     if ($useupper) {
@@ -51,7 +51,7 @@ function str_makerand($minlength, $maxlength, $useupper, $usespecial, $usenumber
 # ------------------------------------------------
 # XOR encryption functions found at:
 # http://www.phpbuilder.com/tips/item.php?id=68
-function x_Encrypt($string, $key)
+function xEncrypt($string, $key)
 {
     for ($i = 0; $i < strlen($string); $i++) {
         for ($j = 0; $j < strlen($key); $j++) {
@@ -62,7 +62,7 @@ function x_Encrypt($string, $key)
     return $string;
 }
 
-function x_Decrypt($string, $key)
+function xDecrypt($string, $key)
 {
     for ($i = 0; $i < strlen($string); $i++) {
         for ($j = 0; $j < strlen($key); $j++) {
@@ -86,7 +86,7 @@ function my_ucwords($input)
     return $input;
 }
 
-function stripnl($string)
+function stripNewlines($string)
 {
     $string = preg_replace("/\n\r|\n|\r|\t/", "", $string);
     return $string;
@@ -101,7 +101,7 @@ function isEmpty($var)
     return empty($var);
 }
 
-function DB_connect()
+function dbConnect()
 {
     global $MySQL_server, $MySQL_user, $MySQL_password, $MySQL_database;
     global $DB_LinkID;
@@ -113,14 +113,14 @@ function DB_connect()
     return $DB_LinkID;
 }
 
-function DB_disconnect()
+function dbDisconnect()
 {
     global $DB_LinkID;
     $result = mysql_close($DB_LinkID);
     return $result;
 }
 
-function DB_Insert_Array($table, $fields)
+function dbInsertArray($table, $fields)
 {
     global $DB_LinkID;
     $fieldstr = "";
@@ -135,7 +135,7 @@ function DB_Insert_Array($table, $fields)
     $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
 }
 
-function DB_Update_Array($table, $fields, $where = "")
+function dbUpdateArray($table, $fields, $where = "")
 {
     global $DB_LinkID;
     $updatestr = "";
@@ -150,7 +150,7 @@ function DB_Update_Array($table, $fields, $where = "")
     $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
 }
 
-function get_db_fields($tablename)
+function dbGetFields($tablename)
 {
     global $DB_LinkID;
     $result_array = array();
@@ -164,7 +164,7 @@ function get_db_fields($tablename)
     return $result_array;
 }
 
-function reset_user_session()
+function resetUserSession()
 {
     # Reset old session vars
     if ($_SESSION['initialized'] == TRUE) {
@@ -188,7 +188,7 @@ function reset_user_session()
     setcookie(session_name(), session_id());
 }
 
-function User_Auth()
+function userAuth()
 {
     global $config;
 
@@ -198,27 +198,27 @@ function User_Auth()
     # Is the session even here?
     if ($_SESSION['initialized'] != TRUE) {
         # Nope, it's not initialized...
-        reset_user_session();
+        resetUserSession();
         return FALSE;
     }
 
     # Check IP address against last known...
     if ($_SESSION['last_IP'] != $_SERVER['REMOTE_ADDR']) {
         # Not the same, reset the session and return FALSE
-        reset_user_session();
+        resetUserSession();
         return FALSE;
     }
 
     # Check session timestamp
     if (time() >= ($_SESSION['timestamp'] + 10800)) {
         # 3 hours of inactivity kills a session
-        reset_user_session();
+        resetUserSession();
         return FALSE;
     }
 
     # Test the login and pass
-    $test_user = md5(WebEncrypt($config['admin_user'], $config['random_str_1']));
-    $test_pass = md5(WebEncrypt($config['admin_pass'], $config['random_str_2']));
+    $test_user = md5(webEncrypt($config['admin_user'], $config['random_str_1']));
+    $test_pass = md5(webEncrypt($config['admin_pass'], $config['random_str_2']));
     if (($_SESSION['l'] == $test_user) && ($_SESSION['p'] == $test_pass)) {
         # Update the session details, we're good!
         $_SESSION['timestamp'] = time();
@@ -226,37 +226,37 @@ function User_Auth()
     }
 }
 
-function WebEncrypt($str, $key)
+function webEncrypt($str, $key)
 {
-    $result = base64_encode(x_Encrypt($str, $key));
+    $result = base64_encode(xEncrypt($str, $key));
     return $result;
 }
 
-function WebDecrypt($str, $key)
+function webDecrypt($str, $key)
 {
-    $result = x_Decrypt(base64_decode($str), $key);
+    $result = xDecrypt(base64_decode($str), $key);
     return $result;
 }
 
-function Scramble($var, $RespID, $sometext)
+function scramble($var, $RespID, $sometext)
 {
     global $Responder_ID;
 
-    $var = x_Encrypt($var, $RespID);
-    $var = x_Encrypt($var, $sometext);
+    $var = xEncrypt($var, $RespID);
+    $var = xEncrypt($var, $sometext);
     return $var;
 }
 
-function Descramble($var, $RespID, $sometext)
+function descramble($var, $RespID, $sometext)
 {
     global $Responder_ID;
 
-    $var = x_Decrypt($var, $sometext);
-    $var = x_Decrypt($var, $RespID);
+    $var = xDecrypt($var, $sometext);
+    $var = xDecrypt($var, $RespID);
     return $var;
 }
 
-function ResponderExists($R_ID)
+function responderExists($R_ID)
 {
     global $DB_LinkID;
     if (isEmpty($R_ID)) {
@@ -279,7 +279,7 @@ function ResponderExists($R_ID)
     }
 }
 
-function GetMsgInfo($M_ID)
+function getMsgInfo($M_ID)
 {
     global $DB_MsgID, $DB_MsgSub, $DB_MsgSeconds;
     global $DB_absDay, $DB_absHours, $DB_absMins;
@@ -307,7 +307,7 @@ function GetMsgInfo($M_ID)
     }
 }
 
-function GetSubscriberInfo($sub_ID)
+function getSubscriberInfo($sub_ID)
 {
     global $DB_SubscriberID, $DB_ResponderID, $DB_SentMsgs, $DB_LastActivity;
     global $DB_EmailAddress, $DB_TimeJoined, $CanReceiveHTML, $DB_Real_TimeJoined;
@@ -338,7 +338,7 @@ function GetSubscriberInfo($sub_ID)
     }
 }
 
-function GetResponderInfo()
+function getResponderInfo()
 {
     global $DB_ResponderID, $DB_ResponderName, $DB_OwnerEmail;
     global $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgList, $DB_RespEnabled;
@@ -371,7 +371,7 @@ function GetResponderInfo()
 }
 
 # Returns TRUE if the user is in the DB. False if not.
-function UserIsSubscribed()
+function userIsSubscribed()
 {
     global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
 
@@ -395,7 +395,7 @@ function UserIsSubscribed()
 
 # ---------------------------------------------------------
 
-function IsInArray($haystack_array, $needle)
+function isInArray($haystack_array, $needle)
 {
     $needle = trim(strtolower($needle));
     foreach ($haystack_array as $key => $blah_value) {
@@ -408,7 +408,7 @@ function IsInArray($haystack_array, $needle)
     return FALSE;
 }
 
-function IsInList($list, $ItemCheckedFor)
+function isInList($list, $ItemCheckedFor)
 {
     $list = strtolower(trim((trim($list)), ","));
     $List_Array = explode(',', $list);
@@ -435,7 +435,7 @@ function IsInList($list, $ItemCheckedFor)
     return $ResultVar;
 }
 
-function RemoveFromList($list, $ItemToRemove)
+function removeFromList($list, $ItemToRemove)
 {
     $ItemToRemove = strtolower(trim(trim($ItemToRemove), ","));
     $list = strtolower(trim((trim($list)), ","));
@@ -465,7 +465,7 @@ function RemoveFromList($list, $ItemToRemove)
 
 # ---------------------------------------------------------
 
-function ProcessMessageTags()
+function processMessageTags()
 {
     global $Send_Subject, $DB_Real_TimeJoined;
     global $DB_EmailAddress, $DB_LastActivity, $DB_FirstName;
@@ -733,7 +733,7 @@ function ProcessMessageTags()
 
 # ---------------------------------------------------------
 
-function SendMessageTemplate($filename = "", $to_address = "", $from_address = "")
+function sendMessageTemplate($filename = "", $to_address = "", $from_address = "")
 {
     global $Send_Subject, $DB_EmailAddress, $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgBodyHTML, $DB_MsgBodyText;
     global $UnsubURL, $siteURL, $ResponderDirectory, $DB_SubscriberID, $sub_conf_link, $unsub_link, $unsub_conf_link;
@@ -742,7 +742,7 @@ function SendMessageTemplate($filename = "", $to_address = "", $from_address = "
     if ($filename == "") {
         die("Message template error!<br>\n");
     }
-    $file_contents = GrabFile($filename);
+    $file_contents = grabFile($filename);
     if ($file_contents == FALSE) {
         die("Template $filename not found!<br>\n");
     }
@@ -776,7 +776,7 @@ function SendMessageTemplate($filename = "", $to_address = "", $from_address = "
     $DB_MsgBodyHTML = preg_replace('/%unsub_url%/i', "<A HREF=\"$unsub_link\">$unsub_link</A>", $DB_MsgBodyHTML);
 
     # Process tags
-    ProcessMessageTags();
+    processMessageTags();
 
     # Set another from
     if (!(isEmpty($from_address))) {
@@ -824,7 +824,7 @@ function SendMessageTemplate($filename = "", $to_address = "", $from_address = "
     }
 
     # Final filtering
-    $Send_Subject = stripnl(str_replace("|", "", $Send_Subject));
+    $Send_Subject = stripNewlines(str_replace("|", "", $Send_Subject));
     $Message_Body = str_replace("|", "", $Message_Body);
     $Message_Headers = str_replace("|", "", $Message_Headers);
     $Message_Body = utf8_decode($Message_Body);
@@ -843,7 +843,7 @@ function SendMessageTemplate($filename = "", $to_address = "", $from_address = "
 
 # ---------------------------------------------------------
 
-function ResponderPulldown($field)
+function responderPulldown($field)
 {
     global $DB_LinkID;
     $menu_query = "SELECT * FROM InfResp_responders ORDER BY ResponderID";
@@ -854,13 +854,13 @@ function ResponderPulldown($field)
         $DB_ResponderID = $menu_row['ResponderID'];
         $DB_ResponderName = $menu_row['Name'];
 
-        $PullDown_String = string_cut($DB_ResponderName, 3);
+        $PullDown_String = cutString($DB_ResponderName, 3);
         print "<option value=\"$DB_ResponderID\">$PullDown_String</option>\n";
     }
     print "</select>\n";
 }
 
-function Add_To_Logs($Activity, $Activity_Parm, $ID_Parm, $Extra_Parm)
+function addToLogs($Activity, $Activity_Parm, $ID_Parm, $Extra_Parm)
 {
     global $DB_LinkID;
 
@@ -874,7 +874,7 @@ function Add_To_Logs($Activity, $Activity_Parm, $ID_Parm, $Extra_Parm)
     return $Log_result;
 }
 
-function GetFieldNames($table)
+function getFieldNames($table)
 {
     global $DB_LinkID;
 
@@ -898,7 +898,7 @@ function GetFieldNames($table)
 
 # ---------------------------------------------------------
 
-function GrabFile($filename = FALSE)
+function grabFile($filename = FALSE)
 {
     if (!($filename)) {
         return FALSE;
@@ -950,14 +950,14 @@ function isEmail($address = "")
 
 # ---------------------------------------------------------
 
-function generate_unique_code()
+function generateUniqueCode()
 {
     global $DB_LinkID;
 
     # Generate a unique ID
     $not_unique = TRUE;
     while ($not_unique) {
-        $id_str = substr(md5(str_makerand(15, 15, TRUE, FALSE, TRUE)), 0, 15);
+        $id_str = substr(md5(makeRandomString(15, 15, TRUE, FALSE, TRUE)), 0, 15);
         $query = "SELECT UniqueCode FROM InfResp_subscribers WHERE UniqueCode = '$id_str'";
         $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
         if (mysql_num_rows($result) == 0) {
@@ -969,11 +969,11 @@ function generate_unique_code()
     return $id_str;
 }
 
-function generate_random_block()
+function generateRandomBlock()
 {
-    $block1 = substr(md5(str_makerand(30, 30, TRUE, FALSE, TRUE)), 0, 30);
-    $block2 = substr(md5(str_makerand(30, 30, TRUE, FALSE, TRUE)), 0, 30);
-    $block = md5(WebEncrypt($block1, $block2));
+    $block1 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
+    $block2 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
+    $block = md5(webEncrypt($block1, $block2));
     return $block;
 }
 
@@ -996,13 +996,13 @@ function copyright($check = FALSE)
     $tempy = preg_replace("/www\./", "", $siteURL);
     $tempy = preg_replace("/http:\/\//", "", $tempy);
     if ($check == TRUE) {
-        if ((trim($config['site_code'])) == md5(x_Encrypt(md5(str_rot13(base64_encode($tempy))), $tempy))) {
+        if ((trim($config['site_code'])) == md5(xEncrypt(md5(str_rot13(base64_encode($tempy))), $tempy))) {
             return TRUE;
         } else {
             return FALSE;
         }
     }
-    if ((trim($config['site_code'])) != md5(x_Encrypt(md5(str_rot13(base64_encode($tempy))), $tempy))) {
+    if ((trim($config['site_code'])) != md5(xEncrypt(md5(str_rot13(base64_encode($tempy))), $tempy))) {
         print "<br><br><center>\n";
         print "<A HREF=\"http://infinite.ibasics.biz\"><img src=\"$siteURL$ResponderDirectory/images/powered-by.gif\" alt=\"Powered by Infinite Responder!\" height=\"50\" width=\"100\" border=\"0\"></A><br>\n";
         print "<br></center> \n";
@@ -1019,7 +1019,7 @@ function checkit()
 
 # ---------------------------------------------------------
 
-function admin_redirect()
+function adminRedirect()
 {
     global $siteURL, $ResponderDirectory;
     $redir_URL = $siteURL . $ResponderDirectory . '/admin.php';

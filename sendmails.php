@@ -169,7 +169,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                 $msg_data = $message_array[$msg_id];
 
                 # Check to see if the message ID is in the message list.
-                if ((!(IsInList($this_subscriber['SentMsgs'], $msg_id))) && ($Send_Count <= $max_send_count) && (is_numeric($msg_id)) && ($config['daily_count'] <= $config['daily_limit'])) {
+                if ((!(isInList($this_subscriber['SentMsgs'], $msg_id))) && ($Send_Count <= $max_send_count) && (is_numeric($msg_id)) && ($config['daily_count'] <= $config['daily_limit'])) {
                     # Debug info
                     # echo "ID:   " . $msg_id . "<br>\n";
                     # echo "Subj: " . $msg_data['Subject'] . "<br>\n";
@@ -270,14 +270,14 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         # echo "Subj:  " . $msg_data['Subject'] . "<br>\n";
 
                         # Filter the email address of a few nasties
-                        $DB_EmailAddress = stripnl(str_replace("|", "", $DB_EmailAddress));
+                        $DB_EmailAddress = stripNewlines(str_replace("|", "", $DB_EmailAddress));
                         $DB_EmailAddress = str_replace(">", "", $DB_EmailAddress);
                         $DB_EmailAddress = str_replace("<", "", $DB_EmailAddress);
                         $DB_EmailAddress = str_replace('/', "", $DB_EmailAddress);
                         $DB_EmailAddress = str_replace('..', "", $DB_EmailAddress);
 
                         # Process the tags
-                        ProcessMessageTags();
+                        processMessageTags();
 
                         # echo "------------------------------<br>\n";
                         # echo "HTML:  " . $DB_MsgBodyHTML . "<br>\n";
@@ -320,7 +320,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         }
 
                         # Final filtering
-                        $Send_Subject = stripnl(str_replace("|", "", $Send_Subject));
+                        $Send_Subject = stripNewlines(str_replace("|", "", $Send_Subject));
                         $Message_Body = str_replace("|", "", $Message_Body);
                         $Message_Headers = str_replace("|", "", $Message_Headers);
                         $Message_Body = utf8_decode($Message_Body);
@@ -423,14 +423,14 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                 $UnsubURL = $siteURL . $ResponderDirectory . "/s.php?c=$unsubcode";
 
                 # Filter the email address of a few nasties
-                $DB_EmailAddress = stripnl(str_replace("|", "", $DB_EmailAddress));
+                $DB_EmailAddress = stripNewlines(str_replace("|", "", $DB_EmailAddress));
                 $DB_EmailAddress = str_replace(">", "", $DB_EmailAddress);
                 $DB_EmailAddress = str_replace("<", "", $DB_EmailAddress);
                 $DB_EmailAddress = str_replace('/', "", $DB_EmailAddress);
                 $DB_EmailAddress = str_replace('..', "", $DB_EmailAddress);
 
                 # Process the tags
-                ProcessMessageTags();
+                processMessageTags();
 
                 # Generate the headers
                 $Message_Body = "";
@@ -468,7 +468,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                 }
 
                 # Final filtering
-                $Send_Subject = stripnl(str_replace("|", "", $Send_Subject));
+                $Send_Subject = stripNewlines(str_replace("|", "", $Send_Subject));
                 $Message_Body = str_replace("|", "", $Message_Body);
                 $Message_Headers = str_replace("|", "", $Message_Headers);
                 $Message_Body = utf8_decode($Message_Body);
@@ -549,7 +549,7 @@ if (($last_activity_trim > 0) && ($this_subscriber['LastActivity'] != "") AND ($
 }
 
 if ($sendmails_included != TRUE) {
-    DB_disconnect();
+    dbDisconnect();
 }
 
 # Verbose

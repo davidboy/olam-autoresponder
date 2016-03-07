@@ -7,8 +7,8 @@
 include('common.php');
 include('templates/open.page.php');
 
-$Responder_ID = MakeSafe($_REQUEST['r_ID']);
-$action = MakeSafe($_REQUEST['action']);
+$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$action = makeSafe($_REQUEST['action']);
 
 # ----------------------------------------------------------------------------------
 # Anti-spam phrase. It's added to the end of all email addressed to make it more
@@ -86,5 +86,5 @@ if ($action == "subscribe") {
 copyright();
 include('templates/close.page.php');
 
-DB_disconnect();
+dbDisconnect();
 ?>
