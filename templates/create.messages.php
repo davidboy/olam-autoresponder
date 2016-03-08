@@ -35,7 +35,9 @@
          <form action="upload.php" method="post" enctype="multipart/form-data">
             Attach File:
             <input type="file" name="fileToUpload" id="fileToUpload">
-            <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+
+            <input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
+
             </form>
       </td>
    </tr>
