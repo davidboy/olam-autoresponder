@@ -98,7 +98,7 @@ if ($action == "list") {
     getResponderInfo();
 
     # Display template
-    include('templates/update_top.responders.php');
+    require('templates/update_top.responders.php');
 
     # Resp msg anchor
     print "<a name=\"responder_msgs\">&nbsp;</a>\n";
@@ -118,11 +118,11 @@ if ($action == "list") {
     }
     if ($Max_Index == 0) {
         # No msgs found!
-        include('templates/no_responder_msgs.responders.php');
+        require('templates/no_responder_msgs.responders.php');
     } else {
         # Msg list header
         $alt = TRUE;
-        include('templates/msg_list_top.responders.php');
+        require('templates/msg_list_top.responders.php');
 
         for ($i = 0; $i <= $Max_Index - 1; $i++) {
             $M_ID = trim($MsgList_Array[$i]);
@@ -141,11 +141,11 @@ if ($action == "list") {
 
             # Display message row
             $alt = (!($alt));
-            include('templates/msg_list_row.responders.php');
+            require('templates/msg_list_row.responders.php');
         }
 
         # Msg list footer
-        include('templates/msg_list_bottom.responders.php');
+        require('templates/msg_list_bottom.responders.php');
     }
 
     # Display new msg template
@@ -218,6 +218,15 @@ if ($action == "list") {
         $NotifyOwner = "0";
     }
 
+    // TODO: handle formatting errors
+    $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate']);
+//    if (!$Start_Date) {
+//        $Start_Date = new DateTime();
+//
+//    }
+    $Start_Date = $Start_Date->setTime(0, 0, 0)->format('Y-m-d');
+
+
     $query = "UPDATE InfResp_responders
           SET Name = '$Resp_Name',
               ResponderDesc = '$Resp_Desc',
@@ -229,7 +238,8 @@ if ($action == "list") {
               OptOutRedir = '$OptOutRedir',
               OptInDisplay = '$OptInDisp',
               OptOutDisplay = '$OptOutDisp',
-              NotifyOwnerOnSub = '$NotifyOwner'
+              NotifyOwnerOnSub = '$NotifyOwner',
+              StartDate = '$Start_Date'
           WHERE ResponderID = '$Responder_ID'";
     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
 

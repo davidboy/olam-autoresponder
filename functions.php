@@ -236,7 +236,7 @@ function getResponderInfo()
     global $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgList, $DB_RespEnabled;
     global $DB_result, $DB_LinkID, $DB_ResponderDesc, $Responder_ID;
     global $DB_OptMethod, $DB_OptInRedir, $DB_NotifyOnSub;
-    global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay;
+    global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay, $DB_StartDate;
 
     $query = "SELECT * FROM InfResp_responders WHERE ResponderID = '$Responder_ID'";
     $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
@@ -256,6 +256,7 @@ function getResponderInfo()
         $DB_OptInDisplay = $result_data['OptInDisplay'];
         $DB_OptOutDisplay = $result_data['OptOutDisplay'];
         $DB_NotifyOnSub = $result_data['NotifyOwnerOnSub'];
+        $DB_StartDate = DateTime::createFromFormat('Y-m-d', $result_data['StartDate'])->setTime(0, 0, 0);
         return TRUE;
     } else {
         return FALSE;
