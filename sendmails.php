@@ -261,7 +261,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         $Send_Subject = "$DB_MsgSub";
                         $subcode = "s" . $DB_UniqueCode;
                         $unsubcode = "u" . $DB_UniqueCode;
-                        $UnsubURL = $siteURL . $ResponderDirectory . "/s.php?c=$unsubcode";
+                        $UnsubURL = $siteURL . $ResponderDirectory . "/confirm_subscription.php?c=$unsubcode";
 
                         # Filter the email address of a few nasties
                         $DB_EmailAddress = stripNewlines(str_replace("|", "", $DB_EmailAddress));
@@ -405,7 +405,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                 $Send_Subject = "$DB_MsgSub";
                 $subcode = "s" . $DB_UniqueCode;
                 $unsubcode = "u" . $DB_UniqueCode;
-                $UnsubURL = $siteURL . $ResponderDirectory . "/s.php?c=$unsubcode";
+                $UnsubURL = $siteURL . $ResponderDirectory . "/confirm_subscription.php?c=$unsubcode";
 
                 # Filter the email address of a few nasties
                 $DB_EmailAddress = stripNewlines(str_replace("|", "", $DB_EmailAddress));

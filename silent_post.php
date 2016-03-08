@@ -47,5 +47,5 @@ $vars['r'] = "1";
 $vars['a'] = "sub";
 $vars['h'] = "1";
 $vars['ref'] = "co-registration from xyz.com";
-silent_post('http://yoursite.com', 80, '/course/s.php', $vars);
+silent_post('http://yoursite.com', 80, '/subscribe.php', $vars);
 ?>

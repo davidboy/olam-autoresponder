@@ -642,9 +642,9 @@ function sendMessageTemplate($filename = "", $to_address = "", $from_address = "
     $cop = checkit();
     $subcode = "s" . $DB_UniqueCode;
     $unsubcode = "u" . $DB_UniqueCode;
-    $sub_conf_link = $siteURL . $ResponderDirectory . "/s.php?c=$subcode";
-    $unsub_conf_link = $siteURL . $ResponderDirectory . "/s.php?c=$unsubcode";
-    $unsub_link = $siteURL . $ResponderDirectory . "/s.php?c=$unsubcode";
+    $sub_conf_link = $siteURL . $ResponderDirectory . "/confirm_subscription.php?c=$subcode";
+    $unsub_conf_link = $siteURL . $ResponderDirectory . "/confirm_subscription.php?c=$unsubcode";
+    $unsub_link = $siteURL . $ResponderDirectory . "/confirm_subscription.php?c=$unsubcode";
     $UnsubURL = $unsub_link;
 
     # Seperate the subject
@@ -953,6 +953,52 @@ function userIsLoggedIn() {
 function requireUserToBeLoggedIn() {
     if (!userIsLoggedIn()) {
         redirectTo('/login.php');
+    }
+}
+
+function addCustomFields()
+{
+    global $Email_Address, $Responder_ID;
+    global $FirstName, $LastName, $DB_LinkID;
+
+    $CustomFieldsArray = getFieldNames('InfResp_customfields');
+    $CustomFieldsExist = FALSE;
+    foreach ($CustomFieldsArray as $key => $value) {
+        $blah = "cf_" . $value;
+        $reqblah = trim($_REQUEST[$blah]);
+        if (!(Empty($reqblah))) {
+            $CustomFieldsArray[$value] = makeSafe($reqblah);
+            $CustomFieldsExist = TRUE;
+        }
+    }
+
+    # Any custom fields?
+    if ($CustomFieldsExist == TRUE) {
+        #------------- Mandatory fields checking ------------------
+        # if (empty($CustomFieldsArray['blah'])) { die('Error Message'); }
+        #----------------------------------------------------------
+
+        # --- Custom code ---
+        $Fullname = "$FirstName $LastName";
+        $CustomFieldsArray['full_name'] = $Fullname;
+        # -------------------
+
+        # Set static data
+        $CustomFieldsArray['email_attached'] = $Email_Address;
+        $CustomFieldsArray['resp_attached'] = $Responder_ID;
+        unset($CustomFieldsArray['fieldID']);
+        unset($CustomFieldsArray['user_attached']);
+
+        # Delete any old data
+        $query = "SELECT * FROM InfResp_customfields WHERE email_attached = '$Email_Address' AND resp_attached = '$Responder_ID'";
+        $result = mysql_query($query) or die("Invalid query: " . mysql_error());
+        if (mysql_num_rows($result) > 0) {
+            $query = "DELETE FROM InfResp_customfields WHERE email_attached = '$Email_Address' AND resp_attached = '$Responder_ID'";
+            $result = mysql_query($query) or die("Invalid query: " . mysql_error());
+        }
+
+        # Insert new data
+        dbInsertArray("InfResp_customfields", $CustomFieldsArray);
     }
 }
 

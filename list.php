@@ -24,7 +24,7 @@ if ($action == "subscribe") {
     print "<br><font color=\"#000066\">\n";
     print "<center>\n";
     print "<table cellspacing=\"10\" bgcolor=\"#CCCCCC\" style=\"border: 1px solid #000000;\"><tr><td>\n";
-    print "<form action=\"$siteURL$ResponderDirectory/s.php\" method=GET>\n";
+    print "<form action=\"$siteURL$ResponderDirectory/subscribe.php\" method=GET>\n";
     print "<strong><font color=\"#660000\">Your name (First, Last):</font></strong><br>\n";
     print "<input type=\"text\" name=\"f\" style=\"background-color : #FFFFFF\" size=11 maxlength=40>\n";
     print " <input type=\"text\" name=\"l\" style=\"background-color : #FFFFFF\" size=11 maxlength=40>\n";

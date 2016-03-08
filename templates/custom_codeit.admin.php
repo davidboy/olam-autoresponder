@@ -3,7 +3,7 @@ if ($display_it == TRUE) {
      print "<br><font size=\"4\" color=\"#003300\">Here is your subscription form for that responder ID:</font><br><br>\n";
      print "<center>\n";
      print "<br>\n";
-     print "<form action=\"s.php\" method=\"post\"> \n";
+     print "<form action=\"subscribe.php\" method=\"post\"> \n";
      print "<input type=\"hidden\" name=\"r\" value=\"$Responder_ID\"> \n";
      print "<input type=\"hidden\" name=\"h\" value=\"1\"> \n";
      print "<input type=\"hidden\" name=\"a\" value=\"sub\"> \n";
@@ -234,7 +234,7 @@ if ($display_it == TRUE) {
      print "<br><hr style = \"border: 0; background-color: #660000; color: #660000; height: 1px; width: 100%;\"><br>\n";
      print "<font size=\"4\" color=\"#660066\">Or copy and paste this code into your page:</font><br><br>\n";
 
-     print "&lt;form action=\"s.php\" method=\"post\"&gt; <br>\n";
+     print "&lt;form action=\"subscribe.php\" method=\"post\"&gt; <br>\n";
      print "&lt;input type=\"hidden\" name=\"r\" value=\"$Responder_ID\"&gt; <br>\n";
      print "&lt;input type=\"hidden\" name=\"h\" value=\"1\"&gt; <br>\n";
      print "&lt;input type=\"hidden\" name=\"a\" value=\"sub\"&gt; <br>\n";

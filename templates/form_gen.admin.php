@@ -22,7 +22,7 @@
      print "<br><font size=\"4\" color=\"#003300\">Here is your subscription form for that responder ID:</font><br><br>\n";
      print "<center>\n";
      print "<table cellspacing=\"10\" bgcolor=\"#CCCCCC\" style=\"border: 1px solid #000000;\"><tr><td>\n";
-     print "<form action=\"$siteURL$ResponderDirectory/s.php\" method=GET>\n";
+     print "<form action=\"$siteURL$ResponderDirectory/subscribe.php\" method=GET>\n";
      print "<strong><font color=\"#660000\">Your name (First, Last):</font></strong><br>\n";
      print "<input type=\"text\" name=\"f\" style=\"background-color : #FFFFFF\" size=11 maxlength=40> \n";
      print "<input type=\"text\" name=\"l\" style=\"background-color : #FFFFFF\" size=11 maxlength=40>\n";
@@ -45,7 +45,7 @@
 
      print "&lt;center&gt;<br>\n";
      print "&lt;table cellspacing=\"10\" bgcolor=\"#CCCCCC\" style=\"border: 1px solid #000000;\"&gt;&lt;tr&gt;&lt;td&gt;<br>\n";
-     print "&lt;form action=\"$siteURL$ResponderDirectory/s.php\" method=GET&gt;<br>\n";
+     print "&lt;form action=\"$siteURL$ResponderDirectory/subscribe.php\" method=GET&gt;<br>\n";
      print "&lt;strong&gt;&lt;font color=\"#660000\"&gt;Your name (First, Last):&lt;/font&gt;&lt;/strong&gt;&lt;br&gt;<br>\n";
      print "&lt;input type=\"text\" name=\"f\" style=\"background-color : #FFFFFF\" size=11 maxlength=40&gt; <br>\n";
      print "&lt;input type=\"text\" name=\"l\" style=\"background-color : #FFFFFF\" size=11 maxlength=40&gt;<br>\n";

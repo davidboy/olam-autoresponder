@@ -76,12 +76,12 @@
       <?php
          if ($DB_Confirmed == "1") {
             # Resend unsubscribe confirmation
-            $url = $siteURL.$ResponderDirectory."/s.php?action=resend_unsub_conf&r_ID=$Responder_ID&sub_ID=$Subscriber_ID";
+            $url = $siteURL.$ResponderDirectory."/resend_subscription_confirmation.php?r_ID=$Responder_ID&sub_ID=$Subscriber_ID";
             print "<A HREF=\"$url\">Resend Unsub Confirm</A>\n";
          }
          else {
             # Resend subscribe confirmation
-            $url = $siteURL.$ResponderDirectory."/s.php?action=resend_sub_conf&r_ID=$Responder_ID&sub_ID=$Subscriber_ID";
+            $url = $siteURL.$ResponderDirectory."/resend_subscription_confirmation.php?r_ID=$Responder_ID&sub_ID=$Subscriber_ID";
             print "<A HREF=\"$url\">Resend Sub Confirm</A>\n";
          }
       ?>

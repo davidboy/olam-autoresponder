@@ -1,5 +1,7 @@
 <?php
 
+// This file is old and broken and I have no idea what it does.  Enter at your own risk.
+
 include('common.php');
 /*
    Before using this, make sure you read the entry about it in manual.txt!
@@ -34,7 +36,7 @@ include('common.php');
   $resp = "1"
   $mydomain = 'http://www.yourdomain.com'
   $resp_dir = '/course'
-  $resp_subfile = '/s.php'
+  $resp_subfile = '/subscribe.php'
   $silent = 0;    # Set to 1 if you don't want the sub page to return anything.
   #-----------------------------------------------------------------------
 
