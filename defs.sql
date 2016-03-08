@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_subscribers` (
    `ReferralSource` varchar(255) NOT NULL default '',
    `UniqueCode` varchar(255) NOT NULL default '',
    `Confirmed` tinyint(1) NOT NULL default '0',
-   'IsSubscribed' tinyint(1) NOT NULL default '1'
+   `IsSubscribed` tinyint(1) NOT NULL default '1'
 ) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
