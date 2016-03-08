@@ -118,10 +118,10 @@ if ($action == "create") {
     $T_months = $DB_MsgMonths;
 
     # Display template
-    include('templates/delete.messages.php');
+    include('templates/delete.messages.php');   #assuming this is where the page graphics are intialized?
 } elseif ($action == "do_create") {
     # Prep data
-    $P_subj = makeSemiSafe($_REQUEST['subj']);
+    $P_subj = makeSemiSafe($_REQUEST['shbj']);
     $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);
     $P_bodyhtml = makeSemiSafe($_REQUEST['bodyhtml']);
     $P_months = makeSafe($_REQUEST['months']);
@@ -189,7 +189,7 @@ if ($action == "create") {
     or die("Invalid query: " . mysql_error());
 
     # Done!
-    print "<H3 style=\"color : #003300\">Message added!</H3> \n";
+    print "<H3 style=\"color : #003300\">Message added!</H3> \n";   #This appears after you right a message and hit the save button
     print "<font size=4 color=\"#660000\">Return to list. <br></font> \n";
 
     # Print back button

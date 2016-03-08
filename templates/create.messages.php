@@ -25,10 +25,22 @@
    </tr>
    <tr>
       <td colspan="2">
-         <strong>Message Subject:</strong> <em>[Supports Tags]</em><br>
+         <strong>Message Subject:</strong> <em>[Supports Tags]</em><br>   
          <input name="subj" size=98 maxlength=250 class="fields">
       </td>
    </tr>
+   <!--INSERT ATTACH FILE BUTTON -->
+   <tr>
+      <td>
+         <form action="upload.php" method="post" enctype="multipart/form-data">
+            Attach File:
+            <input type="file" name="fileToUpload" id="fileToUpload">
+            <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+            </form>
+      </td>
+   </tr>
+
+    <!--END ATTACH FILE-->
    <tr><td colspan="2"><br /></td></tr>
    <tr>
       <td colspan="2">
