@@ -159,7 +159,6 @@ if ($action == "list") {
     # Display template
     include('templates/erase.responders.php');
 } elseif ($action == "do_create") {
-
     $Resp_Enabled = '1';
     $Resp_Name = makeSemiSafe($_REQUEST['Resp_Name']);
     $Resp_Desc = makeSemiSafe($_REQUEST['Resp_Desc']);
@@ -178,10 +177,14 @@ if ($action == "list") {
     if ($OptMethod != "Double") {
         $OptMethod = "Single";
     }
+
+    // TODO: handle formatting errors
+    $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate'])->setTime(0, 0, 0)->format('Y-m-d');
+
     $Msg_List = '';
 
-    $query = "INSERT INTO InfResp_responders (Name, Enabled, ResponderDesc, OwnerEmail, OwnerName, ReplyToEmail, MsgList, OptMethod, OptInRedir, OptOutRedir, OptInDisplay, OptOutDisplay, NotifyOwnerOnSub)
-          VALUES('$Resp_Name', '$Resp_Enabled', '$Resp_Desc', '$Owner_Email', '$Owner_Name', '$Reply_To', '$Msg_List', '$OptMethod', '$OptInRedir', '$OptOutRedir', '$OptInDisp', '$OptOutDisp', '$NotifyOwner')";
+    $query = "INSERT INTO InfResp_responders (Name, Enabled, ResponderDesc, OwnerEmail, OwnerName, ReplyToEmail, MsgList, OptMethod, OptInRedir, OptOutRedir, OptInDisplay, OptOutDisplay, NotifyOwnerOnSub, StartDate)
+          VALUES('$Resp_Name', '$Resp_Enabled', '$Resp_Desc', '$Owner_Email', '$Owner_Name', '$Reply_To', '$Msg_List', '$OptMethod', '$OptInRedir', '$OptOutRedir', '$OptInDisp', '$OptOutDisp', '$NotifyOwner', '$Start_Date')";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
