@@ -4,15 +4,12 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
+# Flag to prevent an infinite redirect loop
+define('EDITING_CONFIG', true);
+
 include_once('common.php');
 
-$Is_Auth = userAuth();
-if (empty($config['admin_pass'])) {
-    $auto_auth = TRUE;
-    $Is_Auth = TRUE;
-}
-
-if (($Is_Auth) || ($auto_auth)) {
+if (userIsLoggedIn() || $config['admin_pass'] == '') {
     # Get the absolute directory info
     $abs_directory_array = explode('/', $_SERVER['SCRIPT_FILENAME']);
     if (sizeof($abs_directory_array) <= 2) {
@@ -41,6 +38,8 @@ if (($Is_Auth) || ($auto_auth)) {
             }
         }
 
+        $form['admin_pass'] = password_hash($form['admin_pass'], PASSWORD_BCRYPT);
+
         if (!(is_numeric($form['add_sub_size']))) {
             $form['add_sub_size'] = 5;
         }
@@ -67,9 +66,8 @@ if (($Is_Auth) || ($auto_auth)) {
         $last_activity_trim = $config['last_activity_trim'];
         $charset = $config['charset'];
 
-        # Fix the session
-        $_SESSION['l'] = md5(webEncrypt($config['admin_user'], $config['random_str_1']));
-        $_SESSION['p'] = md5(webEncrypt($config['admin_pass'], $config['random_str_2']));
+        # Log the user in with their newly created account
+        createLoginSession($config['admin_user'], $config['admin_pass']);
 
         # Done!
         print "<center><H2>Changes Saved!</H2></center>\n";
@@ -90,7 +88,7 @@ if (($Is_Auth) || ($auto_auth)) {
     copyright();
     include('templates/close.page.php');
 } else {
-    adminRedirect();
+    redirectTo('/login.php');
 }
 
 dbDisconnect();

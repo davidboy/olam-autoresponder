@@ -1,5 +1,5 @@
 <?php
-if ($Is_Auth) {
+if (userIsLoggedIn()) {
 include_once('popup_js.php');
 ?>
 <center>

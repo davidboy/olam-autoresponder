@@ -5,6 +5,7 @@
 # ------------------------------------------------
 
 include('common.php');
+requireUserToBeLoggedIn();
 
 # ------------------------------------------------
 
@@ -37,11 +38,6 @@ function regexpExists($regexp_id)
 
 # Get the action var
 $action = strtolower(makeSafe($_REQUEST['action']));
-
-# Not logged in?
-if (!($Is_Auth = userAuth($X_login, $X_pass))) {
-    adminRedirect();
-}
 
 # Top template
 include('templates/open.page.php');

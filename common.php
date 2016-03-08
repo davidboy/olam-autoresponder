@@ -20,6 +20,9 @@ if ($MySQL_database == '') {
     die('$MySQL_database not set in config.php');
 }
 
+# Start the session
+session_start();
+
 # Include the includes
 include('evilness-filter.php');
 include('functions.php');
@@ -94,12 +97,14 @@ if (mysql_num_rows($result) < 1) {
 
     # Insert the data
     dbInsertArray('InfResp_config', $config);
-
-    # Set flag
-    $config_row_inserted = TRUE;
 } else {
     $config = mysql_fetch_assoc($result);
-    $config_row_inserted = FALSE;
+
+    # If the admin password hasn't been set yet, assume the the config row hasn't been created.
+    # Thus the admin hasn't configured anything yet -- force them to do that now.
+    if ($config['admin_pass'] == '' && !EDITING_CONFIG) {
+        redirectTo('/edit_config.php');
+    }
 }
 
 # Bad, but useful, hackery

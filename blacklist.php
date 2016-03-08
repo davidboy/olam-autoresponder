@@ -5,16 +5,13 @@
 # ------------------------------------------------
 
 include('common.php');
+requireUserToBeLoggedIn();
 
 # Grab passed
 $Responder_ID = makeSafe($_REQUEST['r_ID']);
 $Message_ID = makeSafe($_REQUEST['m_ID']);
 $action = strtolower(makeSafe($_REQUEST['action']));
 
-# Not logged in?
-if (!($Is_Auth = userAuth())) {
-    adminRedirect();
-}
 
 # Top template
 include('templates/open.page.php');
