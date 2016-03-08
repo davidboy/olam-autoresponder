@@ -177,6 +177,7 @@ if (!(isInBlacklist($safe['EMAIL']))) {
         $user_data['ReferralSource'] = 'Added w/ Move Subscriber';
         $user_data['UniqueCode'] = generateUniqueCode();
         $user_data['Confirmed'] = '1';
+        $user_data['IsSubscribed'] = '1';
     }
 
     # Check for existance in new responder.
@@ -185,15 +186,15 @@ if (!(isInBlacklist($safe['EMAIL']))) {
     $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
     if (mysql_num_rows($result) > 0) {
         # Update existing data
-        $query = "UPDATE InfResp_subscribers SET SentMsgs = '', TimeJoined = '" . $user_data['TimeJoined'] . "', Real_TimeJoined = '" . $user_data['Real_TimeJoined'] . "', LastActivity = '" . $user_data['LastActivity'] . "', FirstName = '" . $user_data['FirstName'] . "', LastName = '" . $user_data['LastName'] . "', IP_Addy = '" . $user_data['IP_Addy'] . "', ReferralSource = '" . $user_data['ReferralSource'] . "', Confirmed = '" . $user_data['Confirmed'] . "' WHERE EmailAddress = '" . $safe['EMAIL'] . "' AND ResponderID = '" . $passed['MOVE_TO'] . "'";
+        $query = "UPDATE InfResp_subscribers SET SentMsgs = '', TimeJoined = '" . $user_data['TimeJoined'] . "', Real_TimeJoined = '" . $user_data['Real_TimeJoined'] . "', LastActivity = '" . $user_data['LastActivity'] . "', FirstName = '" . $user_data['FirstName'] . "', LastName = '" . $user_data['LastName'] . "', IP_Addy = '" . $user_data['IP_Addy'] . "', ReferralSource = '" . $user_data['ReferralSource'] . "', Confirmed = '" . $user_data['Confirmed'] . "', IsSubscribed = '" . $user_data['IsSubscribed'] . "' WHERE EmailAddress = '" . $safe['EMAIL'] . "' AND ResponderID = '" . $passed['MOVE_TO'] . "'";
 
         # echo $query . "<br>\n";
         $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
     } else {
         # Make a new entry?
         if ($passed['ONLYDEL'] != TRUE) {
-            $insert_values = "'" . $passed['MOVE_TO'] . "','" . $user_data['SentMsgs'] . "','" . $user_data['EmailAddress'] . "','" . $user_data['TimeJoined'] . "','" . $user_data['Real_TimeJoined'] . "','" . $user_data['CanReceiveHTML'] . "','" . $user_data['LastActivity'] . "','" . $user_data['FirstName'] . "','" . $user_data['LastName'] . "','" . $user_data['IP_Addy'] . "','" . $user_data['ReferralSource'] . "','" . $user_data['UniqueCode'] . "','" . $user_data['Confirmed'] . "'";
-            $query = "INSERT INTO InfResp_subscribers (ResponderID,SentMsgs,EmailAddress,TimeJoined,Real_TimeJoined,CanReceiveHTML,LastActivity,FirstName,LastName,IP_Addy,ReferralSource,UniqueCode,Confirmed) VALUES ($insert_values)";
+            $insert_values = "'" . $passed['MOVE_TO'] . "','" . $user_data['SentMsgs'] . "','" . $user_data['EmailAddress'] . "','" . $user_data['TimeJoined'] . "','" . $user_data['Real_TimeJoined'] . "','" . $user_data['CanReceiveHTML'] . "','" . $user_data['LastActivity'] . "','" . $user_data['FirstName'] . "','" . $user_data['LastName'] . "','" . $user_data['IP_Addy'] . "','" . $user_data['ReferralSource'] . "','" . $user_data['UniqueCode'] . "','" . $user_data['Confirmed'] . "','" . $user_data['IsSubscribed'] . "'";
+            $query = "INSERT INTO InfResp_subscribers (ResponderID,SentMsgs,EmailAddress,TimeJoined,Real_TimeJoined,CanReceiveHTML,LastActivity,FirstName,LastName,IP_Addy,ReferralSource,UniqueCode,Confirmed, IsSubscribed) VALUES ($insert_values)";
 
             # echo $query . "<br>\n";
             $result = mysql_query($query) OR die("Invalid query: " . mysql_error());

@@ -203,7 +203,7 @@ function getSubscriberInfo($sub_ID)
     global $DB_SubscriberID, $DB_ResponderID, $DB_SentMsgs, $DB_LastActivity;
     global $DB_EmailAddress, $DB_TimeJoined, $CanReceiveHTML, $DB_Real_TimeJoined;
     global $DB_FirstName, $DB_LastName, $DB_IPaddy, $DB_ReferralSource;
-    global $DB_UniqueCode, $DB_Confirmed, $DB_LinkID;
+    global $DB_UniqueCode, $DB_Confirmed, $DB_IsSubscribed, $DB_LinkID;
 
     $query = "SELECT * FROM InfResp_subscribers WHERE SubscriberID = '$sub_ID'";
     $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
@@ -223,6 +223,7 @@ function getSubscriberInfo($sub_ID)
         $DB_ReferralSource = $result_data['ReferralSource'];
         $DB_UniqueCode = $result_data['UniqueCode'];
         $DB_Confirmed = $result_data['Confirmed'];
+        $DB_IsSubscribed = $result_data['IsSubscribed'];
         return TRUE;
     } else {
         return FALSE;

@@ -97,7 +97,7 @@ if ($config['daily_count'] <= $config['daily_limit']) {
     mysql_free_result($DB_Responder_Result);
 
     # Cache the subscribers
-    $query = "SELECT * FROM InfResp_subscribers WHERE Confirmed = '1' ORDER BY ResponderID";
+    $query = "SELECT * FROM InfResp_subscribers WHERE Confirmed = '1' AND IsSubscribed = '1' ORDER BY ResponderID";
     $DB_Subscriber_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
     for ($i = 0; $i < mysql_num_rows($DB_Subscriber_Result); $i++) {
         $this_row = mysql_fetch_assoc($DB_Subscriber_Result);

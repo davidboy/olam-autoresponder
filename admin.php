@@ -50,6 +50,7 @@ function runUserQuery($query)
             $DB_ReferralSource = $search_query_result['ReferralSource'];
             $DB_UniqueCode = $search_query_result['UniqueCode'];
             $DB_Confirmed = $search_query_result['Confirmed'];
+            $DB_IsSubscribed = $search_query_result['IsSubscribed'];
 
             $Responder_ID = $DB_ResponderID;
             getResponderInfo();
@@ -241,8 +242,8 @@ if ($action == "edit_users") {
             if (($EmailToAdd[$i] != "") AND ($EmailToAdd[$i] != NULL) AND (!(isInBlacklist($EmailToAdd[$i])))) {
                 $uniq_code = generateUniqueCode();
                 $Timestamper = time();
-                $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed)
-                                     VALUES('$AddToResp[$i]','$Blank', '$EmailToAdd[$i]', '$Timestamper', '$Timestamper', '$SendHTML[$i]', '$Timestamper', '$FirstNameArray[$i]', '$LastNameArray[$i]', 'Added Manually', 'Manual Add', '$uniq_code', '1')";
+                $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
+                                     VALUES('$AddToResp[$i]','$Blank', '$EmailToAdd[$i]', '$Timestamper', '$Timestamper', '$SendHTML[$i]', '$Timestamper', '$FirstNameArray[$i]', '$LastNameArray[$i]', 'Added Manually', 'Manual Add', '$uniq_code', '1', '1')";
                 $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
                 print "<strong>Added: $Email_Address </strong><br>\n";
             }
@@ -289,7 +290,8 @@ if ($action == "edit_users") {
                         LastName       = '$LastName',
                         ReferralSource = '$Ref_Src',
                         UniqueCode     = '$UniqueCode',
-                        Confirmed      = '$Confirmed'
+                        Confirmed      = '$Confirmed',
+                        IsSubscribed   = '$IsSubscribed'
                 WHERE SubscriberID = '$Subscriber_ID'";
     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
 
@@ -310,11 +312,11 @@ if ($action == "edit_users") {
     include('templates/back_button.admin.php');
 } elseif ($action == "sub_delete_do") {
 
-    $query = "DELETE FROM InfResp_subscribers WHERE SubscriberID = '$Subscriber_ID'";
+    $query = "SET IsSubscribed = '0'";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
-    $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID'";
+    # $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID'";
     $result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
@@ -381,8 +383,8 @@ if ($action == "edit_users") {
             if (($Email_Address != "") AND ($Email_Address != NULL) AND (!(isInBlacklist($Email_Address)))) {
                 $Timestamper = time();
                 $uniq_code = generateUniqueCode();
-                $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed)
-                                     VALUES('$Responder_ID','$Blank', '$Email_Address', '$Timestamper', '$Timestamper', '$HandleHTML', '$Timestamper', '$Blank', '$Blank', '$Blank', 'Bulk Add', '$uniq_code', '1')";
+                $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
+                                     VALUES('$Responder_ID','$Blank', '$Email_Address', '$Timestamper', '$Timestamper', '$HandleHTML', '$Timestamper', '$Blank', '$Blank', '$Blank', 'Bulk Add', '$uniq_code', '1', '1')";
                 $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
                 print "Added: $Email_Address <br>\n";
             }

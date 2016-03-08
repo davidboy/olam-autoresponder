@@ -100,6 +100,7 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
                 $DB_ReferralSource = $result_data['ReferralSource'];
                 $DB_UniqueCode = $result_data['UniqueCode'];
                 $DB_Confirmed = $result_data['Confirmed'];
+                $DB_IsSubscribed = $result_data['IsSubscribed'];
 
                 # Remove user and custom fields
                 $query = "DELETE FROM InfResp_subscribers WHERE EmailAddress = '$bounced_addy'";
