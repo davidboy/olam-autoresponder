@@ -312,7 +312,7 @@ if ($action == "edit_users") {
     include('templates/back_button.admin.php');
 } elseif ($action == "sub_delete_do") {
 
-    $query = "SET IsSubscribed = '0'";
+    $query = $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 

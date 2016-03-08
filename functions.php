@@ -269,7 +269,7 @@ function userIsSubscribed()
 
     $Result_Var = FALSE;
 
-    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID'";
+    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '0'";
 
     $DB_result = mysql_query($query, $DB_LinkID)
     or die("Invalid query: " . mysql_error());
