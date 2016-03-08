@@ -102,7 +102,7 @@ if (mysql_num_rows($result) < 1) {
 
     # If the admin password hasn't been set yet, assume the the config row hasn't been created.
     # Thus the admin hasn't configured anything yet -- force them to do that now.
-    if ($config['admin_pass'] == '' && !EDITING_CONFIG) {
+    if (($config['admin_pass'] == '') && !isset($editingConfig)) {
         redirectTo('/edit_config.php');
     }
 }

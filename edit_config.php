@@ -5,7 +5,7 @@
 # ------------------------------------------------
 
 # Flag to prevent an infinite redirect loop
-define('EDITING_CONFIG', true);
+$editingConfig = true;
 
 include_once('common.php');
 
