@@ -48,33 +48,6 @@ function makeRandomString($minlength, $maxlength, $useupper, $usespecial, $usenu
     return $key;
 }
 
-# ------------------------------------------------
-# XOR encryption functions found at:
-# http://www.phpbuilder.com/tips/item.php?id=68
-function xEncrypt($string, $key)
-{
-    for ($i = 0; $i < strlen($string); $i++) {
-        for ($j = 0; $j < strlen($key); $j++) {
-            $string[$i] = $string[$i] ^ $key[$j];
-        }
-    }
-
-    return $string;
-}
-
-function xDecrypt($string, $key)
-{
-    for ($i = 0; $i < strlen($string); $i++) {
-        for ($j = 0; $j < strlen($key); $j++) {
-            $string[$i] = $key[$j] ^ $string[$i];
-        }
-    }
-
-    return $string;
-}
-
-# ------------------------------------------------
-
 function my_ucwords($input)
 {
     $input = ucwords($input);
@@ -166,76 +139,12 @@ function dbGetFields($tablename)
 
 function resetUserSession()
 {
-    # Reset old session vars
-    if ($_SESSION['initialized'] == TRUE) {
-        $destroy_it = TRUE;
-    }
-    $_SESSION['initialized'] = FALSE;
-    $_SESSION['timestamp'] = 0;
-    $_SESSION['last_IP'] = '';
-    $_SESSION['l'] = '';
-    $_SESSION['p'] = '';
+    // Empty the $_SESSION variable
+    $_SESSION = array();
 
-    # Unset the session cookie
-    unset($_COOKIE[session_name()]);
-    if ($destroy_it == TRUE) {
-        session_destroy();
-    }
-
-    # Regen a new session cookie
+    // End the current session and create a new one
+    session_destroy();
     session_start();
-    session_regenerate_id();
-    setcookie(session_name(), session_id());
-}
-
-function userAuth()
-{
-    global $config;
-
-    # Start the session
-    session_start();
-
-    # Is the session even here?
-    if ($_SESSION['initialized'] != TRUE) {
-        # Nope, it's not initialized...
-        resetUserSession();
-        return FALSE;
-    }
-
-    # Check IP address against last known...
-    if ($_SESSION['last_IP'] != $_SERVER['REMOTE_ADDR']) {
-        # Not the same, reset the session and return FALSE
-        resetUserSession();
-        return FALSE;
-    }
-
-    # Check session timestamp
-    if (time() >= ($_SESSION['timestamp'] + 10800)) {
-        # 3 hours of inactivity kills a session
-        resetUserSession();
-        return FALSE;
-    }
-
-    # Test the login and pass
-    $test_user = md5(webEncrypt($config['admin_user'], $config['random_str_1']));
-    $test_pass = md5(webEncrypt($config['admin_pass'], $config['random_str_2']));
-    if (($_SESSION['l'] == $test_user) && ($_SESSION['p'] == $test_pass)) {
-        # Update the session details, we're good!
-        $_SESSION['timestamp'] = time();
-        return TRUE;
-    }
-}
-
-function webEncrypt($str, $key)
-{
-    $result = base64_encode(xEncrypt($str, $key));
-    return $result;
-}
-
-function webDecrypt($str, $key)
-{
-    $result = xDecrypt(base64_decode($str), $key);
-    return $result;
 }
 
 function responderExists($R_ID)
@@ -955,12 +864,13 @@ function generateRandomBlock()
 {
     $block1 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
     $block2 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
-    $block = md5(webEncrypt($block1, $block2));
+    //$block = md5(webEncrypt($block1, $block2));
     return $block;
 }
 
 # ---------------------------------------------------------
 
+// FIXME: this should go in a template
 function copyright($check = FALSE)
 {
     global $siteURL, $ResponderDirectory, $config;
@@ -975,21 +885,9 @@ function copyright($check = FALSE)
     # Follow the instructions and you'll be sent a site code that will
     # turn off the banner. This helps us to continue further development.
     #
-    $tempy = preg_replace("/www\./", "", $siteURL);
-    $tempy = preg_replace("/http:\/\//", "", $tempy);
-    if ($check == TRUE) {
-        if ((trim($config['site_code'])) == md5(xEncrypt(md5(str_rot13(base64_encode($tempy))), $tempy))) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-    if ((trim($config['site_code'])) != md5(xEncrypt(md5(str_rot13(base64_encode($tempy))), $tempy))) {
-        print "<br><br><center>\n";
-        print "<A HREF=\"http://infinite.ibasics.biz\"><img src=\"$siteURL$ResponderDirectory/images/powered-by.gif\" alt=\"Powered by Infinite Responder!\" height=\"50\" width=\"100\" border=\"0\"></A><br>\n";
-        print "<br></center> \n";
-    }
-    return;
+    print "<br><br><center>\n";
+    print "<A HREF=\"http://infinite.ibasics.biz\"><img src=\"$siteURL$ResponderDirectory/images/powered-by.gif\" alt=\"Powered by Infinite Responder!\" height=\"50\" width=\"100\" border=\"0\"></A><br>\n";
+    print "<br></center> \n";
 }
 
 function checkit()
@@ -1001,17 +899,61 @@ function checkit()
 
 # ---------------------------------------------------------
 
-function adminRedirect()
-{
+// Redirects to a given url, with support for browsers that don't support redirects
+// TODO: use this for all redirects
+function redirectTo($url) {
     global $siteURL, $ResponderDirectory;
-    $redir_URL = $siteURL . $ResponderDirectory . '/admin.php';
-    header("Location: $redir_URL");
-    print "<br>\n";
-    print "You need to log in first!<br>\n";
-    print "<br>\n";
-    print "If your browser doesn't support redirects then you'll need to <A HREF=\"$redir_URL\">click here.</A><br>\n";
-    print "<br>\n";
+
+    $fullUrl = $siteURL . $ResponderDirectory . $url;
+    header("Location: $fullUrl");
+
+    echo '<br />';
+    echo 'If your browser doesn\'t support redirects then you\'ll need to <a href="$url">click here.</a><br />';
+    echo '<br />';
+
     die();
+}
+
+function createLoginSession($username, $passwordHash)
+{
+    $_SESSION['initialized'] = true;
+    $_SESSION['timestamp'] = time();
+    $_SESSION['lastIP'] = $_SERVER['REMOTE_ADDR'];
+    $_SESSION['username'] = $username;
+    $_SESSION['passwordHash'] = $passwordHash;
+}
+
+function userIsLoggedIn() {
+    global $config;
+
+    # Make sure there actually is a session
+    if ($_SESSION['initialized'] != true) {
+        return false;
+    }
+
+    # Check that the user's ip address hasn't changed to prevent session hijacking
+    if ($_SESSION['lastIP'] != $_SERVER['REMOTE_ADDR']) {
+        resetUserSession();
+        return false;
+    }
+
+    # Check session timestamp -- 3 hours of inactivity kills a session
+    if (time() >= ($_SESSION['timestamp'] + 10800)) {
+        resetUserSession();
+        return false;
+    }
+
+    if ($_SESSION['passwordHash'] == $config['admin_pass']) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function requireUserToBeLoggedIn() {
+    if (!userIsLoggedIn()) {
+        redirectTo('/login.php');
+    }
 }
 
 # ---------------------------------------------------------

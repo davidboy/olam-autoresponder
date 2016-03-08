@@ -122,11 +122,11 @@ if ($HandleHTML != "1") {
 if (($action == "resend_unsub_conf") || ($action == "resend_sub_conf")) {
     # Pull info
     if (!(responderExists($Responder_ID))) {
-        adminRedirect();
+        redirectTo('/admin.php');
     }
     getResponderInfo();
     if ((getSubscriberInfo($Subscriber_ID)) == FALSE) {
-        adminRedirect();
+        redirectTo('/admin.php');
     }
 
     # Open template
