@@ -276,7 +276,7 @@
     </strong>
   </td>
   <td> 
-    <input maxlength="100" size="50" name="admin_pass" value="<?php echo $config['admin_pass']; ?>">
+    <input type="password" maxlength="100" size="50" name="admin_pass">
   </td>
 </tr>
 <tr> 
