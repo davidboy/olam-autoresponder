@@ -515,7 +515,7 @@ if ($action == "edit_users") {
             $DB_OptOutDisplay = $query_result['OptOutDisplay'];
             $DB_NotifyOnSub = $query_result['NotifyOwnerOnSub'];
 
-            $Count_query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$DB_ResponderID'";
+            $Count_query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$DB_ResponderID' AND IsSubscribed = '1'";
             $DB_Count_result = mysql_query($Count_query) or die("Invalid query: " . mysql_error());
             $User_Count = mysql_num_rows($DB_Count_result);
 
