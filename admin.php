@@ -128,7 +128,7 @@ if ($action == "edit_users") {
     $help_section = "editusers";
     include('templates/controlpanel.php');
 
-    $DBquery = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' ORDER BY EmailAddress";
+    $DBquery = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '1' ORDER BY EmailAddress";
     runUserQuery($DBquery);
 } elseif ($action == "Email_Search") {
     # Panel top
