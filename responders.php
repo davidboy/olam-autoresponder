@@ -179,12 +179,18 @@ if ($action == "list") {
     }
 
     // TODO: handle formatting errors
-    $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate'])->setTime(0, 0, 0)->format('Y-m-d');
+    $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate']);
+    if ($Start_Date) {
+        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') ."'";
+    } else {
+        $Start_Date_Sql = 'NULL';
+    }
+
 
     $Msg_List = '';
 
     $query = "INSERT INTO InfResp_responders (Name, Enabled, ResponderDesc, OwnerEmail, OwnerName, ReplyToEmail, MsgList, OptMethod, OptInRedir, OptOutRedir, OptInDisplay, OptOutDisplay, NotifyOwnerOnSub, StartDate)
-          VALUES('$Resp_Name', '$Resp_Enabled', '$Resp_Desc', '$Owner_Email', '$Owner_Name', '$Reply_To', '$Msg_List', '$OptMethod', '$OptInRedir', '$OptOutRedir', '$OptInDisp', '$OptOutDisp', '$NotifyOwner', '$Start_Date')";
+          VALUES('$Resp_Name', '$Resp_Enabled', '$Resp_Desc', '$Owner_Email', '$Owner_Name', '$Reply_To', '$Msg_List', '$OptMethod', '$OptInRedir', '$OptOutRedir', '$OptInDisp', '$OptOutDisp', '$NotifyOwner', $Start_Date_Sql)";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
@@ -218,13 +224,12 @@ if ($action == "list") {
         $NotifyOwner = "0";
     }
 
-    // TODO: handle formatting errors
     $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate']);
-//    if (!$Start_Date) {
-//        $Start_Date = new DateTime();
-//
-//    }
-    $Start_Date = $Start_Date->setTime(0, 0, 0)->format('Y-m-d');
+    if ($Start_Date) {
+        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') ."'";
+    } else {
+        $Start_Date_Sql = 'NULL';
+    }
 
 
     $query = "UPDATE InfResp_responders
@@ -239,7 +244,7 @@ if ($action == "list") {
               OptInDisplay = '$OptInDisp',
               OptOutDisplay = '$OptOutDisp',
               NotifyOwnerOnSub = '$NotifyOwner',
-              StartDate = '$Start_Date'
+              StartDate = $Start_Date_Sql
           WHERE ResponderID = '$Responder_ID'";
     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
 

@@ -256,7 +256,13 @@ function getResponderInfo()
         $DB_OptInDisplay = $result_data['OptInDisplay'];
         $DB_OptOutDisplay = $result_data['OptOutDisplay'];
         $DB_NotifyOnSub = $result_data['NotifyOwnerOnSub'];
-        $DB_StartDate = DateTime::createFromFormat('Y-m-d', $result_data['StartDate'])->setTime(0, 0, 0);
+        $DB_StartDate = DateTime::createFromFormat('Y-m-d', $result_data['StartDate']);
+        if ($DB_StartDate) {
+            $DB_StartDate = $DB_StartDate->setTime(0, 0, 0)->format('Y-m-d');
+        } else {
+            $DB_StartDate = '';
+        }
+
         return TRUE;
     } else {
         return FALSE;
