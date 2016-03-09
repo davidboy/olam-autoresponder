@@ -55,6 +55,7 @@ $DB_IPaddy = $result_data['IP_Addy'];
 $DB_ReferralSource = $result_data['ReferralSource'];
 $DB_UniqueCode = $result_data['UniqueCode'];
 $DB_Confirmed = $result_data['Confirmed'];
+$DB_IsSubscribed = $result_data['IsSubscribed'];
 
 # Grab the relevant responder data
 $Responder_ID = $DB_ResponderID;
@@ -74,7 +75,7 @@ getResponderInfo();
 if ($type == "s") {
     # Do DB update
     $Set_LastActivity = time();
-    $query = "UPDATE InfResp_subscribers SET LastActivity = '$Set_LastActivity', TimeJoined = '$Set_LastActivity', Real_TimeJoined = '$Set_LastActivity', Confirmed = '1' WHERE SubscriberID = '$DB_SubscriberID'";
+    $query = "UPDATE InfResp_subscribers SET LastActivity = '$Set_LastActivity', TimeJoined = '$Set_LastActivity', Real_TimeJoined = '$Set_LastActivity', Confirmed = '1', IsSubscribed = '1' WHERE SubscriberID = '$DB_SubscriberID'";
     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
 
     # Handle custom fields

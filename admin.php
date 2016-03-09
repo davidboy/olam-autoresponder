@@ -128,7 +128,7 @@ if ($action == "edit_users") {
     $help_section = "editusers";
     include('templates/controlpanel.php');
 
-    $DBquery = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' ORDER BY EmailAddress";
+    $DBquery = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '1' ORDER BY EmailAddress";
     runUserQuery($DBquery);
 } elseif ($action == "Email_Search") {
     # Panel top
@@ -238,6 +238,10 @@ if ($action == "edit_users") {
 
         if (userIsSubscribed()) {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
+        } else if (userWasSubscribed()) {
+            $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
+            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+            print "<strong>Resubscribed: $Email_Address </strong><br>\n";
         } else {
             if (($EmailToAdd[$i] != "") AND ($EmailToAdd[$i] != NULL) AND (!(isInBlacklist($EmailToAdd[$i])))) {
                 $uniq_code = generateUniqueCode();
@@ -311,8 +315,8 @@ if ($action == "edit_users") {
     $return_action = "edit_users";
     include('templates/back_button.admin.php');
 } elseif ($action == "sub_delete_do") {
+    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
 
-    $query = "SET IsSubscribed = '0'";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
@@ -379,6 +383,10 @@ if ($action == "edit_users") {
         $Email_Address = $AddList_Array[$i];
         if (userIsSubscribed()) {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
+        } else if (userWasSubscribed()) {
+            $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
+            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+            print "<strong>Resubscribed: $Email_Address </strong><br>\n";
         } else {
             if (($Email_Address != "") AND ($Email_Address != NULL) AND (!(isInBlacklist($Email_Address)))) {
                 $Timestamper = time();
@@ -515,7 +523,7 @@ if ($action == "edit_users") {
             $DB_OptOutDisplay = $query_result['OptOutDisplay'];
             $DB_NotifyOnSub = $query_result['NotifyOwnerOnSub'];
 
-            $Count_query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$DB_ResponderID'";
+            $Count_query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$DB_ResponderID' AND IsSubscribed = '1'";
             $DB_Count_result = mysql_query($Count_query) or die("Invalid query: " . mysql_error());
             $User_Count = mysql_num_rows($DB_Count_result);
 
