@@ -269,7 +269,30 @@ function userIsSubscribed()
 
     $Result_Var = FALSE;
 
-    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID'";
+    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '1'";
+
+    $DB_result = mysql_query($query, $DB_LinkID)
+    or die("Invalid query: " . mysql_error());
+
+    while ($row = mysql_fetch_object($DB_result)) {
+        $Temp_Var = strtolower($row->EmailAddress);
+        $Email_Address = strtolower($Email_Address);
+        if ($Temp_Var == $Email_Address) {
+            $Result_Var = TRUE;
+        }
+    }
+
+    return $Result_Var;
+}
+
+# Returns TRUE if the user is in the DB. False if not.
+function userWasSubscribed()
+{
+    global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
+
+    $Result_Var = FALSE;
+
+    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '0'";
 
     $DB_result = mysql_query($query, $DB_LinkID)
     or die("Invalid query: " . mysql_error());
