@@ -81,9 +81,13 @@ if ($config['daily_count'] <= $config['daily_limit']) {
         $message_array[$message_id] = $this_row;
     }
     mysql_free_result($DB_Message_Result);
+    
+    $today = new DateTime();
+    $today->setTime(0, 0, 0);
+    $today_string = $today->format('Y-m-d');
 
     # Cache the responders
-    $query = "SELECT * FROM InfResp_responders ORDER BY ResponderID";
+    $query = "SELECT * FROM InfResp_responders WHERE '$today_string' > StartDate OR StartDate IS NULL ORDER BY ResponderID";
     $DB_Responder_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
     for ($i = 0; $i < mysql_num_rows($DB_Responder_Result); $i++) {
         $this_row = mysql_fetch_assoc($DB_Responder_Result);
