@@ -98,7 +98,7 @@ if ($action == "list") {
     getResponderInfo();
 
     # Display template
-    include('templates/update_top.responders.php');
+    require('templates/update_top.responders.php');
 
     # Resp msg anchor
     print "<a name=\"responder_msgs\">&nbsp;</a>\n";
@@ -118,11 +118,11 @@ if ($action == "list") {
     }
     if ($Max_Index == 0) {
         # No msgs found!
-        include('templates/no_responder_msgs.responders.php');
+        require('templates/no_responder_msgs.responders.php');
     } else {
         # Msg list header
         $alt = TRUE;
-        include('templates/msg_list_top.responders.php');
+        require('templates/msg_list_top.responders.php');
 
         for ($i = 0; $i <= $Max_Index - 1; $i++) {
             $M_ID = trim($MsgList_Array[$i]);
@@ -141,11 +141,11 @@ if ($action == "list") {
 
             # Display message row
             $alt = (!($alt));
-            include('templates/msg_list_row.responders.php');
+            require('templates/msg_list_row.responders.php');
         }
 
         # Msg list footer
-        include('templates/msg_list_bottom.responders.php');
+        require('templates/msg_list_bottom.responders.php');
     }
 
     # Display new msg template
@@ -159,7 +159,6 @@ if ($action == "list") {
     # Display template
     include('templates/erase.responders.php');
 } elseif ($action == "do_create") {
-
     $Resp_Enabled = '1';
     $Resp_Name = makeSemiSafe($_REQUEST['Resp_Name']);
     $Resp_Desc = makeSemiSafe($_REQUEST['Resp_Desc']);
@@ -178,10 +177,20 @@ if ($action == "list") {
     if ($OptMethod != "Double") {
         $OptMethod = "Single";
     }
+
+    // TODO: handle formatting errors
+    $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate']);
+    if ($Start_Date) {
+        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') ."'";
+    } else {
+        $Start_Date_Sql = 'NULL';
+    }
+
+
     $Msg_List = '';
 
-    $query = "INSERT INTO InfResp_responders (Name, Enabled, ResponderDesc, OwnerEmail, OwnerName, ReplyToEmail, MsgList, OptMethod, OptInRedir, OptOutRedir, OptInDisplay, OptOutDisplay, NotifyOwnerOnSub)
-          VALUES('$Resp_Name', '$Resp_Enabled', '$Resp_Desc', '$Owner_Email', '$Owner_Name', '$Reply_To', '$Msg_List', '$OptMethod', '$OptInRedir', '$OptOutRedir', '$OptInDisp', '$OptOutDisp', '$NotifyOwner')";
+    $query = "INSERT INTO InfResp_responders (Name, Enabled, ResponderDesc, OwnerEmail, OwnerName, ReplyToEmail, MsgList, OptMethod, OptInRedir, OptOutRedir, OptInDisplay, OptOutDisplay, NotifyOwnerOnSub, StartDate)
+          VALUES('$Resp_Name', '$Resp_Enabled', '$Resp_Desc', '$Owner_Email', '$Owner_Name', '$Reply_To', '$Msg_List', '$OptMethod', '$OptInRedir', '$OptOutRedir', '$OptInDisp', '$OptOutDisp', '$NotifyOwner', $Start_Date_Sql)";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
@@ -215,6 +224,14 @@ if ($action == "list") {
         $NotifyOwner = "0";
     }
 
+    $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate']);
+    if ($Start_Date) {
+        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') ."'";
+    } else {
+        $Start_Date_Sql = 'NULL';
+    }
+
+
     $query = "UPDATE InfResp_responders
           SET Name = '$Resp_Name',
               ResponderDesc = '$Resp_Desc',
@@ -226,7 +243,8 @@ if ($action == "list") {
               OptOutRedir = '$OptOutRedir',
               OptInDisplay = '$OptInDisp',
               OptOutDisplay = '$OptOutDisp',
-              NotifyOwnerOnSub = '$NotifyOwner'
+              NotifyOwnerOnSub = '$NotifyOwner',
+              StartDate = $Start_Date_Sql
           WHERE ResponderID = '$Responder_ID'";
     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
 
