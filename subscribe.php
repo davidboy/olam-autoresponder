@@ -61,6 +61,7 @@ if (mysql_num_rows($result) > 0) {
     $DB_ReferralSource = $result_data['ReferralSource'];
     $DB_UniqueCode = $result_data['UniqueCode'];
     $DB_Confirmed = $result_data['Confirmed'];
+    $DB_IsSubscribed = $result_data['IsSubscribed'];
 
     # Are they confirmed?
     if ($DB_Confirmed == "1") {
@@ -113,11 +114,12 @@ $DB_IPaddy = $IPaddy;
 $DB_ReferralSource = $ReferralSrc;
 $DB_UniqueCode = generateUniqueCode();
 $DB_Confirmed = "0";
+$DB_IsSubscribed = "1";
 
 if ($DB_OptMethod == "Double") {
     # Add a non-confirmed row to the DB
-    $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed)
-                 VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed')";
+    $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
+                 VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed', '$DB_IsSubscribed')";
     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
     $DB_SubscriberID = mysql_insert_id();
 
@@ -147,8 +149,8 @@ if ($DB_OptMethod == "Double") {
 } else {
     # Add a confirmed row to the DB
     $DB_Confirmed = "1";
-    $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed)
-                 VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed')";
+    $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
+                 VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed', '$DB_IsSubscribed')";
     $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
     $DB_SubscriberID = mysql_insert_id();
 

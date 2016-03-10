@@ -79,20 +79,20 @@ if ($config['daily_count'] <= $config['daily_limit']) {
         $this_row = mysql_fetch_assoc($DB_Message_Result);
         $message_id = $this_row['MsgID'];
         $message_array[$message_id] = $this_row;
-        # echo $this_row['MsgID'] . " " . $this_row['BodyText'] . "<br>\n";
     }
     mysql_free_result($DB_Message_Result);
+    
+    $today = new DateTime();
+    $today->setTime(0, 0, 0);
+    $today_string = $today->format('Y-m-d');
 
     # Cache the responders
-    $query = "SELECT * FROM InfResp_responders ORDER BY ResponderID";
+    $query = "SELECT * FROM InfResp_responders WHERE '$today_string' > StartDate OR StartDate IS NULL ORDER BY ResponderID";
     $DB_Responder_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
     for ($i = 0; $i < mysql_num_rows($DB_Responder_Result); $i++) {
         $this_row = mysql_fetch_assoc($DB_Responder_Result);
         $responder_id = $this_row['ResponderID'];
         $responder_array[$responder_id] = $this_row;
-        # foreach ($responder_array[$responder_id] as $key => $value) {
-        #    echo $key . " - " . $value . "<br />\n";
-        # }
     }
     mysql_free_result($DB_Responder_Result);
 
@@ -103,10 +103,6 @@ if ($config['daily_count'] <= $config['daily_limit']) {
         $this_row = mysql_fetch_assoc($DB_Subscriber_Result);
         $subscriber_id = $this_row['SubscriberID'];
         $subscriber_array[$subscriber_id] = $this_row;
-        # foreach ($subscriber_array[$subscriber_id] as $key => $value) {
-        #    echo $key . " - " . $value . "<br />\n";
-        # }
-        # echo "<br>\n";
     }
     mysql_free_result($DB_Subscriber_Result);
 
@@ -117,9 +113,6 @@ if ($config['daily_count'] <= $config['daily_limit']) {
         $this_row = mysql_fetch_assoc($DB_Mail_Result);
         $mail_id = $this_row['Mail_ID'];
         $mail_msg_array[$mail_id] = $this_row;
-        # foreach ($mail_msg_array[$mail_id] as $key => $value) {
-        #    echo $key . " - " . $value . "<br />\n";
-        # }
     }
     mysql_free_result($DB_Mail_Result);
 } else {
@@ -150,18 +143,11 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
             # Get the message list for this subscriber's responder
             $this_responder = $responder_array[$this_responder_id];
 
-            # Debug info
-            # echo "<br>\n";
-            # echo "Resp:  " . $this_subscriber['ResponderID'] . "<br>\n";
-            # echo "Email: " . $this_subscriber['EmailAddress'] . "<br>\n";
-
             # Split and process the list
             $DB_MsgList = trim($this_responder['MsgList'], ",");
             $DB_MsgList = trim($DB_MsgList);
             $MsgList_Array = explode(',', $DB_MsgList);
             $Max_Index = sizeof($MsgList_Array);
-
-            # echo "Max index: " . $Max_Index . "<br>\n";
 
             # Work thru the msg list
             for ($msg_idx = 0; $msg_idx < $Max_Index; $msg_idx++) {
@@ -170,9 +156,6 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
 
                 # Check to see if the message ID is in the message list.
                 if ((!(isInList($this_subscriber['SentMsgs'], $msg_id))) && ($Send_Count <= $max_send_count) && (is_numeric($msg_id)) && ($config['daily_count'] <= $config['daily_limit'])) {
-                    # Debug info
-                    # echo "ID:   " . $msg_id . "<br>\n";
-                    # echo "Subj: " . $msg_data['Subject'] . "<br>\n";
 
                     # Figure out the time that this subscriber should receive this message.
 
@@ -382,7 +365,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
             $this_responder = $responder_array[$responder_id];
 
             # Set the tag variables and send?
-            if (!(isEmpty($this_subscriber))) {
+            if (!(isEmptyArray($this_subscriber))) {
                 $DB_TimeJoined = $this_subscriber['TimeJoined'];
                 $DB_Real_TimeJoined = $this_subscriber['Real_TimeJoined'];
                 $DB_EmailAddress = $this_subscriber['EmailAddress'];
@@ -459,11 +442,6 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                 $Message_Body = utf8_decode($Message_Body);
 
                 # Send the mail
-                # echo "addy: $DB_EmailAddress <br>\n";
-                # echo "subj: $Send_Subject <br>\n";
-                # echo "body: $Message_Body <br>\n";
-                # echo "head: $Message_Headers <br>\n";
-                # echo "---------------------------<br>\n";
                 mail($DB_EmailAddress, $Send_Subject, $Message_Body, $Message_Headers, "-f $DB_ReplyToEmail");
 
                 # Verbose

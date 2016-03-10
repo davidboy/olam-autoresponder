@@ -65,12 +65,26 @@ function stripNewlines($string)
     return $string;
 }
 
+function trim_value($value) 
+{ 
+    $value = trim($value); 
+}
+
 function isEmpty($var)
 {
     if (!(isset($var))) {
         return TRUE;
     }
     $var = trim($var);
+    return empty($var);
+}
+
+function isEmptyArray($var)
+{
+    if (!(isset($var))) {
+        return TRUE;
+    }
+    array_walk($var, 'trim_value');
     return empty($var);
 }
 
@@ -236,7 +250,7 @@ function getResponderInfo()
     global $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgList, $DB_RespEnabled;
     global $DB_result, $DB_LinkID, $DB_ResponderDesc, $Responder_ID;
     global $DB_OptMethod, $DB_OptInRedir, $DB_NotifyOnSub;
-    global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay;
+    global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay, $DB_StartDate;
 
     $query = "SELECT * FROM InfResp_responders WHERE ResponderID = '$Responder_ID'";
     $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
@@ -256,6 +270,13 @@ function getResponderInfo()
         $DB_OptInDisplay = $result_data['OptInDisplay'];
         $DB_OptOutDisplay = $result_data['OptOutDisplay'];
         $DB_NotifyOnSub = $result_data['NotifyOwnerOnSub'];
+        $DB_StartDate = DateTime::createFromFormat('Y-m-d', $result_data['StartDate']);
+        if ($DB_StartDate) {
+            $DB_StartDate = $DB_StartDate->setTime(0, 0, 0)->format('Y-m-d');
+        } else {
+            $DB_StartDate = '';
+        }
+
         return TRUE;
     } else {
         return FALSE;
@@ -269,7 +290,30 @@ function userIsSubscribed()
 
     $Result_Var = FALSE;
 
-    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID'";
+    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '1'";
+
+    $DB_result = mysql_query($query, $DB_LinkID)
+    or die("Invalid query: " . mysql_error());
+
+    while ($row = mysql_fetch_object($DB_result)) {
+        $Temp_Var = strtolower($row->EmailAddress);
+        $Email_Address = strtolower($Email_Address);
+        if ($Temp_Var == $Email_Address) {
+            $Result_Var = TRUE;
+        }
+    }
+
+    return $Result_Var;
+}
+
+# Returns TRUE if the user is in the DB. False if not.
+function userWasSubscribed()
+{
+    global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
+
+    $Result_Var = FALSE;
+
+    $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '0'";
 
     $DB_result = mysql_query($query, $DB_LinkID)
     or die("Invalid query: " . mysql_error());
