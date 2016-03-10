@@ -421,18 +421,18 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                     $Message_Body .= "This is a multi-part message in MIME format.$newline$newline";
                     $Message_Body .= "--" . $boundary . $newline;
                     $Message_Body .= "Content-type: text/plain; charset=$charset$newline";
-                    $Message_Body .= "Content-Transfer-Encoding: 8bit" . $newline;
+                    $Message_Body .= "Content-Transfer-Encoding: base64" . $newline;
                     $Message_Body .= "Content-Disposition: inline$newline$newline";
                     $Message_Body .= $DB_MsgBodyText . $newline . $newline;
                     $Message_Body .= "--" . $boundary . $newline;
                     $Message_Body .= "Content-type: text/html; charset=$charset$newline";
-                    $Message_Body .= "Content-Transfer-Encoding: 8bit" . $newline;
+                    $Message_Body .= "Content-Transfer-Encoding: base64" . $newline;
                     $Message_Body .= "Content-Disposition: inline$newline$newline";
-                    $Message_Body .= $DB_MsgBodyHTML . $newline . $newline;
+                    $Message_Body .= rtrim(chunk_split(base64_encode($DB_MsgBodyHTML))) . $newline . $newline;
                 } else {
                     $Message_Headers .= "Content-type: text/plain; charset=$charset$newline";
-                    $Message_Headers .= "Content-Transfer-Encoding: 8bit" . $newline;
-                    $Message_Body = $DB_MsgBodyText . $newline;
+                    $Message_Headers .= "Content-Transfer-Encoding: base64" . $newline;
+                    $Message_Body = rtrim(chunk_split(base64_encode($DB_MsgBodyText))) . $newline;
                 }
 
                 # Final filtering
