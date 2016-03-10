@@ -365,7 +365,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
             $this_responder = $responder_array[$responder_id];
 
             # Set the tag variables and send?
-            if (!(isEmpty($this_subscriber))) {
+            if (!(isEmptyArray($this_subscriber))) {
                 $DB_TimeJoined = $this_subscriber['TimeJoined'];
                 $DB_Real_TimeJoined = $this_subscriber['Real_TimeJoined'];
                 $DB_EmailAddress = $this_subscriber['EmailAddress'];
