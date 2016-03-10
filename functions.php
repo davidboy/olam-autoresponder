@@ -65,9 +65,9 @@ function stripNewlines($string)
     return $string;
 }
 
-function trim_value($value) 
-{ 
-    $value = trim($value); 
+function trim_value($value)
+{
+    $value = trim($value);
 }
 
 function isEmpty($var)
@@ -946,7 +946,8 @@ function checkit()
 
 // Redirects to a given url, with support for browsers that don't support redirects
 // TODO: use this for all redirects
-function redirectTo($url) {
+function redirectTo($url)
+{
     global $siteURL, $ResponderDirectory;
 
     $fullUrl = $siteURL . $ResponderDirectory . $url;
@@ -968,7 +969,8 @@ function createLoginSession($username, $passwordHash)
     $_SESSION['passwordHash'] = $passwordHash;
 }
 
-function userIsLoggedIn() {
+function userIsLoggedIn()
+{
     global $config;
 
     # Make sure there actually is a session
@@ -995,7 +997,8 @@ function userIsLoggedIn() {
     }
 }
 
-function requireUserToBeLoggedIn() {
+function requireUserToBeLoggedIn()
+{
     if (!userIsLoggedIn()) {
         redirectTo('/login.php');
     }
