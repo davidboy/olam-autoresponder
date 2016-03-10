@@ -31,18 +31,19 @@
    </tr>
    <!--INSERT ATTACH FILE BUTTON -->
    <tr>
-      <td>
+      <td>  
          <form action="upload.php" method="post" enctype="multipart/form-data">
             Attach File:
-            <input type="file" name="fileToUpload" id="fileToUpload">
-
-            <input type="hidden" name="MAX_FILE_SIZE" value="5242880" />
-
+            <input type="file" name="attachment" id="fileToUpload"/>
+              
+         
             </form>
+
       </td>
    </tr>
-
+   
     <!--END ATTACH FILE-->
+
    <tr><td colspan="2"><br /></td></tr>
    <tr>
       <td colspan="2">

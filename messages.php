@@ -38,7 +38,7 @@ if ($action == "create") {
     $DB_absMins = 0;
 
     # Display template
-    include('templates/create.messages.php');
+    include('templates/create.messages.php');   #assuming this is where the page graphics are intialized?
 } elseif ($action == "update") {
     getMsgInfo($M_ID);
 
@@ -102,7 +102,7 @@ if ($action == "create") {
     # print "  MsgHTML $DB_MsgBodyHTML<br>\n";
 
     # Display template
-    include('templates/update.messages.php');
+    include('templates/update.messages.php');   
 } elseif ($action == "delete") {
     getMsgInfo($M_ID);
 
@@ -118,7 +118,7 @@ if ($action == "create") {
     $T_months = $DB_MsgMonths;
 
     # Display template
-    include('templates/delete.messages.php');   #assuming this is where the page graphics are intialized?
+    include('templates/delete.messages.php');   
 } elseif ($action == "do_create") {
     # Prep data
     $P_subj = makeSemiSafe($_REQUEST['shbj']);
@@ -208,6 +208,7 @@ if ($action == "create") {
     $P_absday = makeSafe($_REQUEST['abs_day']);
     $P_abshours = makeSafe($_REQUEST['abs_hours']);
     $P_absmin = makeSafe($_REQUEST['abs_min']);
+
 
     if (!(is_numeric($P_months))) {
         $P_months = 0;
