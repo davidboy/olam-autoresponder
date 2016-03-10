@@ -65,12 +65,26 @@ function stripNewlines($string)
     return $string;
 }
 
+function trim_value($value) 
+{ 
+    $value = trim($value); 
+}
+
 function isEmpty($var)
 {
     if (!(isset($var))) {
         return TRUE;
     }
     $var = trim($var);
+    return empty($var);
+}
+
+function isEmptyArray($var)
+{
+    if (!(isset($var))) {
+        return TRUE;
+    }
+    array_walk($var, 'trim_value');
     return empty($var);
 }
 
