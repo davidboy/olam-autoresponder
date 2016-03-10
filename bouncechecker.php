@@ -4,7 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-include_once('common.php');
+require_once 'common.php';
 
 # Load the regexps
 $query = "SELECT DISTINCT * FROM InfResp_BounceRegs";
@@ -23,12 +23,6 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
     $bounced_addy_array = array();
 
     # Connect up
-    # echo $bouncer['host'] . "<br>\n";
-    # echo $bouncer['port'] . "<br>\n";
-    # echo $bouncer['mailtype'] . "<br>\n";
-    # echo $bouncer['mailbox'] . "<br>\n";
-    # echo $bouncer['username'] . "<br>\n";
-    # echo $bouncer['password'] . "<br>\n";
     $conn = @imap_open("{" . $bouncer['host'] . ":" . $bouncer['port'] . "/" . $bouncer['mailtype'] . "/notls}" . $bouncer['mailbox'], $bouncer['username'], $bouncer['password']);
     $headers = @imap_headers($conn);
     if ($headers) {
@@ -37,8 +31,6 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
             # Check the body against all saved patterns
             $mail_head = imap_headerinfo($conn, $i);
             $mail_body = imap_fetchbody($conn, $i, 1);
-            # echo "mail head: $mail_head<br>\n";
-            # echo "mail body: $mail_body<br>\n";
 
             $matched = FALSE;
             foreach ($regexp as $regexp_id => $pattern) {
@@ -110,8 +102,6 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
 
                 # Notify owner
                 if ($bouncer['NotifyOwner'] == "1") {
-                    # print "Got a bounce, assigned email: " . $bouncer['EmailAddy'] . "<br>\n";
-                    # print "sending notify...<br>\n";
                     sendMessageTemplate('templates/subscriber_removed.notify.txt', $bouncer['EmailAddy'], $bouncer['EmailAddy']);
                 }
             }
