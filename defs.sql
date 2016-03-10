@@ -164,8 +164,6 @@ CREATE TABLE IF NOT EXISTS `InfResp_BounceRegs` (
 CREATE TABLE IF NOT EXISTS `InfResp_config` (
    `max_send_count` bigint(32) NOT NULL default '500',
    `last_activity_trim` bigint(10) NOT NULL default '6',
-   `random_str_1` text NOT NULL,
-   `random_str_2` text NOT NULL,
    `random_timestamp` bigint(32) NOT NULL,
    `admin_user` varchar(100) NOT NULL default '',
    `admin_pass` varchar(100) NOT NULL default '',

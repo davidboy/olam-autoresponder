@@ -72,14 +72,10 @@ $result = mysql_query($query) or die("Invalid query: " . mysql_error());
 if (mysql_num_rows($result) < 1) {
     # Grab the vars
     $now = time();
-    $str1 = generateRandomBlock();
-    $str2 = generateRandomBlock();
 
     # Setup the array
     $config['Max_Send_Count'] = '500';
     $config['Last_Activity_Trim'] = '6';
-    $config['random_str_1'] = $str1;
-    $config['random_str_2'] = $str2;
     $config['random_timestamp'] = $now;
     $config['admin_user'] = 'admin';
     $config['admin_pass'] = '';
