@@ -4,6 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
+# Handle emails that have been blacklisted and should not be let into the database
 include('common.php');
 requireUserToBeLoggedIn();
 
