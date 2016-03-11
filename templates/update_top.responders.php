@@ -87,9 +87,10 @@ include_once('popup_js.php');
                                         </tr>
                                         <tr>
                                             <td width="200">
-                                                <strong>Start date (optional):</strong><br />
+                                                <strong>Start date (optional):</strong><br/>
                                                 <em>(YYYY-MM-DD)</em></td>
-                                            <td><input name="StartDate" value="<?= $DB_StartDate ?>" type="text" size="55" maxlength="95" class="fields"/></td>
+                                            <td><input name="StartDate" value="<?= $DB_StartDate ?>" type="text"
+                                                       size="55" maxlength="95" class="fields"/></td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
@@ -102,13 +103,15 @@ include_once('popup_js.php');
                                         </tr>
                                         <tr>
                                             <td width="200"><strong>Opt-In Redirect URL:</strong></td>
-                                            <td><input name=OptInRedir size=63 maxlength=100 value="<?= $DB_OptInRedir ?>"
+                                            <td><input name=OptInRedir size=63 maxlength=100
+                                                       value="<?= $DB_OptInRedir ?>"
                                                        class="fields">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td width="200"><strong>Opt-Out Redirect URL:</strong></td>
-                                            <td><input name=OptOutRedir size=63 maxlength=100 value="<?= $DB_OptOutRedir ?>"
+                                            <td><input name=OptOutRedir size=63 maxlength=100
+                                                       value="<?= $DB_OptOutRedir ?>"
                                                        class="fields"></td>
                                         </tr>
                                         <tr>

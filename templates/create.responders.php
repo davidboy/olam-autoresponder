@@ -67,9 +67,10 @@ include_once('popup_js.php');
                                         </tr>
                                         <tr>
                                             <td width="200">
-                                                <strong>Start date (optional):</strong><br />
+                                                <strong>Start date (optional):</strong><br/>
                                                 <em>(YYYY-MM-DD)</em></td>
-                                            <td><input name="StartDate" type="text" size="55" maxlength="95" class="fields"/></td>
+                                            <td><input name="StartDate" type="text" size="55" maxlength="95"
+                                                       class="fields"/></td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">

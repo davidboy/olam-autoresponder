@@ -1,1 +1,1 @@
-<br /><strong>Invalid Action!</strong><br />
+<br/><strong>Invalid Action!</strong><br/>

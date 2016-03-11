@@ -1,1 +1,1 @@
-<br /><strong>Subscription Complete!</strong><br />
+<br/><strong>Subscription Complete!</strong><br/>

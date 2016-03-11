@@ -184,7 +184,7 @@ if ($action == "create") {
               VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml')";
 
     }
-    
+
     # Add row to database
     $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 

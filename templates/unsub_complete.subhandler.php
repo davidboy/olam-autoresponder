@@ -1,1 +1,1 @@
-<br /><strong>Unsubscribe Complete!</strong><br />
+<br/><strong>Unsubscribe Complete!</strong><br/>

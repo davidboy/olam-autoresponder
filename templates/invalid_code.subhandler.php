@@ -1,1 +1,1 @@
-<br /><strong>Invalid Confirmation Code!</strong><br />
+<br/><strong>Invalid Confirmation Code!</strong><br/>
