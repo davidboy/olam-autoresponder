@@ -133,8 +133,12 @@ if ($type == "s") {
     }
 
     # Set the user's status to unsubscribed, but leave them in the database if they want to resubscribe later
-    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
+    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$DB_SubscriberID'";
     $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
+
+    $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID'";
+    $result = $DB->query($query)
     or die("Invalid query: " . $DB->error);
 
     # Redirect or template
