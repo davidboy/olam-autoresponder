@@ -8,17 +8,16 @@ require_once 'common.php';
 
 # Load the regexps
 $query = "SELECT DISTINCT * FROM InfResp_BounceRegs";
-$regexp_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-for ($i = 0; $i < mysql_num_rows($regexp_result); $i++) {
-    $this_row = mysql_fetch_assoc($regexp_result);
+$regexp_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+while ($this_row = $regexp_result->fetch_assoc()) {
     $regexp_id = $this_row['BounceRegexpID'];
     $regexp[$regexp_id] = $this_row['RegX'];
 }
 
 # Go thru the enabled bouncers
 $query = "SELECT * FROM InfResp_Bouncers WHERE Enabled = '1' ORDER BY BouncerID";
-$bouncer_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
+$bouncer_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+while ($bouncer = $bouncer_result->fetch_assoc()) {
     # Re-init the array
     $bounced_addy_array = array();
 
@@ -74,10 +73,10 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
         foreach ($bounced_addy_array as $bouncenum => $bounced_addy) {
             # Pull subscriber info.
             $query = "SELECT * FROM InfResp_subscribers WHERE EmailAddress = '$bounced_addy'";
-            $result = mysql_query($query) or die("Invalid query: " . mysql_error());
-            if (mysql_num_rows($result) > 0) {
+            $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+            if ($result->num_rows > 0) {
                 # Prep data
-                $result_data = mysql_fetch_assoc($result);
+                $result_data = $result->fetch_assoc();
                 $DB_SubscriberID = $result_data['SubscriberID'];
                 $DB_ResponderID = $result_data['ResponderID'];
                 $DB_SentMsgs = $result_data['SentMsgs'];
@@ -96,9 +95,9 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
 
                 # Remove user and custom fields
                 $query = "DELETE FROM InfResp_subscribers WHERE EmailAddress = '$bounced_addy'";
-                $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
                 $query = "DELETE FROM InfResp_customfields WHERE email_attached = '$bounced_addy'";
-                $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
                 # Notify owner
                 if ($bouncer['NotifyOwner'] == "1") {
@@ -108,9 +107,3 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
         }
     }
 }
-
-# Should we disconnect from the DB?
-if ($included != TRUE) {
-    dbDisconnect();
-}
-?>

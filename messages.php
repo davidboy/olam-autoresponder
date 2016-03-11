@@ -120,6 +120,15 @@ if ($action == "create") {
     # Display template
     include('templates/delete.messages.php');
 } elseif ($action == "do_create") {
+
+    # Process the uploaded file
+    if (!empty($_FILES['attachment']['name'])) {
+        $attachment_filename = basename($_FILES['attachment']['name']);
+        $attachment_storage_filename = uniqid(rand());
+
+        move_uploaded_file($_FILES['attachment']['tmp_name'], __DIR__ . '/storage/' . $attachment_storage_filename);
+    }
+
     # Prep data
     $P_subj = makeSemiSafe($_REQUEST['subj']);
     $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);
@@ -167,16 +176,16 @@ if ($action == "create") {
     $Time_stamp = $TempDay_Seconds + $TempHour_Seconds + $TempMin_Seconds;
 
     # Add row to database
-    $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML)
-            VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml')";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML, attachmentName, attachmentStorageName)
+              VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml', '$attachment_filename', '$attachment_storage_filename')";
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Clear $M_ID. If the query was successful then get the new $M_ID and
     # and attach it to the end of the Responder's message list.
     $M_ID = 0;
-    if (mysql_affected_rows() > 0) {
-        $M_ID = mysql_insert_id();
+    if ($DB->affected_rows > 0) {
+        $M_ID = $DB->insert_id;
         $Update_MsgList = $DB_MsgList . "," . $M_ID;
         $Update_MsgList = trim($Update_MsgList, ",");
     }
@@ -185,11 +194,11 @@ if ($action == "create") {
     $query = "UPDATE InfResp_responders
             SET MsgList = '$Update_MsgList'
             WHERE ResponderID = '$Responder_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Done!
-    print "<H3 style=\"color : #003300\">Message added!</H3> \n";
+    print "<H3 style=\"color : #003300\">Message added!</H3> \n";   #This appears after you right a message and hit the save button
     print "<font size=4 color=\"#660000\">Return to list. <br></font> \n";
 
     # Print back button
@@ -208,6 +217,7 @@ if ($action == "create") {
     $P_absday = makeSafe($_REQUEST['abs_day']);
     $P_abshours = makeSafe($_REQUEST['abs_hours']);
     $P_absmin = makeSafe($_REQUEST['abs_min']);
+
 
     if (!(is_numeric($P_months))) {
         $P_months = 0;
@@ -267,8 +277,8 @@ if ($action == "create") {
                 BodyHTML = '$P_bodyhtml'
             WHERE MsgID = '$M_ID'";
 
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<H3 style=\"color : #003300\">Message Saved!</H3> \n";
@@ -297,12 +307,12 @@ if ($action == "create") {
     $NewList = trim($NewList, ",");
 
     $query = "DELETE FROM InfResp_messages WHERE MsgID = '$M_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     $query = "UPDATE InfResp_responders SET MsgList = '$NewList' WHERE ResponderID = '$Responder_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<H3 style=\"color : #003300\">Message deleted!</H3> \n";
@@ -319,7 +329,3 @@ if ($action == "create") {
 # Template bottom
 copyright();
 include('templates/close.page.php');
-
-
-dbDisconnect();
-?>

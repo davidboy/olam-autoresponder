@@ -28,7 +28,7 @@ include('evilness-filter.php');
 include('functions.php');
 
 # Set the siteURL
-if ((isEmpty($_SERVER['HTTPS'])) || ((strtolower($_SERVER['HTTPS'])) == "off")) {
+if ((!isset($_SERVER['HTTPS'])) || ((strtolower($_SERVER['HTTPS'])) == "off")) {
     $siteURL = "http://" . $_SERVER['SERVER_NAME'];
 } else {
     $siteURL = "https://" . $_SERVER['SERVER_NAME'];
@@ -61,25 +61,21 @@ $DB_LinkID = 0;
 dbConnect();
 
 # Ensure UTF8
-mysql_query("SET NAMES 'utf8'");
+$DB->query("SET NAMES 'utf8'");
 
 # Check the table install
 include_once('check_install.php');
 
 # Check the config
 $query = "SELECT * FROM InfResp_config";
-$result = mysql_query($query) or die("Invalid query: " . mysql_error());
-if (mysql_num_rows($result) < 1) {
+$result = $DB->query($query) or die("Invalid query: " . $DB->error);
+if ($result->num_rows < 1) {
     # Grab the vars
     $now = time();
-    $str1 = generateRandomBlock();
-    $str2 = generateRandomBlock();
 
     # Setup the array
     $config['Max_Send_Count'] = '500';
     $config['Last_Activity_Trim'] = '6';
-    $config['random_str_1'] = $str1;
-    $config['random_str_2'] = $str2;
     $config['random_timestamp'] = $now;
     $config['admin_user'] = 'admin';
     $config['admin_pass'] = '';
@@ -98,7 +94,7 @@ if (mysql_num_rows($result) < 1) {
     # Insert the data
     dbInsertArray('InfResp_config', $config);
 } else {
-    $config = mysql_fetch_assoc($result);
+    $config = $result->fetch_assoc();
 
     # If the admin password hasn't been set yet, assume the the config row hasn't been created.
     # Thus the admin hasn't configured anything yet -- force them to do that now.

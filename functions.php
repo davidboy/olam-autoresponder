@@ -91,25 +91,15 @@ function isEmptyArray($var)
 function dbConnect()
 {
     global $MySQL_server, $MySQL_user, $MySQL_password, $MySQL_database;
-    global $DB_LinkID;
+    global $DB;
 
-    $DB_LinkID = mysql_connect($MySQL_server, $MySQL_user, $MySQL_password)
-    or die("Could not connect : " . mysql_error());
-
-    mysql_select_db($MySQL_database) or die("Could not select database.");
-    return $DB_LinkID;
-}
-
-function dbDisconnect()
-{
-    global $DB_LinkID;
-    $result = mysql_close($DB_LinkID);
-    return $result;
+    $DB = new mysqli($MySQL_server, $MySQL_user, $MySQL_password, $MySQL_database)
+          or die("Could not connect : " . $DB->connect_error);
 }
 
 function dbInsertArray($table, $fields)
 {
-    global $DB_LinkID;
+    global $DB;
     $fieldstr = "";
     $valuestr = "";
     foreach ($fields as $key => $value) {
@@ -119,12 +109,12 @@ function dbInsertArray($table, $fields)
     $fieldstr = trim((trim($fieldstr)), ",");
     $valuestr = trim((trim($valuestr)), ",");
     $query = "INSERT INTO $table ($fieldstr) VALUES($valuestr)";
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
 }
 
 function dbUpdateArray($table, $fields, $where = "")
 {
-    global $DB_LinkID;
+    global $DB;
     $updatestr = "";
     foreach ($fields as $key => $value) {
         $updatestr .= "$key='" . $value . "', ";
@@ -134,16 +124,16 @@ function dbUpdateArray($table, $fields, $where = "")
     if (!(isEmpty($where))) {
         $query .= " WHERE $where";
     }
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
 }
 
 function dbGetFields($tablename)
 {
-    global $DB_LinkID;
+    global $DB;
     $result_array = array();
     $query = "SHOW COLUMNS FROM $tablename";
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    while ($meta = mysql_fetch_array($result)) {
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    while ($meta = $result->fetch_assoc()) {
         $fieldname = strtolower($meta['Field']);
         $result_array['list'][] = $fieldname;
         $result_array['hash'][$fieldname] = TRUE;
@@ -163,7 +153,8 @@ function resetUserSession()
 
 function responderExists($R_ID)
 {
-    global $DB_LinkID;
+    global $DB;
+
     if (isEmpty($R_ID)) {
         return FALSE;
     }
@@ -174,10 +165,10 @@ function responderExists($R_ID)
         return FALSE;
     }
     $query = "SELECT * FROM InfResp_responders WHERE ResponderID = '$R_ID'";
-    $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    $result_data = mysql_fetch_row($DB_result);
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    $result_data = $DB_result->fetch_row();
 
-    if (mysql_num_rows($DB_result) > 0) {
+    if ($DB_result->num_rows > 0) {
         return TRUE;
     } else {
         return FALSE;
@@ -189,14 +180,14 @@ function getMsgInfo($M_ID)
     global $DB_MsgID, $DB_MsgSub, $DB_MsgSeconds;
     global $DB_absDay, $DB_absHours, $DB_absMins;
     global $DB_MsgMonths, $DB_MsgBodyText, $DB_MsgBodyHTML;
-    global $DB_LinkID;
+    global $DB;
 
     $query = "SELECT * FROM InfResp_messages WHERE MsgID = '$M_ID'";
-    $DB_result = mysql_query($query, $DB_LinkID)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
-    if (mysql_num_rows($DB_result) > 0) {
-        $this_row = mysql_fetch_assoc($DB_result);
+    if ($DB_result->num_rows > 0) {
+        $this_row = $DB_result->fetch_assoc();
         $DB_MsgID = $this_row['MsgID'];
         $DB_MsgSub = $this_row['Subject'];
         $DB_MsgSeconds = $this_row['SecMinHoursDays'];
@@ -217,12 +208,12 @@ function getSubscriberInfo($sub_ID)
     global $DB_SubscriberID, $DB_ResponderID, $DB_SentMsgs, $DB_LastActivity;
     global $DB_EmailAddress, $DB_TimeJoined, $CanReceiveHTML, $DB_Real_TimeJoined;
     global $DB_FirstName, $DB_LastName, $DB_IPaddy, $DB_ReferralSource;
-    global $DB_UniqueCode, $DB_Confirmed, $DB_IsSubscribed, $DB_LinkID;
+    global $DB_UniqueCode, $DB_Confirmed, $DB_IsSubscribed, $DB;
 
     $query = "SELECT * FROM InfResp_subscribers WHERE SubscriberID = '$sub_ID'";
-    $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($DB_result) > 0) {
-        $result_data = mysql_fetch_assoc($DB_result);
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($DB_result->num_rows > 0) {
+        $result_data = $DB_result->fetch_assoc();
         $DB_SubscriberID = $result_data['SubscriberID'];
         $DB_ResponderID = $result_data['ResponderID'];
         $DB_SentMsgs = $result_data['SentMsgs'];
@@ -248,14 +239,14 @@ function getResponderInfo()
 {
     global $DB_ResponderID, $DB_ResponderName, $DB_OwnerEmail;
     global $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgList, $DB_RespEnabled;
-    global $DB_result, $DB_LinkID, $DB_ResponderDesc, $Responder_ID;
+    global $DB_result, $DB, $DB_ResponderDesc, $Responder_ID;
     global $DB_OptMethod, $DB_OptInRedir, $DB_NotifyOnSub;
     global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay, $DB_StartDate;
 
     $query = "SELECT * FROM InfResp_responders WHERE ResponderID = '$Responder_ID'";
-    $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($DB_result) > 0) {
-        $result_data = mysql_fetch_assoc($DB_result);
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($DB_result->num_rows > 0) {
+        $result_data = $DB_result->fetch_assoc();
         $DB_ResponderID = $result_data['ResponderID'];
         $DB_RespEnabled = $result_data['Enabled'];
         $DB_ResponderName = $result_data['Name'];
@@ -286,16 +277,16 @@ function getResponderInfo()
 # Returns TRUE if the user is in the DB and is currently subscribed. False if not.
 function userIsSubscribed()
 {
-    global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
+    global $DB_result, $DB, $Responder_ID, $Email_Address;
 
     $Result_Var = FALSE;
 
     $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '1'";
 
-    $DB_result = mysql_query($query, $DB_LinkID)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
-    while ($row = mysql_fetch_object($DB_result)) {
+    while ($row = $DB_result->fetch_object()) {
         $Temp_Var = strtolower($row->EmailAddress);
         $Email_Address = strtolower($Email_Address);
         if ($Temp_Var == $Email_Address) {
@@ -309,16 +300,16 @@ function userIsSubscribed()
 # Returns TRUE if the user is in the DB but has unsuscribed. False if not.
 function userWasSubscribed()
 {
-    global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
+    global $DB_result, $DB, $Responder_ID, $Email_Address;
 
     $Result_Var = FALSE;
 
     $query = "SELECT EmailAddress FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND IsSubscribed = '0'";
 
-    $DB_result = mysql_query($query, $DB_LinkID)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
-    while ($row = mysql_fetch_object($DB_result)) {
+    while ($row = $DB_result->fetch_object()) {
         $Temp_Var = strtolower($row->EmailAddress);
         $Email_Address = strtolower($Email_Address);
         if ($Temp_Var == $Email_Address) {
@@ -411,7 +402,7 @@ function processMessageTags()
     global $UnsubURL, $siteURL, $ResponderDirectory, $DB_SubscriberID;
     global $DB_IPaddy, $DB_ReferralSource, $DB_OptInRedir, $DB_UniqueCode;
     global $DB_OptOutRedir, $DB_OptInDisplay, $DB_OptOutDisplay;
-    global $DB_LinkID, $cop, $newline;
+    global $DB, $cop, $newline;
 
     # Wednesday May 9, 2007
     # $date_format = 'l \t\h\e jS \of F\, Y';
@@ -651,9 +642,9 @@ function processMessageTags()
     # -------------------------
     # Custom fields
     $query = "SELECT * FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID' LIMIT 1";
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($result) > 0) {
-        $data = mysql_fetch_assoc($result);
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($result->num_rows > 0) {
+        $data = $result->fetch_asoc();
         foreach ($data as $name => $value) {
             $Pattern = "/%cf_$name%/i";
             $DB_MsgBodyHTML = preg_replace($Pattern, $data[$name], $DB_MsgBodyHTML);
@@ -673,7 +664,7 @@ function sendMessageTemplate($filename = "", $to_address = "", $from_address = "
 {
     global $Send_Subject, $DB_EmailAddress, $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgBodyHTML, $DB_MsgBodyText;
     global $UnsubURL, $siteURL, $ResponderDirectory, $DB_SubscriberID, $sub_conf_link, $unsub_link, $unsub_conf_link;
-    global $charset, $DB_UniqueCode, $DB_LinkID, $cop, $newline, $CanReceiveHTML;
+    global $charset, $DB_UniqueCode, $DB, $cop, $newline, $CanReceiveHTML;
 
     if ($filename == "") {
         die("Message template error!<br>\n");
@@ -771,7 +762,7 @@ function sendMessageTemplate($filename = "", $to_address = "", $from_address = "
     # Update the activity row
     $Set_LastActivity = time();
     $query = "UPDATE InfResp_subscribers SET LastActivity = '$Set_LastActivity' WHERE SubscriberID = '$DB_SubscriberID'";
-    $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     # Head on back
     return;
@@ -781,12 +772,12 @@ function sendMessageTemplate($filename = "", $to_address = "", $from_address = "
 
 function responderPulldown($field)
 {
-    global $DB_LinkID;
+    global $DB;
     $menu_query = "SELECT * FROM InfResp_responders ORDER BY ResponderID";
-    $menu_result = mysql_query($menu_query, $DB_LinkID) or die("Invalid query: " . mysql_error());
+    $menu_result = $DB->query($menu_query) or die("Invalid query: " . $DB->error);
 
     print "<select name=\"$field\" class=\"fields\">\n";
-    while ($menu_row = mysql_fetch_assoc($menu_result)) {
+    while ($menu_row = $menu_result->fetch_assoc()) {
         $DB_ResponderID = $menu_row['ResponderID'];
         $DB_ResponderName = $menu_row['Name'];
 
@@ -798,34 +789,30 @@ function responderPulldown($field)
 
 function addToLogs($Activity, $Activity_Parm, $ID_Parm, $Extra_Parm)
 {
-    global $DB_LinkID;
+    global $DB;
 
     $TimeStampy = time();
 
     $Log_Query = "INSERT INTO InfResp_Logs (TimeStamp, Activity, Activity_Parameter, ID_Parameter, Extra_Parameter)
                   VALUES('$TimeStampy', '$Activity', '$Activity_Parm', '$ID_Parm', '$Extra_Parm')";
-    $Log_result = mysql_query($Log_Query, $DB_LinkID)
-    or die("Invalid query: " . mysql_error());
+    $Log_result = $DB->query($Log_Query)
+    or die("Invalid query: " . $DB->error);
 
     return $Log_result;
 }
 
+// TODO: test after weird DB change
 function getFieldNames($table)
 {
-    global $DB_LinkID;
+    global $DB;
 
     $query = "SELECT * FROM $table";
-    $result = mysql_query($query, $DB_LinkID)
-    or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
     $i = 0;
     $FieldNameStr = "";
-    while ($i < mysql_num_fields($result)) {
-        $meta = mysql_fetch_field($result, $i);
-        if ($meta) {
-            $FieldNameStr = $FieldNameStr . trim($meta->name) . ",";
-        }
-
-        $i++;
+    while ($meta = $result->fetch_field($i)) {
+        $FieldNameStr = $FieldNameStr . trim($meta->name) . ",";
     }
     $FieldNameStr = trim((trim($FieldNameStr)), ",");
     $FieldNameArray = explode(',', $FieldNameStr);
@@ -857,14 +844,15 @@ function grabFile($filename = FALSE)
 
 function isInBlacklist($address = "")
 {
-    global $DB_LinkID;
+    global $DB;
+
     if ($address == "") {
         return FALSE;
     }
     $address = trim(strtolower($address));
     $query = "SELECT * FROM InfResp_blacklist WHERE LOWER(EmailAddress) = '$address'";
-    $DB_result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($DB_result) > 0) {
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($DB_result->num_rows > 0) {
         return TRUE;
     } else {
         return FALSE;
@@ -888,29 +876,21 @@ function isEmail($address = "")
 
 function generateUniqueCode()
 {
-    global $DB_LinkID;
+    global $DB;
 
     # Generate a unique ID
     $not_unique = TRUE;
     while ($not_unique) {
         $id_str = substr(md5(makeRandomString(15, 15, TRUE, FALSE, TRUE)), 0, 15);
         $query = "SELECT UniqueCode FROM InfResp_subscribers WHERE UniqueCode = '$id_str'";
-        $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-        if (mysql_num_rows($result) == 0) {
+        $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+        if ($result->num_rows == 0) {
             $not_unique = (!($not_unique));
         }
     }
 
     # Return the ID
     return $id_str;
-}
-
-function generateRandomBlock()
-{
-    $block1 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
-    $block2 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
-    //$block = md5(webEncrypt($block1, $block2));
-    return $block;
 }
 
 # ---------------------------------------------------------
@@ -974,7 +954,7 @@ function userIsLoggedIn()
     global $config;
 
     # Make sure there actually is a session
-    if ($_SESSION['initialized'] != true) {
+    if (!isset($_SESSION['initialized']) || $_SESSION['initialized'] != true) {
         return false;
     }
 
@@ -1039,10 +1019,10 @@ function addCustomFields()
 
         # Delete any old data
         $query = "SELECT * FROM InfResp_customfields WHERE email_attached = '$Email_Address' AND resp_attached = '$Responder_ID'";
-        $result = mysql_query($query) or die("Invalid query: " . mysql_error());
-        if (mysql_num_rows($result) > 0) {
+        $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+        if ($result->num_rows > 0) {
             $query = "DELETE FROM InfResp_customfields WHERE email_attached = '$Email_Address' AND resp_attached = '$Responder_ID'";
-            $result = mysql_query($query) or die("Invalid query: " . mysql_error());
+            $result = $DB->query($query) or die("Invalid query: " . $DB->error);
         }
 
         # Insert new data

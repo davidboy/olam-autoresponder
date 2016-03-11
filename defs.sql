@@ -32,7 +32,9 @@ CREATE TABLE IF NOT EXISTS `InfResp_messages` (
    `absMins` int NOT NULL default '0',
    `absHours` int NOT NULL default '0',
    `BodyText` text NOT NULL,
-   `BodyHTML` text NOT NULL
+   `BodyHTML` text NOT NULL,
+   `attachmentName` varchar(255),
+   `attachmentStorageName` varchar(255)
 ) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 
@@ -164,8 +166,6 @@ CREATE TABLE IF NOT EXISTS `InfResp_BounceRegs` (
 CREATE TABLE IF NOT EXISTS `InfResp_config` (
    `max_send_count` bigint(32) NOT NULL default '500',
    `last_activity_trim` bigint(10) NOT NULL default '6',
-   `random_str_1` text NOT NULL,
-   `random_str_2` text NOT NULL,
    `random_timestamp` bigint(32) NOT NULL,
    `admin_user` varchar(100) NOT NULL default '',
    `admin_pass` varchar(100) NOT NULL default '',

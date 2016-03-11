@@ -14,7 +14,7 @@
       }
       print "</td>\n";
       print "<td align=\"right\" width=\"50%\">\n";
-      if (($SearchCount + (mysql_num_rows($DB_search_result) - 1)) < $Max_Results_Count) {
+      if (($SearchCount + ($DB_search_result->num_rows - 1)) < $Max_Results_Count) {
         print "<p align=\"right\">\n";
         print "<form action=\"admin.php\" method=POST>\n";
         print "<input type=\"hidden\" name=\"action\" value=\"edit_users\">\n";

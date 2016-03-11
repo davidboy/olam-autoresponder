@@ -4,6 +4,12 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
+if (isset($_REQUEST['silent']) && $_REQUEST['silent'] == "1") {
+    $silent = TRUE;
+} else {
+    $silent = FALSE;
+}
+
 include_once 'common.php';
 require_once 'class.phpmailer.php';
 
@@ -51,7 +57,7 @@ $now = time();
 if ($config['daily_reset'] == 0) {
     $config['daily_reset'] = $now;
     $query = "UPDATE InfResp_config SET daily_count = '0', daily_reset = '$now'";
-    $result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
 }
 $reset_time = strtotime("+1 day", $config['daily_reset']);
 if ($now > $reset_time) {
@@ -59,7 +65,7 @@ if ($now > $reset_time) {
     $config['daily_reset'] = $now;
     $config['daily_count'] = 0;
     $query = "UPDATE InfResp_config SET daily_count = '0', daily_reset = '$now'";
-    $result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
 }
 
 # - - - - - - - - - - - - - - - - - - -
@@ -75,13 +81,12 @@ if ($config['daily_count'] <= $config['daily_limit']) {
 
     # Cache the messages
     $query = "SELECT * FROM InfResp_messages ORDER BY MsgID";
-    $DB_Message_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    for ($i = 0; $i < mysql_num_rows($DB_Message_Result); $i++) {
-        $this_row = mysql_fetch_assoc($DB_Message_Result);
+    $DB_Message_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    while ($this_row = $DB_Message_Result->fetch_assoc()) {
         $message_id = $this_row['MsgID'];
         $message_array[$message_id] = $this_row;
     }
-    mysql_free_result($DB_Message_Result);
+    $DB_Message_Result->free();
 
     $today = new DateTime();
     $today->setTime(0, 0, 0);
@@ -89,40 +94,36 @@ if ($config['daily_count'] <= $config['daily_limit']) {
 
     # Cache the responders
     $query = "SELECT * FROM InfResp_responders WHERE '$today_string' > StartDate OR StartDate IS NULL ORDER BY ResponderID";
-    $DB_Responder_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    for ($i = 0; $i < mysql_num_rows($DB_Responder_Result); $i++) {
-        $this_row = mysql_fetch_assoc($DB_Responder_Result);
+    $DB_Responder_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    while ($this_row = $DB_Responder_Result->fetch_assoc()) {
         $responder_id = $this_row['ResponderID'];
         $responder_array[$responder_id] = $this_row;
     }
-    mysql_free_result($DB_Responder_Result);
+    $DB_Responder_Result->free();
 
     # Cache the subscribers
     $query = "SELECT * FROM InfResp_subscribers WHERE Confirmed = '1' AND IsSubscribed = '1' ORDER BY ResponderID";
-    $DB_Subscriber_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    for ($i = 0; $i < mysql_num_rows($DB_Subscriber_Result); $i++) {
-        $this_row = mysql_fetch_assoc($DB_Subscriber_Result);
+    $DB_Subscriber_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    while ($this_row = $DB_Subscriber_Result->fetch_assoc()) {
         $subscriber_id = $this_row['SubscriberID'];
         $subscriber_array[$subscriber_id] = $this_row;
     }
-    mysql_free_result($DB_Subscriber_Result);
+    $DB_Subscriber_Result->free();
 
     # Cache the mail messages
     $query = "SELECT * FROM InfResp_mail ORDER BY Mail_ID";
-    $DB_Mail_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    for ($i = 0; $i < mysql_num_rows($DB_Mail_Result); $i++) {
-        $this_row = mysql_fetch_assoc($DB_Mail_Result);
+    $DB_Mail_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    while ($this_row = $DB_Mail_Result->fetch_assoc()) {
         $mail_id = $this_row['Mail_ID'];
         $mail_msg_array[$mail_id] = $this_row;
     }
-    mysql_free_result($DB_Mail_Result);
+    $DB_Mail_Result->free();
 } else {
     # Verbose
     if ($silent != TRUE) {
         echo "Daily throttle reached!<br>\n";
     }
 }
-$cop = checkit();
 
 # - - - - - - - - - - - - - - - - - - -
 # Handle the responder-style messages
@@ -142,7 +143,11 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
             $this_responder_id = $this_subscriber['ResponderID'];
 
             # Get the message list for this subscriber's responder
-            $this_responder = $responder_array[$this_responder_id];
+            $this_responder = @$responder_array[$this_responder_id];
+            if (empty($this_responder)) {
+                # This responder doesn't have any messages, continue on to the next one
+                continue;
+            }
 
             # Split and process the list
             $DB_MsgList = trim($this_responder['MsgList'], ",");
@@ -263,11 +268,18 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         $mail->addAddress($DB_EmailAddress);
                         $mail->Subject = $Send_Subject;
 
-                        if ($CanReceiveHTML) {
-                            $mail->msgHTML($DB_MsgBodyHTML);
-                        }
-
+                        $mail->msgHTML($DB_MsgBodyHTML);
                         $mail->AltBody = $DB_MsgBodyText;
+
+                        if (
+                            !empty($msg_data['attachmentName']) &&
+                            !empty($msg_data['attachmentStorageName']) &&
+                            file_exists(__DIR__ . '/storage/' . $msg_data['attachmentStorageName'])
+                        ) {
+                            $mail->addAttachment(__DIR__ . '/storage/' . $msg_data['attachmentStorageName'], $msg_data['attachmentName']);
+                        } else {
+                            echo '<br />NO ATTACHMENT<br />';
+                        }
 
                         if ($mail->send()) {
                             # Verbose
@@ -280,7 +292,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                                       SET SentMsgs = '$NewMsgStr',
                                       LastActivity = '$Set_LastActivity'
                                       WHERE SubscriberID = '$DB_SubscriberID'";
-                            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                            $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
                             # Increment the send counts
                             $Send_Count++;
@@ -288,8 +300,6 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         } else {
                             // TODO: handle mail errors
                         }
-
-
                     }
                 }
             }
@@ -324,8 +334,8 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
     # Check for unsent mail in the cache
     $update_list = "";
     $query = "SELECT * FROM InfResp_mail_cache WHERE Status = 'queued'";
-    $DB_Mail_Cache_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    while ($this_entry = mysql_fetch_assoc($DB_Mail_Cache_Result)) {
+    $DB_Mail_Cache_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    while ($this_entry = $DB_Mail_Cache_Result->fetch_assoc()) {
         # Should we send?
         if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['daily_limit']) && ($mail_msg_array[$mail_id]['Closed'] == "0") && ($mail_msg_array[$mail_id]['Time_To_Send'] <= time())) {
             # Fetch the cache entry details
@@ -335,9 +345,15 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
 
             # Get the other relevant data
             $this_mail_msg = $mail_msg_array[$mail_id];
-            $this_subscriber = $subscriber_array[$sub_id];
             $responder_id = $this_mail_msg['ResponderID'];
             $this_responder = $responder_array[$responder_id];
+            $this_subscriber = @$subscriber_array[$sub_id];
+
+            if (empty($this_subscriber)) {
+                // The subscriber has unsubscribed.  Don't bother sending the newsletter to them
+                $DB->query("DELETE FROM InfResp_mail_cache WHERE SubscriberID = '$sub_id'") or die("Invalid query: " . $DB->error);
+                continue;
+            }
 
             # Set the tag variables and send?
             if (!(isEmptyArray($this_subscriber))) {
@@ -398,11 +414,11 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                     $this_subscriber['LastActivity'] = $Set_LastActivity;
                     $subscriber_array[$sub_id]['LastActivity'] = $Set_LastActivity;
                     $query = "UPDATE InfResp_subscribers SET LastActivity = '$Set_LastActivity' WHERE SubscriberID = '$DB_SubscriberID'";
-                    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
                     # Update the cache database
                     $query = "UPDATE InfResp_mail_cache SET Status = 'sent', LastActivity = '$Set_LastActivity' WHERE Cache_ID = '$cache_id'";
-                    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
                     # Increment the send counts
                     $Send_Count++;
@@ -424,7 +440,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
 # Update the daily count in the DB
 # - - - - - - - - - - - - - - - - - - -
 $query = "UPDATE InfResp_config SET daily_count = '" . $config['daily_count'] . "'";
-$result = mysql_query($query) or die("Invalid query: " . mysql_error());
+$result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
 # Verbose
 if ($Send_Count > 0) {
@@ -450,16 +466,12 @@ if (($last_activity_trim > 0) && ($this_subscriber['LastActivity'] != "") AND ($
         $trim_time = strtotime($trim_str, $this_subscriber['LastActivity']);
         if (time() > $trim_time) {
             $query = "DELETE FROM InfResp_subscribers WHERE SubscriberID = '" . $this_subscriber['SubscriberID'] . "'";
-            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+            $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
             $query = "DELETE FROM InfResp_customfields WHERE user_attached = '" . $this_subscriber['SubscriberID'] . "'";
-            $result = mysql_query($query) or die("Invalid query: " . mysql_error());
+            $result = $DB->query($query) or die("Invalid query: " . $DB->error);
         }
     }
-}
-
-if ($sendmails_included != TRUE) {
-    dbDisconnect();
 }
 
 # Verbose
@@ -469,4 +481,3 @@ if ($silent != TRUE) {
 
 # Reset var
 $silent = FALSE;
-?>

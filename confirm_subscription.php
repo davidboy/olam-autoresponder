@@ -27,8 +27,8 @@ if (($type != "s") && ($type != "u")) {
 # Verify the code
 $code = substr($Confirm_String, 1, (strlen($Confirm_String) - 1));
 $query = "SELECT * FROM InfResp_subscribers WHERE UniqueCode = '$code'";
-$result = mysql_query($query) or die("Invalid query: " . mysql_error());
-if (mysql_num_rows($result) < 1) {
+$result = $DB->query($query) or die("Invalid query: " . $DB->error);
+if ($result->num_rows < 1) {
     # Invalid code. Print it!
     if ($SilentMode != 1) {
         include('templates/open.page.php');
@@ -40,7 +40,7 @@ if (mysql_num_rows($result) < 1) {
 }
 
 # Grab the subscriber data
-$result_data = mysql_fetch_assoc($result);
+$result_data = $result->fetch_assoc();
 $DB_SubscriberID = $result_data['SubscriberID'];
 $DB_ResponderID = $result_data['ResponderID'];
 $DB_SentMsgs = $result_data['SentMsgs'];
@@ -76,7 +76,7 @@ if ($type == "s") {
     # Do DB update
     $Set_LastActivity = time();
     $query = "UPDATE InfResp_subscribers SET LastActivity = '$Set_LastActivity', TimeJoined = '$Set_LastActivity', Real_TimeJoined = '$Set_LastActivity', Confirmed = '1', IsSubscribed = '1' WHERE SubscriberID = '$DB_SubscriberID'";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     # Handle custom fields
     addCustomFields();
@@ -123,9 +123,9 @@ if ($type == "s") {
 
     # Delete from DB
     $query = "DELETE FROM InfResp_subscribers WHERE SubscriberID = '$DB_SubscriberID'";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
     $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID'";
-    $result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     # Redirect or template
     if ((trim($DB_OptOutRedir)) == "") {

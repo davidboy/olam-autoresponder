@@ -51,16 +51,16 @@ if ($action == "subscribe") {
     # --------------------------------------------------------------------------------
 } else {
     $query = "SELECT * FROM InfResp_responders ORDER BY ResponderID";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
-    if (mysql_num_rows($DB_result) > 0) {
+    if ($DB_result->num_rows > 0) {
 
         print "<br>\n";
         print "<center><font color=\"#003300\" size=\"5\">List of Responders</font></center>\n";
 
         $i = 0;
-        while ($query_result = mysql_fetch_assoc($DB_result)) {
+        while ($query_result = $DB_result->fetch_assoc()) {
             $DB_ResponderID = $query_result['ResponderID'];
             $DB_RespEnabled = $query_result['Enabled'];
             $DB_ResponderName = $query_result['Name'];
@@ -85,6 +85,3 @@ if ($action == "subscribe") {
 # Template bottom
 copyright();
 include('templates/close.page.php');
-
-dbDisconnect();
-?>

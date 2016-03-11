@@ -8,9 +8,9 @@ include_once('common.php');
 
 # Start checking the mail...
 $query = "SELECT * FROM InfResp_POP3 WHERE username != 'username' AND password != 'password'";
-$DB_POP3_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-if (mysql_num_rows($DB_POP3_Result) > 0) {
-    while ($POP3_Result = mysql_fetch_assoc($DB_POP3_Result)) {
+$DB_POP3_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+if ($DB_POP3_Resul->num_rows > 0) {
+    while ($POP3_Result = $DB_POP3_Result->fetch_assoc()) {
         $DB_POP_ConfID = $POP3_Result['POP_ConfigID'];
         $DB_Pop_Enabled = $POP3_Result['ThisPOP_Enabled'];
         $DB_Confirm_Join = $POP3_Result['Confirm_Join'];
@@ -145,8 +145,8 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                             $DB_Confirmed = "0";
                             $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
                                      VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed', '$DB_IsSubscribed')";
-                            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-                            $DB_SubscriberID = mysql_insert_id();
+                            $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+                            $DB_SubscriberID = $DB->insert_id;
 
                             # Send confirmation msg
                             sendMessageTemplate('templates/subscribe.confirm.txt');
@@ -155,8 +155,8 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
                             $DB_Confirmed = "1";
                             $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
                                      VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed', '$DB_IsSubscribed')";
-                            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-                            $DB_SubscriberID = mysql_insert_id();
+                            $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+                            $DB_SubscriberID = $DB->insert_id;
 
                             # Send welcome and notification
                             sendMessageTemplate('templates/subscribe.complete.txt');
@@ -172,9 +172,3 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
         }
     }
 }
-
-# Should we disconnect from the DB?
-if ($included != TRUE) {
-    dbDisconnect();
-}
-?>

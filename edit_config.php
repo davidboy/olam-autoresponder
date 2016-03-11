@@ -58,8 +58,8 @@ if (userIsLoggedIn() || $config['admin_pass'] == '') {
 
         # Grab the new data
         $query = "SELECT * FROM InfResp_config";
-        $result = mysql_query($query) or die("Invalid query: " . mysql_error());
-        $config = mysql_fetch_assoc($result);
+        $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+        $config = $result->fetch_assoc();
 
         # Prep the data
         $max_send_count = $config['max_send_count'];
@@ -90,6 +90,3 @@ if (userIsLoggedIn() || $config['admin_pass'] == '') {
 } else {
     redirectTo('/login.php');
 }
-
-dbDisconnect();
-?>

@@ -43,10 +43,10 @@ getResponderInfo();
 
 # Is the email already on this responder?
 $query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID' AND EmailAddress = '$Email_Address'";
-$result = mysql_query($query) or die("Invalid query: " . mysql_error());
-if (mysql_num_rows($result) > 0) {
+$result = $DB->query($query) or die("Invalid query: " . $DB->error);
+if ($result->num_rows > 0) {
     # Yes, it is.
-    $result_data = mysql_fetch_assoc($result);
+    $result_data = $result->fetch_assoc();
     $DB_SubscriberID = $result_data['SubscriberID'];
     $DB_ResponderID = $result_data['ResponderID'];
     $DB_SentMsgs = $result_data['SentMsgs'];
@@ -149,8 +149,8 @@ if ($DB_OptMethod == "Double") {
     # Add a non-confirmed row to the DB
     $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
                  VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed', '$DB_IsSubscribed')";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    $DB_SubscriberID = mysql_insert_id();
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    $DB_SubscriberID = $DB->insert_id;
 
     # Send confirmation msg
     sendMessageTemplate('templates/subscribe.confirm.txt');
@@ -180,8 +180,8 @@ if ($DB_OptMethod == "Double") {
     $DB_Confirmed = "1";
     $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
                  VALUES('$DB_ResponderID','$DB_SentMsgs', '$DB_EmailAddress', '$DB_TimeJoined', '$DB_Real_TimeJoined', '$CanReceiveHTML', '$DB_LastActivity', '$DB_FirstName', '$DB_LastName', '$DB_IPaddy', '$DB_ReferralSource', '$DB_UniqueCode', '$DB_Confirmed', '$DB_IsSubscribed')";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    $DB_SubscriberID = mysql_insert_id();
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    $DB_SubscriberID = $DB->insert_id;
 
     # Handle custom fields
     addCustomFields();
