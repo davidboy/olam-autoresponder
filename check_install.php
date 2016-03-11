@@ -6,8 +6,8 @@
 
 # Does the config table exist?
 $query = "SHOW TABLES LIKE 'InfResp_config'";
-$result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-if (mysql_num_rows($result) == 0) {
+$result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+if ($result->num_rows == 0) {
     # No, the defs aren't installed!
     $contents = grabFile('defs.sql');
     if ($contents == FALSE) {
@@ -19,7 +19,7 @@ if (mysql_num_rows($result) == 0) {
     for ($i = 0; $i < sizeof($queries[1]); $i++) {
         $query = $queries[1][$i];
         # echo nl2br($query) . "<br>\n";
-        $result = mysql_query($query) OR die("Invalid query: " . nl2br(mysql_error()));
+        $DB->query($query) or die("Invalid query: " . $DB->error);
     }
 }
 

@@ -113,10 +113,10 @@ if (!(isInBlacklist($safe['EMAIL']))) {
     $resp_list = trim($resp_list, ",");
     $query = "SELECT * FROM InfResp_subscribers WHERE (EmailAddress = '" . $safe['EMAIL'] . "') AND ResponderID IN (" . $resp_list . ")";
     # echo $query . "<br>\n";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($result) > 0) {
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    if ($result->num_rows > 0) {
         # Get current data
-        $user_data = mysql_fetch_assoc($result);
+        $user_data = $result->fetch_assoc();
 
         # Get the relevant responder ID
         $attached_responder_id = $user_data['ResponderID'];
@@ -135,10 +135,10 @@ if (!(isInBlacklist($safe['EMAIL']))) {
         # Is there any custom data?
         $query = "SELECT * FROM InfResp_customfields WHERE (email_attached= '" . $safe['EMAIL'] . "') AND resp_attached IN (" . $resp_list . ")";
         # echo $query . "<br>\n";
-        $custom_result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-        if (mysql_num_rows($custom_result) > 0) {
+        $custom_result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+        if ($custom_result->num_rows > 0) {
             # Yep, get it.
-            $custom_fields = mysql_fetch_assoc($custom_result);
+            $custom_fields = $custom_result->fetch_assoc();
             $got_custom_fields = TRUE;
 
             # Delete the current custom fields?
@@ -150,7 +150,7 @@ if (!(isInBlacklist($safe['EMAIL']))) {
                     $query = "DELETE FROM InfResp_customfields WHERE email_attached = '" . $safe['EMAIL'] . "' AND resp_attached = '" . $attached_responder_id . "'";
                     # echo $query . "<br>\n";
                 }
-                $custom_delete = mysql_query($query) OR die("Invalid query: " . mysql_error());
+                $custom_delete = $DB->query($query) OR die("Invalid query: " . $DB->error);
             }
         }
 
@@ -161,7 +161,7 @@ if (!(isInBlacklist($safe['EMAIL']))) {
             } else {
                 $query = "DELETE FROM InfResp_subscribers WHERE EmailAddress = '" . $safe['EMAIL'] . "' AND ResponderID = '" . $attached_responder_id . "'";
             }
-            $delete_result = mysql_query($query) OR die("Invalid query: " . mysql_error());
+            $delete_result = $DB->query($query) OR die("Invalid query: " . $DB->error);
         }
     } else {
         # Make the data array
@@ -183,13 +183,13 @@ if (!(isInBlacklist($safe['EMAIL']))) {
     # Check for existance in new responder.
     $query = "SELECT * FROM InfResp_subscribers WHERE EmailAddress = '" . $safe['EMAIL'] . "' AND ResponderID = '" . $passed['MOVE_TO'] . "'";
     # echo $query . "<br>\n";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($result) > 0) {
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    if ($result->num_rows > 0) {
         # Update existing data
         $query = "UPDATE InfResp_subscribers SET SentMsgs = '', TimeJoined = '" . $user_data['TimeJoined'] . "', Real_TimeJoined = '" . $user_data['Real_TimeJoined'] . "', LastActivity = '" . $user_data['LastActivity'] . "', FirstName = '" . $user_data['FirstName'] . "', LastName = '" . $user_data['LastName'] . "', IP_Addy = '" . $user_data['IP_Addy'] . "', ReferralSource = '" . $user_data['ReferralSource'] . "', Confirmed = '" . $user_data['Confirmed'] . "', IsSubscribed = '" . $user_data['IsSubscribed'] . "' WHERE EmailAddress = '" . $safe['EMAIL'] . "' AND ResponderID = '" . $passed['MOVE_TO'] . "'";
 
         # echo $query . "<br>\n";
-        $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
+        $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
     } else {
         # Make a new entry?
         if ($passed['ONLYDEL'] != TRUE) {
@@ -197,8 +197,8 @@ if (!(isInBlacklist($safe['EMAIL']))) {
             $query = "INSERT INTO InfResp_subscribers (ResponderID,SentMsgs,EmailAddress,TimeJoined,Real_TimeJoined,CanReceiveHTML,LastActivity,FirstName,LastName,IP_Addy,ReferralSource,UniqueCode,Confirmed, IsSubscribed) VALUES ($insert_values)";
 
             # echo $query . "<br>\n";
-            $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-            $subscriber_id = mysql_insert_id();
+            $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+            $subscriber_id = $DB->insert_id;
 
             # Insert any custom field data
             if (($got_custom_fields == TRUE) && ($subscriber_id) && ($subscriber_id != NULL) && ($subscriber_id != "") && ($subscriber_id != 0)) {
@@ -216,7 +216,7 @@ if (!(isInBlacklist($safe['EMAIL']))) {
                 $valuestr = trim((trim($valuestr)), ",");
                 $query = "INSERT INTO InfResp_customfields ($fieldstr) VALUES($valuestr)";
                 # echo $query . "<br>\n";
-                $custom_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                $custom_result = $DB->query($query) or die("Invalid query: " . $DB->error);
             }
         }
     }

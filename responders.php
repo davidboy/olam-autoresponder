@@ -47,16 +47,16 @@ if ($action == "list") {
     include('templates/controlpanel.php');
 
     $query = "SELECT * FROM InfResp_responders ORDER BY ResponderID";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     # Top template
     $alt = TRUE;
     include('templates/list_top.responders.php');
 
     # Loop thru the list
-    if (mysql_num_rows($DB_result) > 0) {
+    if ($DB_result->num_rows > 0) {
         $i = 0;
-        while ($query_result = mysql_fetch_assoc($DB_result)) {
+        while ($query_result = $DB_result->fetch_assoc()) {
             $Responder_ID = $query_result['ResponderID'];
             $DB_ResponderID = $query_result['ResponderID'];
             $DB_ResponderName = $query_result['Name'];
@@ -191,8 +191,8 @@ if ($action == "list") {
 
     $query = "INSERT INTO InfResp_responders (Name, Enabled, ResponderDesc, OwnerEmail, OwnerName, ReplyToEmail, MsgList, OptMethod, OptInRedir, OptOutRedir, OptInDisplay, OptOutDisplay, NotifyOwnerOnSub, StartDate)
           VALUES('$Resp_Name', '$Resp_Enabled', '$Resp_Desc', '$Owner_Email', '$Owner_Name', '$Reply_To', '$Msg_List', '$OptMethod', '$OptInRedir', '$OptOutRedir', '$OptInDisp', '$OptOutDisp', '$NotifyOwner', $Start_Date_Sql)";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<H3 style=\"color : #003300\">Responder Added!</H3> \n";
@@ -246,7 +246,7 @@ if ($action == "list") {
               NotifyOwnerOnSub = '$NotifyOwner',
               StartDate = $Start_Date_Sql
           WHERE ResponderID = '$Responder_ID'";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<H3 style=\"color : #003300\">Responder Saved!</H3> \n";
@@ -265,12 +265,12 @@ if ($action == "list") {
     $DB_MsgList = trim($DB_MsgList);
 
     $query = "DELETE FROM InfResp_responders WHERE ResponderID = '$Responder_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     $query = "DELETE FROM InfResp_POP3 WHERE Attached_Responder = '$Responder_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     $MsgList_Array = explode(',', $DB_MsgList);
     $Max_Index = sizeof($MsgList_Array);
@@ -286,13 +286,13 @@ if ($action == "list") {
     for ($i = 0; $i <= $Max_Index - 1; $i++) {
         $Temp_ID = trim($MsgList_Array[$i]);
         $query = "DELETE FROM InfResp_messages WHERE MsgID = '$Temp_ID'";
-        $DB_result = mysql_query($query)
-        or die("Invalid query: " . mysql_error());
+        $DB_result = $DB->query($query)
+        or die("Invalid query: " . $DB->error);
     }
 
     $query = "DELETE FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<H3 style=\"color : #003300\">Responder Deleted!</H3> \n";
@@ -314,9 +314,9 @@ if ($action == "list") {
     getResponderInfo();
 
     $query = "SELECT * FROM InfResp_POP3 WHERE Attached_Responder = '$Responder_ID' LIMIT 1";
-    $DB_POP3_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_POP3_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
-    if (mysql_num_rows($DB_POP3_Result) < 1) {
+    if ($DB_POP3_Result->num_rows < 1) {
         # POP3 defaults.
         $DB_Attached_Responder = $Responder_ID;
         $DB_POP3_host = 'localhost';
@@ -334,13 +334,13 @@ if ($action == "list") {
 
         $insertquery = "INSERT INTO InfResp_POP3 (ThisPOP_Enabled, Confirm_Join, Attached_Responder, host, port, username, password, mailbox, HTML_YN, Delete_After_Download, Spam_Header, Concat_Middle, Mail_Type)
                    VALUES('$DB_Pop_Enabled','$DB_Confirm_Join','$DB_Attached_Responder','$DB_POP3_host','$DB_POP3_port','$DB_POP3_username','$DB_POP3_password','$DB_POP3_mailbox','$DB_HTML_YN','$DB_DeleteYN','$DB_SpamHeader','$DB_ConcatMid','$DB_Mail_Type')";
-        $DB_POP3_Insert_Result = mysql_query($insertquery)
-        or die("Invalid query: " . mysql_error());
-        if (mysql_affected_rows() > 0) {
-            $DB_POP_ConfID = mysql_insert_id();
+        $DB_POP3_Insert_Result = $DB->query($insertquery)
+        or die("Invalid query: " . $DB->error);
+        if ($DB->affected_rows > 0) {
+            $DB_POP_ConfID = $DB->insert_id;
         }
     } else {
-        $POP3_Result = mysql_fetch_assoc($DB_POP3_Result);
+        $POP3_Result = $DB_POP3_Result->fetch_assoc();
         $DB_POP_ConfID = $POP3_Result['POP_ConfigID'];
         $DB_Pop_Enabled = $POP3_Result['ThisPOP_Enabled'];
         $DB_Confirm_Join = $POP3_Result['Confirm_Join'];
@@ -366,14 +366,14 @@ if ($action == "list") {
 } elseif ($action == "custom_stuff") {
 
     $query = "SELECT * FROM InfResp_customfields WHERE resp_attached = '$Responder_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     print "<br>\n";
 
-    if (mysql_num_rows($DB_result) > 0) {
+    if ($DB_result->num_rows > 0) {
         $i = 0;
-        while ($DBarray = mysql_fetch_assoc($DB_result)) {
+        while ($DBarray = $DB_result->fetch_assoc()) {
             foreach ($DBarray as $key => $value) {
                 print "$key: $value <br>\n";
             }
@@ -402,8 +402,8 @@ if ($action == "list") {
     header("Expires: 0");
 
     $query = "SELECT * FROM InfResp_customfields WHERE resp_attached = '$Responder_ID'";
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     $CustomFieldsArray = getFieldNames('InfResp_customfields');
     $fieldstr = "";
@@ -413,7 +413,7 @@ if ($action == "list") {
     $fieldstr = trim(trim($fieldstr), ",");
     print "$fieldstr\n";
 
-    while ($DBarray = mysql_fetch_assoc($DB_result)) {
+    while ($DBarray = $DB_result->fetch_assoc()) {
         $datastr = "";
         foreach ($CustomFieldsArray as $key => $value) {
             $datastr .= $DBarray[$value] . ",";
@@ -477,7 +477,7 @@ if ($action == "list") {
              Concat_Middle = '$cmid',
              Mail_Type = '$type'
          WHERE Attached_Responder = '$Responder_ID'";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<H3 style=\"color : #003300\">POP3 changes saved!</H3> \n";

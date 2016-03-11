@@ -25,17 +25,17 @@ function runUserQuery($query)
         $Limitedquery = $query;
     }
 
-    $DB_MaxList_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    $DB_search_result = mysql_query($Limitedquery) or die("Invalid query: " . mysql_error());
-    $Max_Results_Count = mysql_num_rows($DB_MaxList_result) - 1;
+    $DB_MaxList_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    $DB_search_result = $DB->query($Limitedquery) or die("Invalid query: " . $DB->error);
+    $Max_Results_Count = $DB_MaxList_result->num_rows - 1;
 
-    if (mysql_num_rows($DB_search_result) > 0) {
+    if ($DB_search_result->num_rows > 0) {
         # User top template
         $alt = FALSE;
         include('templates/listuser_top.admin.php');
 
         # Display the rows
-        while ($search_query_result = mysql_fetch_assoc($DB_search_result)) {
+        while ($search_query_result = $DB_search_result->fetch_assoc()) {
             $DB_SubscriberID = $search_query_result['SubscriberID'];
             $DB_ResponderID = $search_query_result['ResponderID'];
             $DB_SentMsgs = $search_query_result['SentMsgs'];
@@ -240,7 +240,7 @@ if ($action == "edit_users") {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
         } else if (userWasSubscribed()) {
             $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
-            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+            $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
             print "<strong>Resubscribed: $Email_Address </strong><br>\n";
         } else {
             if (($EmailToAdd[$i] != "") AND ($EmailToAdd[$i] != NULL) AND (!(isInBlacklist($EmailToAdd[$i])))) {
@@ -248,7 +248,7 @@ if ($action == "edit_users") {
                 $Timestamper = time();
                 $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
                                      VALUES('$AddToResp[$i]','$Blank', '$EmailToAdd[$i]', '$Timestamper', '$Timestamper', '$SendHTML[$i]', '$Timestamper', '$FirstNameArray[$i]', '$LastNameArray[$i]', 'Added Manually', 'Manual Add', '$uniq_code', '1', '1')";
-                $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
                 print "<strong>Added: $Email_Address </strong><br>\n";
             }
         }
@@ -297,15 +297,15 @@ if ($action == "edit_users") {
                         Confirmed      = '$Confirmed',
                         IsSubscribed   = '$IsSubscribed'
                 WHERE SubscriberID = '$Subscriber_ID'";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     $FullName = "$FirstName $LastName";
     $query = "UPDATE InfResp_customfields
                                SET email_attached = '$Search_EmailAddress',
                                        full_name = '$FullName'
                            WHERE user_attached = '$Subscriber_ID'";
-    $result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<H3 style=\"color : #003300\">Subscriber Saved!</H3> \n";
@@ -317,12 +317,12 @@ if ($action == "edit_users") {
 } elseif ($action == "sub_delete_do") {
     $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
 
-    $DB_result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID'";
-    $result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Done!
     print "<br> \n";
@@ -385,7 +385,7 @@ if ($action == "edit_users") {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
         } else if (userWasSubscribed()) {
             $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
-            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+            $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
             print "<strong>Resubscribed: $Email_Address </strong><br>\n";
         } else {
             if (($Email_Address != "") AND ($Email_Address != NULL) AND (!(isInBlacklist($Email_Address)))) {
@@ -393,7 +393,7 @@ if ($action == "edit_users") {
                 $uniq_code = generateUniqueCode();
                 $query = "INSERT INTO InfResp_subscribers (ResponderID, SentMsgs, EmailAddress, TimeJoined, Real_TimeJoined, CanReceiveHTML, LastActivity, FirstName, LastName, IP_Addy, ReferralSource, UniqueCode, Confirmed, IsSubscribed)
                                      VALUES('$Responder_ID','$Blank', '$Email_Address', '$Timestamper', '$Timestamper', '$HandleHTML', '$Timestamper', '$Blank', '$Blank', '$Blank', 'Bulk Add', '$uniq_code', '1', '1')";
-                $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+                $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
                 print "Added: $Email_Address <br>\n";
             }
         }
@@ -419,21 +419,21 @@ if ($action == "edit_users") {
     include('templates/back_button.admin.php');
 } elseif ($action == "custom_edit") {
     $query = "SELECT * FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID' OR (resp_attached = '$Responder_ID' AND email_attached = '$Search_EmailAddress')";
-    $result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
-    if (mysql_num_rows($result) < 1) {
+    if ($result->num_rows < 1) {
         $query = "INSERT INTO InfResp_customfields (user_attached, resp_attached, email_attached) VALUES('$Subscriber_ID','$Responder_ID','$Search_EmailAddress')";
-        $DB_result = mysql_query($query)
-        or die("Invalid query: " . mysql_error());
+        $DB_result = $DB->query($query)
+        or die("Invalid query: " . $DB->error);
     }
 
     $CustomFieldsArray = getFieldNames('InfResp_customfields');
     $query = "SELECT * FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID' OR (resp_attached = '$Responder_ID' AND email_attached = '$Search_EmailAddress') LIMIT 1";
-    $result = mysql_query($query)
-    or die("Invalid query: " . mysql_error());
+    $result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
-    $DBarray = mysql_fetch_assoc($result);
+    $DBarray = $result->fetch_assoc();
 
     foreach ($CustomFieldsArray as $key => $value) {
         if (empty($DBarray[$value])) {
@@ -499,15 +499,15 @@ if ($action == "edit_users") {
 
     # Query it
     $query = "SELECT * FROM InfResp_responders ORDER BY ResponderID";
-    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
-    if (mysql_num_rows($DB_result) > 0) {
+    if ($DB_result->num_rows > 0) {
         # List top template
         $alt = FALSE;
         include('templates/resplist_top.admin.php');
 
         $i = 0;
-        while ($query_result = mysql_fetch_assoc($DB_result)) {
+        while ($query_result = $DB_result->fetch_assoc()) {
             $DB_ResponderID = $query_result['ResponderID'];
             $DB_RespEnabled = $query_result['Enabled'];
             $DB_ResponderName = $query_result['Name'];
@@ -524,8 +524,8 @@ if ($action == "edit_users") {
             $DB_NotifyOnSub = $query_result['NotifyOwnerOnSub'];
 
             $Count_query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$DB_ResponderID' AND IsSubscribed = '1'";
-            $DB_Count_result = mysql_query($Count_query) or die("Invalid query: " . mysql_error());
-            $User_Count = mysql_num_rows($DB_Count_result);
+            $DB_Count_result = $DB->query($Count_query) or die("Invalid query: " . $DB->error);
+            $User_Count = $DB_Count_result->num_rows;
 
             # List row template
             $alt = (!($alt));

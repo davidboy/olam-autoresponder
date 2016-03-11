@@ -11,7 +11,7 @@ requireUserToBeLoggedIn();
 
 function bouncerExists($bouncer_id)
 {
-    global $DB_LinkID;
+    global $DB;
 
     # Bounds check
     if (isEmpty($bouncer_id)) {
@@ -26,8 +26,8 @@ function bouncerExists($bouncer_id)
 
     # Check for it's existance
     $query = "SELECT * FROM InfResp_Bouncers WHERE BouncerID = '$bouncer_id'";
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($result) > 0) {
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($result->num_rows > 0) {
         return TRUE;
     } else {
         return FALSE;
@@ -36,15 +36,15 @@ function bouncerExists($bouncer_id)
 
 function bouncerAddressExists($address)
 {
-    global $DB_LinkID;
+    global $DB;
 
     # Grab addy
     $address = trim(strtolower($address));
 
     # Check for it's existance
     $query = "SELECT * FROM InfResp_Bouncers WHERE EmailAddy = '$address'";
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($result) > 0) {
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($result->num_rows > 0) {
         return TRUE;
     } else {
         return FALSE;
@@ -56,8 +56,8 @@ function unassignedAddressPulldown()
     # Make a hash of currently assigned bouncer addresses
     $assigned = array();
     $query = "SELECT EmailAddy FROM InfResp_Bouncers";
-    $DB_result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    while ($data = mysql_fetch_assoc($DB_result)) {
+    $DB_result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    while ($data = $DB_result->fetch_assoc()) {
         $addy = strtolower(trim($data['EmailAddy']));
         $assigned[$addy] = TRUE;
     }
@@ -66,8 +66,8 @@ function unassignedAddressPulldown()
     $unassigned = array();
     $found_some = FALSE;
     $query = "SELECT OwnerEmail,ReplyToEmail FROM InfResp_responders";
-    $DB_result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    while ($data = mysql_fetch_assoc($DB_result)) {
+    $DB_result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    while ($data = $DB_result->fetch_assoc()) {
         foreach ($data as $key => $value) {
             $addy = strtolower(trim($value));
             if ((!(isInArray($unassigned, $addy))) && ($assigned[$addy] != TRUE)) {
@@ -149,8 +149,8 @@ if ($action == "create") {
 } elseif (($action == "edit") && (bouncerExists($bouncer_id))) {
     # Query DB - We already know there's a row for it.
     $query = "SELECT * FROM InfResp_Bouncers WHERE BouncerID = '$bouncer_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    $data = mysql_fetch_assoc($result);
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    $data = $result->fetch_assoc();
 
     # Show the template
     $heading = "Edit a Bouncer";
@@ -161,8 +161,8 @@ if ($action == "create") {
 } elseif (($action == "delete") && (bouncerExists($bouncer_id))) {
     # Query DB - We already know there's a row for it.
     $query = "SELECT * FROM InfResp_Bouncers WHERE BouncerID = '$bouncer_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    $data = mysql_fetch_assoc($result);
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    $data = $result->fetch_assoc();
 
     # Show the template
     $return_action = "list";
@@ -271,7 +271,7 @@ if ($action == "create") {
     } elseif (($action == "do_delete") && (bouncerExists($bouncer_id))) {
         # Delete from the bouncer table
         $query = "DELETE FROM InfResp_Bouncers WHERE BouncerID = '$bouncer_id'";
-        $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
+        $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
 
         # Done! Take us back...
         print "<p class=\"big_header\">Bouncer deleted!</p>\n";
@@ -283,14 +283,13 @@ if ($action == "create") {
 
     # Show the page
     $query = "SELECT * FROM InfResp_Bouncers";
-    $DB_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($DB_Result) > 0) {
+    $DB_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($DB_result->num_rows > 0) {
         # Top template
         include('templates/list_top.bouncers.php');
 
         # Run the list
-        for ($i = 0; $i < mysql_num_rows($DB_Result); $i++) {
-            $data = mysql_fetch_assoc($DB_Result);
+        while($data = $DB_Result->fetch_assoc()) {
 
             # Show the template
             include('templates/list_row.bouncers.php');

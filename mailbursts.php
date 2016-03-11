@@ -11,7 +11,7 @@ requireUserToBeLoggedIn();
 
 function mailMessageExists($mail_id = "0")
 {
-    global $DB_LinkID;
+    global $DB;
 
     # Bounds check
     if (isEmpty($mail_id)) {
@@ -26,8 +26,8 @@ function mailMessageExists($mail_id = "0")
 
     # Check for it's existance
     $query = "SELECT * FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($result) > 0) {
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($result->num_rows > 0) {
         return TRUE;
     } else {
         return FALSE;
@@ -38,7 +38,7 @@ function mailMessageExists($mail_id = "0")
 
 function getSendFigures()
 {
-    global $DB_LinkID, $mail_id;
+    global $DB, $mail_id;
 
     # Init
     $the_math['total'] = 0;
@@ -47,10 +47,10 @@ function getSendFigures()
 
     # Query it
     $query = "SELECT * FROM InfResp_mail_cache WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query, $DB_LinkID) or die("Invalid query: " . mysql_error());
-    for ($i = 0; $i < mysql_num_rows($result); $i++) {
+    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    for ($i = 0; $i < $result->num_rows; $i++) {
         # Grab query results
-        $this_row = mysql_fetch_assoc($result);
+        $this_row = $result->fetch_assoc();
 
         # Tally it
         if ($this_row['Status'] == 'queued') {
@@ -61,7 +61,7 @@ function getSendFigures()
     }
 
     # Tally it up
-    $the_math['total'] = mysql_num_rows($result);
+    $the_math['total'] = $result->num_rows;
     if ($the_math['total'] == 0) {
         $the_math['percent'] = 100;
     } else {
@@ -154,21 +154,20 @@ if ($action == "create") {
     # Add the burst message to the DB
     $timestamp = time();
     $query = "INSERT INTO InfResp_mail (ResponderID,Closed,Subject,TEXT_msg,HTML_msg,Time_To_Send,Time_Sent) VALUES ('$Responder_ID','0','$P_subj','$P_bodytext','$P_bodyhtml','$time_to_send','$timestamp')";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    $mail_id = mysql_insert_id();
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    $mail_id = $DB->insert_id;
 
     # Get the subscriber list for this responder
     $query = "SELECT * FROM InfResp_subscribers WHERE ResponderID = '$Responder_ID'";
-    $DB_Subscriber_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    for ($i = 0; $i < mysql_num_rows($DB_Subscriber_Result); $i++) {
+    $DB_Subscriber_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    while ($this_row = $DB_Subscriber_Result->fetch_assoc()) {
         # Grab query results
-        $this_row = mysql_fetch_assoc($DB_Subscriber_Result);
         $subscriber_id = $this_row['SubscriberID'];
 
         # Add the cache entries for this subscriber if they're confirmed
         if ($this_row['Confirmed'] == 1) {
             $query = "INSERT INTO InfResp_mail_cache (Mail_ID,SubscriberID,Status,LastActivity) VALUES ('$mail_id','$subscriber_id','queued','$timestamp')";
-            $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
+            $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
         }
     }
 
@@ -179,8 +178,8 @@ if ($action == "create") {
 } elseif (($action == "edit") && (mailMessageExists($mail_id))) {
     # Query DB - We already know there's a row for it.
     $query = "SELECT * FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    $this_msg = mysql_fetch_assoc($result);
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    $this_msg = $result->fetch_assoc();
 
     # Init vars
     $subject = $this_msg['Subject'];
@@ -243,7 +242,7 @@ if ($action == "create") {
 
     # Do the update
     $query = "UPDATE InfResp_mail SET Subject = '$P_subj', TEXT_msg = '$P_bodytext', HTML_msg = '$P_bodyhtml', Time_To_Send = '$time_to_send' WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
 
     # Done! Take us back...
     $return_action = "list";
@@ -252,9 +251,9 @@ if ($action == "create") {
 } elseif (($action == "pause") && (mailMessageExists($mail_id))) {
     # Toggle pause
     $query = "SELECT * FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($result) > 0) {
-        $this_row = mysql_fetch_assoc($result);
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    if ($result->num_rows > 0) {
+        $this_row = $result->fetch_assoc();
         if ($this_row['Closed'] == "0") {
             $msg = "<br><center>Message paused!</center><br><br>\n";
             $toggle_query = "UPDATE InfResp_mail SET Closed = '1' WHERE Mail_ID = '$mail_id'";
@@ -262,7 +261,7 @@ if ($action == "create") {
             $msg = "<br><center>Message re-activated!</center><br><br>\n";
             $toggle_query = "UPDATE InfResp_mail SET Closed = '0' WHERE Mail_ID = '$mail_id'";
         }
-        $tog_result = mysql_query($toggle_query) or die("Invalid query: " . mysql_error());
+        $tog_result = $DB->query($toggle_query) or die("Invalid query: " . $DB->error);
 
         # Show screen msg
         $return_action = "edit";
@@ -272,8 +271,8 @@ if ($action == "create") {
 } elseif (($action == "delete") && (mailMessageExists($mail_id))) {
     # Query DB - We already know there's a row for it.
     $query = "SELECT * FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
-    $this_msg = mysql_fetch_assoc($result);
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
+    $this_msg = $result->fetch_assoc();
 
     # Init vars
     $subject = $this_msg['Subject'];
@@ -303,11 +302,11 @@ if ($action == "create") {
 } elseif (($action == "do_delete") && (mailMessageExists($mail_id))) {
     # Delete from the mail table
     $query = "DELETE FROM InfResp_mail WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
 
     # Delete from the mail cache table
     $query = "DELETE FROM InfResp_mail_cache WHERE Mail_ID = '$mail_id'";
-    $result = mysql_query($query) OR die("Invalid query: " . mysql_error());
+    $result = $DB->query($query) OR die("Invalid query: " . $DB->error);
 
     # Done! Take us back...
     $return_action = "list";
@@ -324,14 +323,13 @@ if ($action == "create") {
 
     $alt = TRUE;
     $query = "SELECT * FROM InfResp_mail WHERE ResponderID = '$Responder_ID'";
-    $DB_Mail_Result = mysql_query($query) or die("Invalid query: " . mysql_error());
-    if (mysql_num_rows($DB_Mail_Result) > 0) {
+    $DB_Mail_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    if ($DB_Mail_Result->num_rows > 0) {
         # Top template
         include('templates/list_top.mailbursts.php');
 
-        for ($i = 0; $i < mysql_num_rows($DB_Mail_Result); $i++) {
+        while($this_msg = $DB_Mail_Result->fetch_assoc()) {
             # Mail_ID, ResponderID, Closed, Subject, TEXT_msg, HTML_msg, Time_Sent
-            $this_msg = mysql_fetch_assoc($DB_Mail_Result);
 
             # Init vars
             $timesent = date('l, dS \of F Y h:i:s A', $this_msg['Time_Sent']);
