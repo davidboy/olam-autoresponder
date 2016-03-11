@@ -277,8 +277,6 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                             file_exists(__DIR__ . '/storage/' . $msg_data['attachmentStorageName'])
                         ) {
                             $mail->addAttachment(__DIR__ . '/storage/' . $msg_data['attachmentStorageName'], $msg_data['attachmentName']);
-                        } else {
-                            echo '<br />NO ATTACHMENT<br />';
                         }
 
                         if ($mail->send()) {
