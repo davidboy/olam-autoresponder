@@ -300,7 +300,7 @@ if ($action == "edit_users") {
                         ReferralSource = '$Ref_Src',
                         UniqueCode     = '$UniqueCode',
                         Confirmed      = '$Confirmed',
-                        IsSubscribed   = '$IsSubscribed'
+                        IsSubscribed   = '1'
                 WHERE SubscriberID = '$Subscriber_ID'";
     $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
