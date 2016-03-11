@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Olam Autoresponder.
 // Copyright (c) 2014-2016 Aaron Colman and Adaptive Business Design.
 // Copyright (c) 2016 Anna Burdette, Benjamin Jobson, and David Reed.
@@ -14,13 +15,3 @@
 //
 // You should have received a copy of the GNU General Public License
 //     along with Olam Autoresponder.  If not, see <http://www.gnu.org/licenses/>.
-
-include('common.php');
-$redir_URL = $siteURL . $ResponderDirectory . '/admin.php';
-header("Location: $redir_URL");
-print "<br>\n";
-print "Now loading the control panel...<br>\n";
-print "<br>\n";
-print "If your browser doesn't support redirects then you'll need to <A HREF=\"$redir_URL\">click here.</A><br>\n";
-print "<br>\n";
-?>
