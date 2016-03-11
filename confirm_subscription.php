@@ -121,7 +121,7 @@ if ($type == "s") {
         sendMessageTemplate('templates/subscriber_left.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
     }
 
-    # Delete from DB
+    # Set the user's status to unsubscribed, but leave them in the database if they want to resubscribe later
     $query = "DELETE FROM InfResp_subscribers WHERE SubscriberID = '$DB_SubscriberID'";
     $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
     $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID'";

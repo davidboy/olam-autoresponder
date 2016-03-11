@@ -101,7 +101,7 @@ if ($config['daily_count'] <= $config['daily_limit']) {
     }
     $DB_Responder_Result->free();
 
-    # Cache the subscribers
+    # Cache the subscribers that are currently subscribed
     $query = "SELECT * FROM InfResp_subscribers WHERE Confirmed = '1' AND IsSubscribed = '1' ORDER BY ResponderID";
     $DB_Subscriber_Result = $DB->query($query) or die("Invalid query: " . $DB->error);
     while ($this_row = $DB_Subscriber_Result->fetch_assoc()) {
