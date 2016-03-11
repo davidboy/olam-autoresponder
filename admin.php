@@ -236,14 +236,17 @@ if ($action == "edit_users") {
         $Responder_ID = $AddToResp[$i];
         $Email_Address = $EmailToAdd[$i];
 
+        # Check if the input email is currently subscribed to the responder
         if (userIsSubscribed()) {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
+        # Check if the input email is in the database but has unsubscribed
         } else if (userWasSubscribed()) {
             $Timestamper = time();
             $query = "UPDATE InfResp_subscribers SET TimeJoined = '$Timestamper', Real_TimeJoined = '$Timestamper', CanReceiveHTML = '$SendHTML[$i]', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
             $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
             print "<strong>Resubscribed: $Email_Address </strong><br>\n";
+        # Enter a new email/user into the database
         } else {
             if (($EmailToAdd[$i] != "") AND ($EmailToAdd[$i] != NULL) AND (!(isInBlacklist($EmailToAdd[$i])))) {
                 $uniq_code = generateUniqueCode();
@@ -318,11 +321,10 @@ if ($action == "edit_users") {
     include('templates/back_button.admin.php');
 } elseif ($action == "sub_delete_do") {
     $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
-
     $DB_result = $DB->query($query)
     or die("Invalid query: " . $DB->error);
 
-    # $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID'";
+    $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID'";
     $result = $DB->query($query)
     or die("Invalid query: " . $DB->error);
 

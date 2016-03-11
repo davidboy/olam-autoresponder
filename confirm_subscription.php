@@ -122,10 +122,13 @@ if ($type == "s") {
     }
 
     # Delete from DB
-    $query = "DELETE FROM InfResp_subscribers WHERE SubscriberID = '$DB_SubscriberID'";
-    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
-    $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID'";
-    $result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
+    $DB_result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
+
+    $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$Subscriber_ID'";
+    $result = $DB->query($query)
+    or die("Invalid query: " . $DB->error);
 
     # Redirect or template
     if ((trim($DB_OptOutRedir)) == "") {
