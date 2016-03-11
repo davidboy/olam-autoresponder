@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Olam Autoresponder.
 // Copyright (c) 2004-2007 Aaron Colman and Adaptive Business Design.
 // Copyright (c) 2016 Anna Burdette, Benjamin Jobson, and David Reed.
@@ -14,8 +15,3 @@
 //
 // You should have received a copy of the GNU General Public License
 //     along with Olam Autoresponder.  If not, see <http://www.gnu.org/licenses/>.
-
-include_once('common.php');
-
-resetUserSession();
-redirectTo('/admin.php');

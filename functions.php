@@ -1,8 +1,19 @@
 <?php
-# ------------------------------------------------
-# License and copyright:
-# See license.txt for license information.
-# ------------------------------------------------
+// This file is part of Olam Autoresponder.
+// Copyright (c) 2004-2007 Aaron Colman and Adaptive Business Design.
+// Copyright (c) 2016 Anna Burdette, Benjamin Jobson, and David Reed.
+//
+// Olam Autoresponder is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, version 2.
+//
+// Olam Autoresponder is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+//     along with Olam Autoresponder.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once 'password.php';
 require_once 'evilness-filter.php';
@@ -429,13 +440,13 @@ function processMessageTags()
     $UnsubMSG_HTML = "$newline<br><br>------------------------------------------------<br>$newline";
     $UnsubMSG_HTML .= "<A HREF=\"$UnsubURL\">Unsubscribe link</A><br>$newline";
     if ($cop != TRUE) {
-        $UnsubMSG_HTML .= "This responder is Powered By Infinite Responder! <A HREF=\"http://infinite.ibasics.biz\">http://infinite.ibasics.biz</A><br>$newline";
+        $UnsubMSG_HTML .= "This responder is Powered By Olam Autoresponder! <A HREF=\"https://github.com/davidboy/olam-autoresponder\">https://github.com/davidboy/olam-autoresponder</A><br>$newline";
     }
 
     $UnsubMSG_Text = "$newline------------------------------------------------$newline";
     $UnsubMSG_Text .= "Unsubscribe: $UnsubURL $newline";
     if ($cop != TRUE) {
-        $UnsubMSG_Text .= "This responder is Powered By Infinite Responder! http://infinite.ibasics.biz $newline";
+        $UnsubMSG_Text .= "This responder is Powered By Olam Autoresponder! https://github.com/davidboy/olam-autoresponder $newline";
     }
 
     $Unsub_Pattern = '/%unsub_msg%/i';
@@ -730,7 +741,7 @@ function sendMessageTemplate($filename = "", $to_address = "", $from_address = "
     $Message_Headers .= "Sender-IP: " . $_SERVER["SERVER_ADDR"] . $newline;
     $Message_Headers .= "MIME-Version: 1.0$newline";
     $Message_Headers .= "Priority: normal$newline";
-    $Message_Headers .= "X-Mailer: Infinite Responder$newline";
+    $Message_Headers .= "X-Mailer: Olam Autoresponder$newline";
 
     # Generate the body
     if ($CanReceiveHTML == 1) {
@@ -914,7 +925,7 @@ function copyright($check = FALSE)
     # turn off the banner. This helps us to continue further development.
     #
     print "<br><br><center>\n";
-    print "<A HREF=\"http://infinite.ibasics.biz\"><img src=\"$siteURL$ResponderDirectory/images/powered-by.gif\" alt=\"Powered by Infinite Responder!\" height=\"50\" width=\"100\" border=\"0\"></A><br>\n";
+    print "<A HREF=\"https://github.com/davidboy/olam-autoresponder\"><img src=\"$siteURL$ResponderDirectory/images/powered-by.gif\" alt=\"Powered by Olam Autoresponder!\" height=\"50\" width=\"100\" border=\"0\"></A><br>\n";
     print "<br></center> \n";
 }
 

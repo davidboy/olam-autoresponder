@@ -1,8 +1,4 @@
 <?php
-# ------------------------------------------------
-# License and copyright:
-# See license.txt for license information.
-# ------------------------------------------------
 
 # Database information goes here. Server, user, password and database.
 $MySQL_server   = 'localhost';

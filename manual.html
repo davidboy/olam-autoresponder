@@ -1,6 +1,6 @@
 <html>
 <head>
- <title>Infinite Responder Manual</title>
+ <title>Olam Autoresponder Manual</title>
  <link rel="stylesheet" type="text/css" href="templates/main.css">
  <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
 </head>
@@ -8,7 +8,7 @@
 
 <a name="top"></a>
 <br />
-<p class="big_header">Infinite Responder Manual</p>
+<p class="big_header">Olam Autoresponder Manual</p>
 
 <a name="sections"></a>
 <p class="manual_topic">Sections:</p>
@@ -43,10 +43,7 @@
    <li><a href="#tags">Message Tags</a></li>
    <li><a href="#sendmails.php">Sendmails.php</a></li>
    <li><a href="#checkers">Bounce and Mail Checker</a></li>
-   <li><a href="#remotesub">Remove Subscription Handling</a></li>
    <li><a href="#copyright">License and Copyrights</a></li>
-   <li><a href="#support">Getting Help</a></li>
-   <li><a href="#custommods">Custom Changes & Additions</a></li>
    <li><a href="#spamtips">Tips for Avoiding Spam Filters</a></li>
    <li><a href="#theend">The End...</a></li>
 </ol>
@@ -66,13 +63,9 @@ MySQL 4 or greater (MySQL 5 is highly recommended)</p>
 <a name="installation"></a>
 <p class="manual_topic">Install process</p>
 
-<p class="manual_text">
-<em>Note:</em> I do offer professional installations of this package for $30 provided that you have the required system (PHP 4+, MySQL 4+). I know that a lot of people won't need this, and that's fine... but given how cheap I'm making it there's no reason to teach yourself MySQL and PHP just to install it. Your time is valuable, use it wisely.
-</p>
+<p class="manual_text">Installing this app is pretty straight forward. As with any php program that needs database access you first need to set up your database. You can use a previously existing DB if you want, but only 1 copy of Olam Autoresponder can run per database. Otherwise simply create a new DB, setup a user (user and password) and assign the user to the newly created database. The user needs permission to create, insert, delete, alter and create tables.</p>
 
-<p class="manual_text">Installing this app is pretty straight forward. As with any php program that needs database access you first need to set up your database. You can use a previously existing DB if you want, but only 1 copy of Infinite Responder can run per database. Otherwise simply create a new DB, setup a user (user and password) and assign the user to the newly created database. The user needs permission to create, insert, delete, alter and create tables.</p>
-
-<p class="manual_text">After the database is created unpack the Infinite Responder zip file into a directory on your hard drive. Edit config.php and put in the database and user information there. Save the file and upload all of the files to your server, retaining directory structure (there needs to be a templates, images and jscripts folder w/ all of the same subfolders and all of the files in the right subfolders).</p>
+<p class="manual_text">After the database is created unpack the Olam Autoresponder zip file into a directory on your hard drive. Edit config.php and put in the database and user information there. Save the file and upload all of the files to your server, retaining directory structure (there needs to be a templates, images and jscripts folder w/ all of the same subfolders and all of the files in the right subfolders).</p>
 
 <p class="manual_text">Once the files are on the server go to:<br />
 http://yourdomain.com/respdir/admin.php</p>
@@ -89,8 +82,6 @@ Crontab is an program that runs the background of most unix servers. All it does
 <p class="manual_text">crontab -e</p>
 
 <p class="manual_text">From a *nix command line. Also, a lot of hosts offer a crontab utility that gives you access to the crontab from a control panel. Setting up a crontab isn't simple if you have no unix experience. It's doubly difficult as the standard editor is VI, a very complex editor that is difficult for beginners to learn.</p>
-
-<p class="manual_text">If you have MySQL and PHP on your server I offer custom installations for only $30.</p>
 
 <p class="manual_text">
 Once you get into the crontab edit you need to figure out 4 things:<br />
@@ -229,7 +220,7 @@ Now just add all of it together.</p>
 
 <p class="manual_text"><strong>Admin username/pass:</strong> Simple enough. Set this to whatever you want. Change as often as you want.</p>
 
-<p class="manual_text"><strong>Enable TinyMCE:</strong> TinyMCE is a stand-alone plugin designed by Moxiecode. It's under a seperate license (LGPL) and can be enabled or disabled. It's the HTML editor that's used in the various html areas. Disabling this will convert those areas to simple textareas instead of active html areas. I tend to like the html editor, but if you're operating under a stricter licensing situation and don't want to pay for a seperate tinyMCE license then you may need to disable this.</p>
+<p class="manual_text"><strong>Enable TinyMCE:</strong> TinyMCE is a stand-alone plugin designed by Moxiecode. It's under a seperate license (LGPL) and can be enabled or disabled. It's the HTML editor that's used in the various html areas. Disabling this will convert those areas to simple textareas instead of active html areas.</p>
 
 <p class="manual_text"><a href="#sections"><< Section List</a></p>
 
@@ -460,80 +451,20 @@ Hello %subr_firstname%</p>
 <p class="manual_text"><a href="#sections"><< Section List</a></p>
 
 
-<a name="remotesub"></a>
-<p class="manual_topic">Remote subscriptions</p>
-<p class="manual_text">Since I designed this to be email-course friendly, I figured someone out there might want to use this to handle subscriptions advertised by others. Ie: Design an email course for your affiliates to give away, but let them handle the form capture from their end to build both of your subscriber bases.</p>
-
-<p class="manual_text">For this reason the subscribe routine has a silent subscription feature that will disable all normal output, including the template files and redirects. It won't, however, disable the confirmation message sent to their email address for double opt-in lists.</p>
-
-<p class="manual_text">
-s variables:<br />
-e = The email address<br />
-f = first name<br />
-l = last name<br />
-f = full name<br />
-r = The responder ID<br />
-a = "sub"<br />
-h = 1 for HTML email. 0 for text.<br />
-s = 1 for silent sub, 0 for normal.<br />
-ref = referral source<br />
-
-So lets say you want to set this up from yourdomain.com under /course:<br>
-http://www.yourdomain.com/course/s.php?e=$email&r=$resp&a=sub&h=$html&s=1
-</p>
-
-<p class="manual_text">Then simply set up your PHP variables: $email, $resp and $html. At that point, all you have to do is call that link somehow. You can use a redirect, a silent post/get or even an image load to seamlessly start the confirmation process from any other site.</p>
-
-<p class="manual_text">if you trust other sites to sign up users directly you can even turn off the silent feature, enable single opt-in and set the redirect to another page. Users passed to it will be signed up and sent on to your redirect.</p>
-
-<p class="manual_text"><a href="#sections"><< Section List</a></p>
-
-
 <a name="copyright"></a>
 <p class="manual_topic">License and copyright</p>
-This app is copyright 2004, 2005, 2006 and 2007 by Aaron Colman and Adaptive Business Design and released under the GPL. The GPL requires that you maintain proper credit (the image at the bottom and links in the unsubscribe messages) and that any changes you make be redistributed. You can post code changes to the forum or send them to me via email, I'll repost them for others. Removing the "powered by" and credit links without an alternate license may effect your ability to receive support in the forums.</p>
+This app is copyright 2016 by Anna Burdette, Benjamin Jobson, and David Reed and released under the GPL. The GPL requires that you maintain proper credit and that any changes you make be redistributed. You must post any changes to this project to a repository on GitHub, another project hosting site, or some other publicly accessible location.</p>
 
 <p class="manual_text">A copy of the GPL can be found in this distribution as gpl.txt.</p>
 
-<p class="manual_text">Some plugins (namely tinyMCE) operate under a different license. TinyMCE, written by Moxiecode at <A HREF="http://tinymce.moxiecode.com/" target="_blank">http://tinymce.moxiecode.com/</A> is an open source LGPL html editor. It's seperately licensed and any changes you make specifically to it may require something different.</p>
-
-<p class="manual_text">There are, however, some situations where the GPL isn't the perfect option. If you have clients and need to rebrand the script to fit their site, or if you want to operate w/o the image banner or links in the unsub message. We offer additional licensing capabilities that can allow you to rebrand and make changes w/o redistribution. These also usually include free email support for up to a year, too, so they're generally worth it. Check the website for more information about alternate licensing options.</p>
-
-<p class="manual_text">These alternate licenses cannot expand to cover TinyMCE (or any other plugin) however. If you need a license specifically for that you can get one at <A HREF="http://tinymce.moxiecode.com/" target="_blank">http://tinymce.moxiecode.com/</A> that will cover your needs. You can also disable tinyMCE via the config screen if this becomes a problem for you.</p>
+<p class="manual_text">Some parts of this project operate under a different license. TinyMCE, written by Moxiecode at <A HREF="http://tinymce.moxiecode.com/" target="_blank">http://tinymce.moxiecode.com/</A>, and PHPMailer, written by multiple authors at <a href="https://github.com/PHPMailer/PHPMailer/">https://github.com/PHPMailer/PHPMailer/</a>, are licensed under the LGPL (<a href="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</a>).  Olam Autoresponder's login system also makes use of a library written by Anthony Ferrara, which is licensed under the MIT License (<a href="http://www.opensource.org/licenses/mit-license.html">http://www.opensource.org/licenses/mit-license.html</a>)</p>
 
 <p class="manual_text"><a href="#sections"><< Section List</a></p>
-
-
-<a name="support"></a>
-<p class="manual_topic">Support</p>
-<p class="manual_text">Support is provided at the forums for anyone that needs it. Check <A HREF="http://infinite.ibasics.biz" target="_blank">http://infinite.ibasics.biz</A> for more information. For those with more specific needs I can provide some limited email support (or unlimited support can be purchased if you need it) or even a telephone support agreement if you need it. If you've paid for a custom installation you'll have 30 days of unlimited email support where I can step you thru any problems you have.</p>
-
-<p class="manual_text"><a href="#sections"><< Section List</a></p>
-
-
-<a name="custommods"></a>
-<p class="manual_topic">Custom mods</p>
-<p class="manual_text">Custom changes or additions to this application are available. Visit <A HREF="http://infinite.ibasics.biz" target="_blank">http://infinite.ibasics.biz</A> for more information.</p>
-
-<p class="manual_text"><a href="#sections"><< Section List</a></p>
-
-
-<a name="spamtips"></a>
-<p class="manual_topic">Tips on avoiding spam filters</p>
-<p class="manual_text">This script has been tested with spam assassin at it's tightest levels to ensure that it won't artificially trip spam filters. Infinite Responder's headers are RFC compliant.</p>
-
-<p class="manual_text">If you're having trouble w/ spam filters you should check spam assassin's page on the topic. It has some great tips available at:<br />
-<A HREF="http://wiki.apache.org/spamassassin/AvoidingFpsForSenders" target="_blank">http://wiki.apache.org/spamassassin/AvoidingFpsForSenders</A></p>
-
-<p class="manual_text">If you're still having trouble, send to a test address and replicate the problem locally. Then post the headers to the forum. We can take a look at the triggered rules and give you a better idea of what's going on.</p>
-
-<p class="manual_text"><a href="#sections"><< Section List</a></p>
-
 
 <a name="theend"></a>
 <p class="manual_topic">The End...</p>
 <p class="manual_text">That's the end of this descriptive manual. If you need help go to:<br />
-http://infinite.ibasics.biz</p>
+<a href="https://github.com/davidboy/olam-autoresponder">https://github.com/davidboy/olam-autoresponder</a></p>
 
 </body>
 </html>
