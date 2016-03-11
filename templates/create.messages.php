@@ -31,11 +31,9 @@
    </tr>
 <!--INSERT ATTACH FILE BUTTON AND SUBMIT BUTTON -->
    <tr>
-      <td>  
-       
+      <td>     
          Attach File:
          <input type="file" name="attachment">
-
       </td>
    </tr> 
 <!--END ATTACH FILE-->
