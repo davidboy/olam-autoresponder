@@ -130,7 +130,7 @@ if ($action == "create") {
     }
 
     # Prep data
-    $P_subj = makeSemiSafe($_REQUEST['shbj']);
+    $P_subj = makeSemiSafe($_REQUEST['subj']);
     $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);
     $P_bodyhtml = makeSemiSafe($_REQUEST['bodyhtml']);
     $P_months = makeSafe($_REQUEST['months']);
