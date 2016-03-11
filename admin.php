@@ -239,7 +239,7 @@ if ($action == "edit_users") {
         # Check if the input email is currently subscribed to the responder
         if (userIsSubscribed()) {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
-        # Check if the input email is in the database but has unsubscribed
+        # Check if the input email is in the database but has unsubscribed, and re-add them
         } else if (userWasSubscribed()) {
             $Timestamper = time();
             $query = "UPDATE InfResp_subscribers SET TimeJoined = '$Timestamper', Real_TimeJoined = '$Timestamper', CanReceiveHTML = '$SendHTML[$i]', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
@@ -320,6 +320,7 @@ if ($action == "edit_users") {
     $return_action = "edit_users";
     include('templates/back_button.admin.php');
 } elseif ($action == "sub_delete_do") {
+    # Set the user's status to unsubscribed, but leave them in the database if they want to resubscribe
     $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
     $DB_result = $DB->query($query)
     or die("Invalid query: " . $DB->error);
@@ -359,6 +360,7 @@ if ($action == "edit_users") {
         fclose($file_handle);
     }
 
+    # Create an array of all emails entered
     $file_text = str_replace(' ', '', $file_text);
     $file_text = stripNewlines($file_text);
     $file_text = trim(trim($file_text), ",");
@@ -383,16 +385,20 @@ if ($action == "edit_users") {
 
     $Blank = "";
 
+    # Run through the array of emails, check their status in the database, and address them appropriately
     for ($i = 0; $i <= $List_Max - 1; $i++) {
         $Email_Address = $AddList_Array[$i];
+        # Check if the input email is already subscribed to the responder
         if (userIsSubscribed()) {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
+        # Check if the input email is in the database but has unsubscribed, and re-add them
         } else if (userWasSubscribed()) {
             $Timestamper = time();
             $query = "UPDATE InfResp_subscribers SET TimeJoined = '$Timestamper', Real_TimeJoined = '$Timestamper',CanReceiveHTML = '$SendHTML[$i]', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
             $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
             
             print "<strong>Resubscribed: $Email_Address </strong><br>\n";
+        # Add a new email/user to the database
         } else {
             if (($Email_Address != "") AND ($Email_Address != NULL) AND (!(isInBlacklist($Email_Address)))) {
                 $Timestamper = time();
