@@ -361,8 +361,9 @@ if ($action == "edit_users") {
     $file_name = $_FILES['load_file']['tmp_name'];
     $file_size = $_FILES['load_file']['size'];
     $file_text = "";
-    $file_handle = fopen($file_name, "r");
-    if (($file_handle != "") AND ($file_handle != NULL)) {
+    if ($file_name != "") {
+        $file_handle = fopen($file_name, "r");
+    } if (($file_handle != "") AND ($file_handle != NULL)) {
         while (!feof($file_handle)) {
             $file_buffer = fgets($file_handle, $file_size);
             $file_text = $file_text . $file_buffer;
@@ -387,7 +388,7 @@ if ($action == "edit_users") {
     $List_Max = sizeof($AddList_Array);
 
     # Explode likes to treat NULL as an element. :/
-    if (trim($AddList_Array) == NULL) {
+    if (array_walk($AddList_Array, 'trim_value') == NULL) {
         $List_Max = 0;
     }
     if ($AddList_Array == "") {
