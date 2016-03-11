@@ -122,8 +122,7 @@ if ($action == "create") {
     include('templates/delete.messages.php');   
 } elseif ($action == "do_create") {
 
-    move_uploaded_file($_FILES['attachment']['tmp_name'], __DIR__ ."/storage/".$name = basename($_FILES['attachment']['name']));
-    
+    move_uploaded_file($_FILES['attachment']['tmp_name'], __DIR__ ."/storage/".$name = basename($_FILES['attachment']['name']));  
 
     # Prep data
     $P_subj = makeSemiSafe($_REQUEST['shbj']);
@@ -172,8 +171,8 @@ if ($action == "create") {
     $Time_stamp = $TempDay_Seconds + $TempHour_Seconds + $TempMin_Seconds;
 
     # Add row to database
-    $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML)
-            VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml')";
+    $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML, Attachment)
+            VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml', '$name')";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
