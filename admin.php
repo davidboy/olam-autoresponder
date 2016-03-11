@@ -97,8 +97,8 @@ function runUserQuery($query)
 $Add_List_Size = $config['add_sub_size'];
 $SubsPerPage = $config['subs_per_page'];
 
-# Init vars.  Some of these may not always be set, so we can ignore undefined index warnings.
-$action = makeSafe($_REQUEST['action']);
+# Init vars.  These aren't all set for every action, so we have to ignore undefined index warnings.
+$action = makeSafe(@$_REQUEST['action']);
 $Responder_ID = makeSafe(@$_REQUEST['r_ID']);
 $Search_EmailAddress = makeSafe(@$_REQUEST['email_addy']);
 $Subscriber_ID = makeSafe(@$_REQUEST['sub_ID']);
