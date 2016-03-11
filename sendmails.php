@@ -27,7 +27,7 @@ require_once 'class.phpmailer.php';
 if ($silent != TRUE) {
     print "<html>\n";
     print "<head>\n";
-    print "   <title>Infinite Responder Mailer</title>\n";
+    print "   <title>Olam Responder Mailer</title>\n";
     print "   <meta http-equiv=Content-Type content=\"text/html; charset=UTF-8\">\n";
     print "</head>\n";
 }
