@@ -4,7 +4,8 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-include_once('common.php');
+include_once 'common.php';
+require_once 'class.phpmailer.php';
 
 if ($silent != TRUE) {
     print "<html>\n";
@@ -81,7 +82,7 @@ if ($config['daily_count'] <= $config['daily_limit']) {
         $message_array[$message_id] = $this_row;
     }
     mysql_free_result($DB_Message_Result);
-    
+
     $today = new DateTime();
     $today->setTime(0, 0, 0);
     $today_string = $today->format('Y-m-d');
@@ -256,65 +257,39 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         # Process the tags
                         processMessageTags();
 
-                        # Generate the headers
-                        $Message_Body = "";
-                        $Message_Headers = "Return-Path: <" . $DB_ReplyToEmail . ">$newline";
-                        # $Message_Headers .= "Return-Receipt-To: <" . $DB_ReplyToEmail . ">$newline";
-                        $Message_Headers .= "Envelope-to: $DB_EmailAddress$newline";
-                        $Message_Headers .= "From: $DB_OwnerName <" . $DB_ReplyToEmail . ">$newline";
-                        # $Message_Headers .= "Date: " . date('D\, j F Y H:i:s O') . "$newline";
-                        $Message_Headers .= "Date: " . date('r') . "$newline";
-                        $Message_Headers .= "Reply-To: $DB_ReplyToEmail$newline";
-                        $Message_Headers .= "Sender-IP: " . $_SERVER["SERVER_ADDR"] . $newline;
-                        $Message_Headers .= "MIME-Version: 1.0$newline";
-                        $Message_Headers .= "Priority: normal$newline";
-                        $Message_Headers .= "X-Mailer: Infinite Responder$newline";
+                        $mail = new PHPMailer();
+                        $mail->setFrom($DB_ReplyToEmail, $DB_OwnerName);
+                        $mail->addReplyTo($DB_ReplyToEmail);
+                        $mail->addAddress($DB_EmailAddress);
+                        $mail->Subject = $Send_Subject;
 
-                        # Generate the body
-                        if ($CanReceiveHTML == 1) {
-                            $boundary = md5(time()) . rand(1000, 9999);
-                            $Message_Headers .= "Content-Type: multipart/alternative; $newline            boundary=\"$boundary\"$newline";
-                            $Message_Body .= "This is a multi-part message in MIME format.$newline$newline";
-                            $Message_Body .= "--" . $boundary . $newline;
-                            $Message_Body .= "Content-type: text/plain; charset=$charset$newline";
-                            $Message_Body .= "Content-Transfer-Encoding: base64" . $newline;
-                            $Message_Body .= "Content-Disposition: inline$newline$newline";
-                            $Message_Body .= $DB_MsgBodyText . $newline . $newline;
-                            $Message_Body .= "--" . $boundary . $newline;
-                            $Message_Body .= "Content-type: text/html; charset=$charset$newline";
-                            $Message_Body .= "Content-Transfer-Encoding: base64" . $newline;
-                            $Message_Body .= "Content-Disposition: inline$newline$newline";
-                            $Message_Body .= rtrim(chunk_split(base64_encode($DB_MsgBodyHTML))) . $newline . $newline;
+                        if ($CanReceiveHTML) {
+                            $mail->msgHTML($DB_MsgBodyHTML);
+                        }
+
+                        $mail->AltBody = $DB_MsgBodyText;
+
+                        if ($mail->send()) {
+                            # Verbose
+                            if ($silent != TRUE) {
+                                echo "Responder msg to sub #" . $subscriber_id . "<br>\n";
+                            }
+
+                            # Update the DB
+                            $query = "UPDATE InfResp_subscribers
+                                      SET SentMsgs = '$NewMsgStr',
+                                      LastActivity = '$Set_LastActivity'
+                                      WHERE SubscriberID = '$DB_SubscriberID'";
+                            $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+
+                            # Increment the send counts
+                            $Send_Count++;
+                            $config['daily_count']++;
                         } else {
-                            $Message_Headers .= "Content-type: text/plain; charset=$charset$newline";
-                            $Message_Headers .= "Content-Transfer-Encoding: base64" . $newline;
-                            $Message_Body = rtrim(chunk_split(base64_encode($DB_MsgBodyText))) . $newline;
+                            // TODO: handle mail errors
                         }
 
-                        # Final filtering
-                        $Send_Subject = stripNewlines(str_replace("|", "", $Send_Subject));
-                        $Message_Body = str_replace("|", "", $Message_Body);
-                        $Message_Headers = str_replace("|", "", $Message_Headers);
-                        $Message_Body = utf8_decode($Message_Body);
 
-                        # Actually send the email
-                        mail($DB_EmailAddress, $Send_Subject, $Message_Body, $Message_Headers, "-f $DB_ReplyToEmail");
-
-                        # Verbose
-                        if ($silent != TRUE) {
-                            echo "Responder msg to sub #" . $subscriber_id . "<br>\n";
-                        }
-
-                        # Update the DB
-                        $query = "UPDATE InfResp_subscribers
-                          SET SentMsgs = '$NewMsgStr',
-                          LastActivity = '$Set_LastActivity' 
-                          WHERE SubscriberID = '$DB_SubscriberID'";
-                        $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-
-                        # Increment the send counts
-                        $Send_Count++;
-                        $config['daily_count']++;
                     }
                 }
             }
@@ -400,69 +375,41 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                 # Process the tags
                 processMessageTags();
 
-                # Generate the headers
-                $Message_Body = "";
-                $Message_Headers = "Return-Path: <" . $DB_ReplyToEmail . ">$newline";
-                # $Message_Headers .= "Return-Receipt-To: <" . $DB_ReplyToEmail . ">$newline";
-                $Message_Headers .= "Envelope-to: $DB_EmailAddress$newline";
-                $Message_Headers .= "From: $DB_OwnerName <" . $DB_ReplyToEmail . ">$newline";
-                # $Message_Headers .= "Date: " . date('D\, j F Y H:i:s O') . "$newline";
-                $Message_Headers .= "Date: " . date('r') . "$newline";
-                $Message_Headers .= "Reply-To: $DB_ReplyToEmail$newline";
-                $Message_Headers .= "Sender-IP: " . $_SERVER["SERVER_ADDR"] . $newline;
-                $Message_Headers .= "MIME-Version: 1.0$newline";
-                $Message_Headers .= "Priority: normal$newline";
-                $Message_Headers .= "X-Mailer: Infinite Responder$newline";
+                $mail = new PHPMailer();
+                $mail->setFrom($DB_ReplyToEmail, $DB_OwnerName);
+                $mail->addReplyTo($DB_ReplyToEmail);
+                $mail->addAddress($DB_EmailAddress);
+                $mail->Subject = $Send_Subject;
 
-                # Generate the body
-                if ($CanReceiveHTML == 1) {
-                    $boundary = md5(time()) . rand(1000, 9999);
-                    $Message_Headers .= "Content-Type: multipart/alternative; $newline            boundary=\"$boundary\"$newline";
-                    $Message_Body .= "This is a multi-part message in MIME format.$newline$newline";
-                    $Message_Body .= "--" . $boundary . $newline;
-                    $Message_Body .= "Content-type: text/plain; charset=$charset$newline";
-                    $Message_Body .= "Content-Transfer-Encoding: 8bit" . $newline;
-                    $Message_Body .= "Content-Disposition: inline$newline$newline";
-                    $Message_Body .= $DB_MsgBodyText . $newline . $newline;
-                    $Message_Body .= "--" . $boundary . $newline;
-                    $Message_Body .= "Content-type: text/html; charset=$charset$newline";
-                    $Message_Body .= "Content-Transfer-Encoding: 8bit" . $newline;
-                    $Message_Body .= "Content-Disposition: inline$newline$newline";
-                    $Message_Body .= $DB_MsgBodyHTML . $newline . $newline;
+                if ($CanReceiveHTML) {
+                    $mail->msgHTML($DB_MsgBodyHTML);
+                }
+
+                $mail->AltBody = $DB_MsgBodyText;
+
+                if ($mail->send()) {
+                    # Verbose
+                    if ($silent != TRUE) {
+                        echo "Newsletter msg to sub #" . $sub_id . "<br>\n";
+                    }
+
+                    # Update the last activity field
+                    $Set_LastActivity = time();
+                    $this_subscriber['LastActivity'] = $Set_LastActivity;
+                    $subscriber_array[$sub_id]['LastActivity'] = $Set_LastActivity;
+                    $query = "UPDATE InfResp_subscribers SET LastActivity = '$Set_LastActivity' WHERE SubscriberID = '$DB_SubscriberID'";
+                    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+
+                    # Update the cache database
+                    $query = "UPDATE InfResp_mail_cache SET Status = 'sent', LastActivity = '$Set_LastActivity' WHERE Cache_ID = '$cache_id'";
+                    $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+
+                    # Increment the send counts
+                    $Send_Count++;
+                    $config['daily_count']++;
                 } else {
-                    $Message_Headers .= "Content-type: text/plain; charset=$charset$newline";
-                    $Message_Headers .= "Content-Transfer-Encoding: 8bit" . $newline;
-                    $Message_Body = $DB_MsgBodyText . $newline;
+                    // TODO: handle errors
                 }
-
-                # Final filtering
-                $Send_Subject = stripNewlines(str_replace("|", "", $Send_Subject));
-                $Message_Body = str_replace("|", "", $Message_Body);
-                $Message_Headers = str_replace("|", "", $Message_Headers);
-                $Message_Body = utf8_decode($Message_Body);
-
-                # Send the mail
-                mail($DB_EmailAddress, $Send_Subject, $Message_Body, $Message_Headers, "-f $DB_ReplyToEmail");
-
-                # Verbose
-                if ($silent != TRUE) {
-                    echo "Newsletter msg to sub #" . $sub_id . "<br>\n";
-                }
-
-                # Update the last activity field
-                $Set_LastActivity = time();
-                $this_subscriber['LastActivity'] = $Set_LastActivity;
-                $subscriber_array[$sub_id]['LastActivity'] = $Set_LastActivity;
-                $query = "UPDATE InfResp_subscribers SET LastActivity = '$Set_LastActivity' WHERE SubscriberID = '$DB_SubscriberID'";
-                $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-
-                # Update the cache database
-                $query = "UPDATE InfResp_mail_cache SET Status = 'sent', LastActivity = '$Set_LastActivity' WHERE Cache_ID = '$cache_id'";
-                $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
-
-                # Increment the send counts
-                $Send_Count++;
-                $config['daily_count']++;
             }
         }
     }

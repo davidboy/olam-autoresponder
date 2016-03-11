@@ -4,22 +4,22 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-function cutString($string, $cut_size)
+// Truncates a string at the given word count
+//   Example: cutString("EAT MOR CHIKIN", 2); // => EAT MOR...
+function cutString($string, $word_limit)
 {
-    $StringArray = explode(" ", $string);
-    $SizeCount = sizeof($StringArray);
+    $words = explode(" ", $string);
 
-    for ($i = 0; $i < $cut_size; $i++) {
-        $string_cut .= " " . "$StringArray[$i]";
+    $result = '';
+    for ($i = 0; $i < $word_limit; $i++) {
+        $result .= " " . "$words[$i]";
     }
 
-    if ($cut_size < $SizeCount) {
-        $return_str = "$string_cut" . "...";
-    } else {
-        $return_str = $string;
+    if ($word_limit < count($words)) {
+        $result .= '...';
     }
 
-    return $return_str;
+    return $result;
 }
 
 function makeRandomString($minlength, $maxlength, $useupper, $usespecial, $usenumbers)
@@ -65,9 +65,9 @@ function stripNewlines($string)
     return $string;
 }
 
-function trim_value($value) 
-{ 
-    $value = trim($value); 
+function trim_value($value)
+{
+    $value = trim($value);
 }
 
 function isEmpty($var)
@@ -918,7 +918,7 @@ function generateRandomBlock()
 // FIXME: this should go in a template
 function copyright($check = FALSE)
 {
-    global $siteURL, $ResponderDirectory, $config;
+    global $siteURL, $ResponderDirectory;
     # The GPL requires that credit be given to the people that write
     # software. In order to help keep this package alive we need people
     # to be able to find it, so in order to keep the package alive, and
@@ -946,7 +946,8 @@ function checkit()
 
 // Redirects to a given url, with support for browsers that don't support redirects
 // TODO: use this for all redirects
-function redirectTo($url) {
+function redirectTo($url)
+{
     global $siteURL, $ResponderDirectory;
 
     $fullUrl = $siteURL . $ResponderDirectory . $url;
@@ -968,7 +969,8 @@ function createLoginSession($username, $passwordHash)
     $_SESSION['passwordHash'] = $passwordHash;
 }
 
-function userIsLoggedIn() {
+function userIsLoggedIn()
+{
     global $config;
 
     # Make sure there actually is a session
@@ -995,7 +997,8 @@ function userIsLoggedIn() {
     }
 }
 
-function requireUserToBeLoggedIn() {
+function requireUserToBeLoggedIn()
+{
     if (!userIsLoggedIn()) {
         redirectTo('/login.php');
     }
