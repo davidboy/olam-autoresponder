@@ -905,14 +905,6 @@ function generateUniqueCode()
     return $id_str;
 }
 
-function generateRandomBlock()
-{
-    $block1 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
-    $block2 = substr(md5(makeRandomString(30, 30, TRUE, FALSE, TRUE)), 0, 30);
-    //$block = md5(webEncrypt($block1, $block2));
-    return $block;
-}
-
 # ---------------------------------------------------------
 
 // FIXME: this should go in a template
