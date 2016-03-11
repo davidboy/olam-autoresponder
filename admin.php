@@ -13,7 +13,7 @@ function runUserQuery($query)
 {
     global $DB_ResponderID, $DB_ResponderName, $DB_OwnerEmail;
     global $DB_OwnerName, $DB_ReplyToEmail, $DB_MsgList, $DB_LastActivity;
-    global $DB_result, $DB_LinkID, $DB_ResponderDesc, $DB_RespEnabled;
+    global $DB_result, $DB, $DB_ResponderDesc, $DB_RespEnabled;
     global $Responder_ID, $action, $SearchCount;
     global $Search_EmailAddress, $Subscriber_ID, $SubsPerPage;
     global $DB_FirstName, $DB_LastName, $DB_IPaddy, $DB_Real_TimeJoined;
