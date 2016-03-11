@@ -221,6 +221,3 @@ if (!(isInBlacklist($safe['EMAIL']))) {
         }
     }
 }
-
-dbDisconnect();
-?>

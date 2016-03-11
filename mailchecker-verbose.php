@@ -172,9 +172,3 @@ if (mysql_num_rows($DB_POP3_Result) > 0) {
         }
     }
 }
-
-# Should we disconnect from the DB?
-if ($included != TRUE) {
-    dbDisconnect();
-}
-?>

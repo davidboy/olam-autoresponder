@@ -316,5 +316,3 @@ if ($action == "create") {
 copyright();
 include('templates/close.page.php');
 
-dbDisconnect();
-?>

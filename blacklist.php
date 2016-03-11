@@ -98,6 +98,3 @@ if (($action == "add") && (isEmail($address))) {
 # Template bottom
 copyright();
 include('templates/close.page.php');
-
-dbDisconnect();
-?>

@@ -90,6 +90,3 @@ if (userIsLoggedIn() || $config['admin_pass'] == '') {
 } else {
     redirectTo('/login.php');
 }
-
-dbDisconnect();
-?>

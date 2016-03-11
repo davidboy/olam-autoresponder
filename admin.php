@@ -544,5 +544,3 @@ if ($action == "edit_users") {
 copyright();
 include('templates/close.page.php');
 
-dbDisconnect();
-?>

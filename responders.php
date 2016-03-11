@@ -495,7 +495,3 @@ if ($silent == FALSE) {
     copyright();
     include('templates/close.page.php');
 }
-
-
-dbDisconnect();
-?>

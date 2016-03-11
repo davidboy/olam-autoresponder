@@ -478,10 +478,6 @@ if (($last_activity_trim > 0) && ($this_subscriber['LastActivity'] != "") AND ($
     }
 }
 
-if ($sendmails_included != TRUE) {
-    dbDisconnect();
-}
-
 # Verbose
 if ($silent != TRUE) {
     echo "Done!<br>\n";
@@ -489,4 +485,3 @@ if ($silent != TRUE) {
 
 # Reset var
 $silent = FALSE;
-?>

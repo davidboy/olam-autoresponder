@@ -40,6 +40,3 @@ include('templates/back_button.tools.php');
 # Display the bottom template
 copyright();
 include('templates/close.page.php');
-
-dbDisconnect();
-?>

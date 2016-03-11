@@ -108,9 +108,3 @@ while ($bouncer = mysql_fetch_assoc($bouncer_result)) {
         }
     }
 }
-
-# Should we disconnect from the DB?
-if ($included != TRUE) {
-    dbDisconnect();
-}
-?>
