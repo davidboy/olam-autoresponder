@@ -76,7 +76,7 @@ if (mysql_num_rows($result) > 0) {
     # Are they confirmed but unsubscribed?
     } else if ($DB_Confirmed == "1" AND $DB_IsSubscribed == "0") {
         $Timestamper = time();
-        $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', Confirmed = '0', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
+        $query = "UPDATE InfResp_subscribers SET TimeJoined = '$Timestamper', Real_TimeJoined = '$Timestamper', CanReceiveHTML = '$SendHTML[$i]', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', Confirmed = '0', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
         $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
 
         # Send confirmation msg
