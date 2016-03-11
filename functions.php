@@ -4,22 +4,22 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-function cutString($string, $cut_size)
+// Truncates a string at the given word count
+//   Example: cutString("EAT MOR CHIKIN", 2); // => EAT MOR...
+function cutString($string, $word_limit)
 {
-    $StringArray = explode(" ", $string);
-    $SizeCount = sizeof($StringArray);
+    $words = explode(" ", $string);
 
-    for ($i = 0; $i < $cut_size; $i++) {
-        $string_cut .= " " . "$StringArray[$i]";
+    $result = '';
+    for ($i = 0; $i < $word_limit; $i++) {
+        $result .= " " . "$words[$i]";
     }
 
-    if ($cut_size < $SizeCount) {
-        $return_str = "$string_cut" . "...";
-    } else {
-        $return_str = $string;
+    if ($word_limit < count($words)) {
+        $result .= '...';
     }
 
-    return $return_str;
+    return $result;
 }
 
 function makeRandomString($minlength, $maxlength, $useupper, $usespecial, $usenumbers)
@@ -918,7 +918,7 @@ function generateRandomBlock()
 // FIXME: this should go in a template
 function copyright($check = FALSE)
 {
-    global $siteURL, $ResponderDirectory, $config;
+    global $siteURL, $ResponderDirectory;
     # The GPL requires that credit be given to the people that write
     # software. In order to help keep this package alive we need people
     # to be able to find it, so in order to keep the package alive, and
