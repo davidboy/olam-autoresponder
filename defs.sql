@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `InfResp_responders` (
    `OptOutRedir` varchar(255) NOT NULL default '',
    `OptInDisplay` text NOT NULL,
    `OptOutDisplay` text NOT NULL,
-   `NotifyOwnerOnSub` tinyint(1) NOT NULL default '1'
+   `NotifyOwnerOnSub` tinyint(1) NOT NULL default '1',
    `StartDate` date
 ) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
