@@ -34,12 +34,12 @@
             </tr>
 
             <tr>
-                <td colspan="2"><br /></td>
+                <td colspan="2"><br/></td>
             </tr>
 
             <tr>
                 <td colspan="2">
-                    <strong>Attach File:</strong> <em>(optional)</em><br />
+                    <strong>Attach File:</strong> <em>(optional)</em><br/>
                     <input type="file" name="attachment">
                 </td>
             </tr>
