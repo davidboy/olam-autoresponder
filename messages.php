@@ -42,6 +42,7 @@ if ($action == "create") {
 } elseif ($action == "update") {
     getMsgInfo($M_ID);
 
+
     # Do the math
     $T_minutes = intval($DB_MsgSeconds / 60);
     $T_seconds = $DB_MsgSeconds - ($T_minutes * 60);
@@ -120,6 +121,9 @@ if ($action == "create") {
     # Display template
     include('templates/delete.messages.php');   
 } elseif ($action == "do_create") {
+
+    move_uploaded_file($_FILES['attachment']['tmp_name'], __DIR__ ."/storage/".basename($_FILES['attachment']['name']));
+
     # Prep data
     $P_subj = makeSemiSafe($_REQUEST['shbj']);
     $P_bodytext = makeSemiSafe($_REQUEST['bodytext']);

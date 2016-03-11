@@ -1,5 +1,5 @@
 <center>
-<FORM action="messages.php" method=POST>
+<FORM action="messages.php" method=POST enctype="multipart/form-data">
 <table width="750" cellpadding="0" cellspacing="5" bgcolor="#660000" style="border: 1px solid #000000;">
    <tr>
       <td>
@@ -29,20 +29,16 @@
          <input name="subj" size=98 maxlength=250 class="fields">
       </td>
    </tr>
-   <!--INSERT ATTACH FILE BUTTON -->
+<!--INSERT ATTACH FILE BUTTON AND SUBMIT BUTTON -->
    <tr>
       <td>  
-         <form action="upload.php" method="post" enctype="multipart/form-data">
-            Attach File:
-            <input type="file" name="attachment" id="fileToUpload"/>
-              
-         
-            </form>
+       
+         Attach File:
+         <input type="file" name="attachment">
 
       </td>
-   </tr>
-   
-    <!--END ATTACH FILE-->
+   </tr> 
+<!--END ATTACH FILE-->
 
    <tr><td colspan="2"><br /></td></tr>
    <tr>
