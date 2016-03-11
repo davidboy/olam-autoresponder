@@ -95,7 +95,7 @@ include('templates/open.page.php');
 include_once('popup_js.php');
 
 # Check the mail ID
-$mail_id = makeSafe($_REQUEST['m_ID']);
+$mail_id = makeSafe(@$_REQUEST['m_ID']);
 if ((!(is_numeric($mail_id))) || (empty($mail_id)) || ($mail_id == "")) {
     $mail_id = "0";
 }
@@ -331,10 +331,10 @@ if ($action == "create") {
 
         for ($i = 0; $i < mysql_num_rows($DB_Mail_Result); $i++) {
             # Mail_ID, ResponderID, Closed, Subject, TEXT_msg, HTML_msg, Time_Sent
-            $data = mysql_fetch_assoc($DB_Mail_Result);
+            $this_msg = mysql_fetch_assoc($DB_Mail_Result);
 
             # Init vars
-            $timesent = date('l, dS \of F Y h:i:s A', $data['Time_Sent']);
+            $timesent = date('l, dS \of F Y h:i:s A', $this_msg['Time_Sent']);
             $month_to_send = strtolower(date('F', $this_msg['Time_To_Send']));
             $day_to_send = date('d', $this_msg['Time_To_Send']);
             $year_to_send = date('Y', $this_msg['Time_To_Send']);

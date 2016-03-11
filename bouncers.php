@@ -94,12 +94,8 @@ function unassignedAddressPulldown()
 
 # ------------------------------------------------
 
-# Get login / pass information.
-$X_login = $_REQUEST['login'];
-$X_pass = $_REQUEST['pword'];
-
 # Get and verify input
-$Responder_ID = makeSafe($_REQUEST['r_ID']);
+$Responder_ID = makeSafe(@$_REQUEST['r_ID']);
 $action = makeSafe($_REQUEST['action']);
 if (!(is_numeric($Responder_ID))) {
     $Responder_ID = "";

@@ -97,15 +97,15 @@ function runUserQuery($query)
 $Add_List_Size = $config['add_sub_size'];
 $SubsPerPage = $config['subs_per_page'];
 
-# Init vars
+# Init vars.  Some of these may not always be set, so we can ignore undefined index warnings.
 $action = makeSafe($_REQUEST['action']);
-$Responder_ID = makeSafe($_REQUEST['r_ID']);
-$Search_EmailAddress = makeSafe($_REQUEST['email_addy']);
-$Subscriber_ID = makeSafe($_REQUEST['sub_ID']);
-$HandleHTML = makeSafe($_REQUEST['h']);
-$SearchCount = makeSafe($_REQUEST['Search_Count']);
-$FirstName = makeSafe($_REQUEST['firstname']);
-$LastName = makeSafe($_REQUEST['lastname']);
+$Responder_ID = makeSafe(@$_REQUEST['r_ID']);
+$Search_EmailAddress = makeSafe(@$_REQUEST['email_addy']);
+$Subscriber_ID = makeSafe(@$_REQUEST['sub_ID']);
+$HandleHTML = makeSafe(@$_REQUEST['h']);
+$SearchCount = makeSafe(@$_REQUEST['Search_Count']);
+$FirstName = makeSafe(@$_REQUEST['firstname']);
+$LastName = makeSafe(@$_REQUEST['lastname']);
 
 # Bounds check
 if ($HandleHTML != 1) {

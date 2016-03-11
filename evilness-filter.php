@@ -10,23 +10,18 @@ $allowedTags = '<center><u><table><td><tr><font><br><em><strong><h1><h2><h3><h4>
 $stripAttrib = 'javascript:|onclick|ondblclick|onmousedown|onmouseup|onmouseover|' .
     'onmousemove|onmouseout|onkeypress|onkeydown|onkeyup';
 
-/**
- * @return string
- * @param string
- * @desc Strip forbidden tags and delegate tag-source check to removeEvilAttributes()
- */
+# Strips forbidden tags and attributes
 function removeEvilTags($source)
 {
     global $allowedTags;
     $source = strip_tags($source, $allowedTags);
-    return preg_replace('/<(.*?)>/ie', "'<'.removeEvilAttributes('\\1').'>'", $source);
+
+    return preg_replace_callback('/<(.*?)>/i', function ($matches) {
+        return '<' . removeEvilAttributes($matches[1]) . '>';
+    }, $source);
 }
 
-/**
- * @return string
- * @param string
- * @desc Strip forbidden attributes from a tag
- */
+# Strips forbidden attributes from a tag
 function removeEvilAttributes($tagSource)
 {
     global $stripAttrib;

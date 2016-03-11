@@ -28,7 +28,7 @@ include('evilness-filter.php');
 include('functions.php');
 
 # Set the siteURL
-if ((isEmpty($_SERVER['HTTPS'])) || ((strtolower($_SERVER['HTTPS'])) == "off")) {
+if ((!isset($_SERVER['HTTPS'])) || ((strtolower($_SERVER['HTTPS'])) == "off")) {
     $siteURL = "http://" . $_SERVER['SERVER_NAME'];
 } else {
     $siteURL = "https://" . $_SERVER['SERVER_NAME'];

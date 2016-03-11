@@ -6,7 +6,7 @@
 <table border=0 width="750" cellpadding="0" cellspacing="2" class="<?php echo $css_class; ?>">
    <tr>
       <td width="325">
-         <?php echo $data['Subject']; ?>
+         <?php echo $this_msg['Subject']; ?>
       </td>
       <td width="325">
          <?php echo $timesent; ?>

@@ -966,7 +966,7 @@ function userIsLoggedIn()
     global $config;
 
     # Make sure there actually is a session
-    if ($_SESSION['initialized'] != true) {
+    if (!isset($_SESSION['initialized']) || $_SESSION['initialized'] != true) {
         return false;
     }
 

@@ -4,6 +4,12 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
+if (isset($_REQUEST['silent']) && $_REQUEST['silent'] == "1") {
+    $silent = TRUE;
+} else {
+    $silent = FALSE;
+}
+
 include_once 'common.php';
 require_once 'class.phpmailer.php';
 
@@ -122,7 +128,6 @@ if ($config['daily_count'] <= $config['daily_limit']) {
         echo "Daily throttle reached!<br>\n";
     }
 }
-$cop = checkit();
 
 # - - - - - - - - - - - - - - - - - - -
 # Handle the responder-style messages
@@ -142,7 +147,11 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
             $this_responder_id = $this_subscriber['ResponderID'];
 
             # Get the message list for this subscriber's responder
-            $this_responder = $responder_array[$this_responder_id];
+            $this_responder = @$responder_array[$this_responder_id];
+            if (empty($this_responder)) {
+                # This responder doesn't have any messages, continue on to the next one
+                continue;
+            }
 
             # Split and process the list
             $DB_MsgList = trim($this_responder['MsgList'], ",");
@@ -340,9 +349,15 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
 
             # Get the other relevant data
             $this_mail_msg = $mail_msg_array[$mail_id];
-            $this_subscriber = $subscriber_array[$sub_id];
             $responder_id = $this_mail_msg['ResponderID'];
             $this_responder = $responder_array[$responder_id];
+            $this_subscriber = @$subscriber_array[$sub_id];
+
+            if (empty($this_subscriber)) {
+                // The subscriber has unsubscribed.  Don't bother sending the newsletter to them
+                mysql_query("DELETE FROM InfResp_mail_cache WHERE SubscriberID = '$sub_id'");
+                continue;
+            }
 
             # Set the tag variables and send?
             if (!(isEmptyArray($this_subscriber))) {

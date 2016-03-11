@@ -4,8 +4,7 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
-$silent = $_REQUEST['silent'];
-if ($silent == "1") {
+if (isset($_REQUEST['silent']) && $_REQUEST['silent'] == "1") {
     $silent = TRUE;
 } else {
     $silent = FALSE;
@@ -24,14 +23,15 @@ $DB_MsgList = "";
 $DB_ResponderDesc = "";
 
 # Passed stuff
-$Responder_ID = makeSafe($_REQUEST['r_ID']);
-$action = makeSafe($_REQUEST['action']);
-$HandleHTML = makeSafe($_REQUEST['h']);
 
-# Bounds check
-if ($HandleHTML != 1) {
+$action = makeSafe($_REQUEST['action']);
+if (isset($_REQUEST['h']) && $_REQUEST['h'] == '1') {
+    $HandleHTML = 1;
+} else {
     $HandleHTML = 0;
 }
+
+$Responder_ID = makeSafe(@$_REQUEST['r_ID']);
 if (!(is_numeric($Responder_ID))) {
     $Responder_ID = 0;
 }
@@ -181,7 +181,7 @@ if ($action == "list") {
     // TODO: handle formatting errors
     $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate']);
     if ($Start_Date) {
-        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') ."'";
+        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') . "'";
     } else {
         $Start_Date_Sql = 'NULL';
     }
@@ -226,7 +226,7 @@ if ($action == "list") {
 
     $Start_Date = DateTime::createFromFormat('Y-m-d', $_POST['StartDate']);
     if ($Start_Date) {
-        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') ."'";
+        $Start_Date_Sql = "'" . $Start_Date->setTime(0, 0, 0)->format('Y-m-d') . "'";
     } else {
         $Start_Date_Sql = 'NULL';
     }
