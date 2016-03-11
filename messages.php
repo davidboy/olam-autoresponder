@@ -38,7 +38,7 @@ if ($action == "create") {
     $DB_absMins = 0;
 
     # Display template
-    include('templates/create.messages.php');   #assuming this is where the page graphics are intialized?
+    include('templates/create.messages.php');
 } elseif ($action == "update") {
     getMsgInfo($M_ID);
 
