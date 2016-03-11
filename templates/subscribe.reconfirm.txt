@@ -1,0 +1,18 @@
+<SUBJ>%resp_name% - Your confirmation is needed.</SUBJ>
+<MSG>Hello!
+Thank you for resubscribing to %resp_name%.
+
+You may need to add %resp_replyto% to your spam filter
+whitelist in order to receive these messages.
+
+If you did not resubscribe or did so by accident, just ignore this
+email. Otherwise you will need to confirm your resubscription by
+clicking here:
+%sub_conf_url%
+
+If your email software cannot handle hyperlinks then you will need
+to copy and paste the following into your browser:
+%sub_conf_url%
+
+Sincerely,
+%resp_ownername% (%resp_owneremail%)</MSG>
