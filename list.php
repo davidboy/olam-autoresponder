@@ -8,7 +8,7 @@ include('common.php');
 include('templates/open.page.php');
 
 $Responder_ID = makeSafe($_REQUEST['r_ID']);
-$action = makeSafe($_REQUEST['action']);
+$action = makeSafe(@$_REQUEST['action']);
 
 # ----------------------------------------------------------------------------------
 # Anti-spam phrase. It's added to the end of all email addressed to make it more

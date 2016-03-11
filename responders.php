@@ -24,7 +24,7 @@ $DB_ResponderDesc = "";
 
 # Passed stuff
 
-$action = makeSafe($_REQUEST['action']);
+$action = makeSafe(@$_REQUEST['action']);
 if (isset($_REQUEST['h']) && $_REQUEST['h'] == '1') {
     $HandleHTML = 1;
 } else {

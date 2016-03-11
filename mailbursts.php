@@ -76,7 +76,7 @@ function getSendFigures()
 
 # Get and verify input
 $Responder_ID = makeSafe($_REQUEST['r_ID']);
-$action = makeSafe($_REQUEST['action']);
+$action = makeSafe(@$_REQUEST['action']);
 if (!(is_numeric($Responder_ID))) {
     $Responder_ID = FALSE;
 }

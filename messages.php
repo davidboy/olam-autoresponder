@@ -8,9 +8,9 @@ include('common.php');
 requireUserToBeLoggedIn();
 
 # Grab the data
-$Responder_ID = makeSafe($_REQUEST['r_ID']);
-$M_ID = makeSafe($_REQUEST['MSG_ID']);
-$action = makeSafe($_REQUEST['action']);
+$Responder_ID = makeSafe(@$_REQUEST['r_ID']);
+$M_ID = makeSafe(@$_REQUEST['MSG_ID']);
+$action = makeSafe(@$_REQUEST['action']);
 
 if (!(is_numeric($Responder_ID))) {
     # A small bit of magic to filter out any screwy crackerness of the RespID
@@ -175,11 +175,18 @@ if ($action == "create") {
 
     $Time_stamp = $TempDay_Seconds + $TempHour_Seconds + $TempMin_Seconds;
 
-    # Add row to database
-    $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML, attachmentName, attachmentStorageName)
+    // The query to create a message is slightly different if we have an attachment
+    if (isset($attachment_filename) && isset($attachment_storage_filename)) {
+        $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML, attachmentName, attachmentStorageName)
               VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml', '$attachment_filename', '$attachment_storage_filename')";
-    $DB_result = $DB->query($query)
-    or die("Invalid query: " . $DB->error);
+    } else {
+        $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML)
+              VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml')";
+
+    }
+    
+    # Add row to database
+    $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 
     # Clear $M_ID. If the query was successful then get the new $M_ID and
     # and attach it to the end of the Responder's message list.
