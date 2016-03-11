@@ -239,7 +239,8 @@ if ($action == "edit_users") {
         if (userIsSubscribed()) {
             print "<strong>Duplicate address!</strong> Not Added: $Email_Address <br>\n";
         } else if (userWasSubscribed()) {
-            $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
+            $Timestamper = time();
+            $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
             $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
             print "<strong>Resubscribed: $Email_Address </strong><br>\n";
         } else {

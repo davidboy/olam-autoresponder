@@ -63,8 +63,8 @@ if (mysql_num_rows($result) > 0) {
     $DB_Confirmed = $result_data['Confirmed'];
     $DB_IsSubscribed = $result_data['IsSubscribed'];
 
-    # Are they confirmed?
-    if ($DB_Confirmed == "1") {
+    # Are they confirmed and subscribed?
+    if ($DB_Confirmed == "1" AND $DB_IsSubscribed == "1") {
         # Yes, display the error page.
         if ($SilentMode != 1) {
             include('templates/open.page.php');
@@ -73,6 +73,35 @@ if (mysql_num_rows($result) > 0) {
             include('templates/close.page.php');
         }
         die();
+    # Are they confirmed but unsubscribed?
+    } else if ($DB_Confirmed == "1" AND $DB_IsSubscribed == "0") {
+        $Timestamper = time();
+        $query = "UPDATE InfResp_subscribers SET CanReceiveHTML = '$SendHTML[$i]', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', Confirmed = '0', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
+        $DB_result = mysql_query($query) or die("Invalid query: " . mysql_error());
+
+        # Send confirmation msg
+        sendMessageTemplate('templates/subscribe.reconfirm.txt');
+
+        # Display from the DB or the template
+        if ((trim($DB_OptInDisplay)) == "") {
+            # Display the template
+            if ($SilentMode != 1) {
+                include('templates/open.page.php');
+                include('templates/sub_confirm.subhandler.php');
+                copyright();
+                include('templates/close.page.php');
+            }
+            die();
+        } else {
+            # Display from the DB
+            if ($SilentMode != 1) {
+                include('templates/open.page.php');
+                print $DB_OptInDisplay;
+                copyright();
+                include('templates/close.page.php');
+            }
+            die();
+        }
     } else {
         # Send confirmation msg
         sendMessageTemplate('templates/subscribe.confirm.txt');

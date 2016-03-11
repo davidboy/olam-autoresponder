@@ -283,7 +283,7 @@ function getResponderInfo()
     }
 }
 
-# Returns TRUE if the user is in the DB. False if not.
+# Returns TRUE if the user is in the DB and is currently subscribed. False if not.
 function userIsSubscribed()
 {
     global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
@@ -306,7 +306,7 @@ function userIsSubscribed()
     return $Result_Var;
 }
 
-# Returns TRUE if the user is in the DB. False if not.
+# Returns TRUE if the user is in the DB but has unsuscribed. False if not.
 function userWasSubscribed()
 {
     global $DB_result, $DB_LinkID, $Responder_ID, $Email_Address;
