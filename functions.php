@@ -4,6 +4,9 @@
 # See license.txt for license information.
 # ------------------------------------------------
 
+require_once 'password.php';
+require_once 'evilness-filter.php';
+
 // Truncates a string at the given word count
 //   Example: cutString("EAT MOR CHIKIN", 2); // => EAT MOR...
 function cutString($string, $word_limit)

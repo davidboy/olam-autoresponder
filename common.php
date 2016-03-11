@@ -23,9 +23,8 @@ if ($MySQL_database == '') {
 # Start the session
 session_start();
 
-# Include the includes
-include('evilness-filter.php');
-include('functions.php');
+# Load our functions
+require_once 'functions.php';
 
 # Set the siteURL
 if ((!isset($_SERVER['HTTPS'])) || ((strtolower($_SERVER['HTTPS'])) == "off")) {
