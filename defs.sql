@@ -179,7 +179,8 @@ CREATE TABLE IF NOT EXISTS `InfResp_config` (
    `tinyMCE` tinyint(1) NOT NULL default '1',
    `daily_limit` int NOT NULL default '50000',
    `daily_count` int NOT NULL default '0',
-   `daily_reset` bigint(32) NOT NULL default '0'
+   `daily_reset` bigint(32) NOT NULL default '0',
+   `schema_version` int NOT NULL default '1'
 ) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 

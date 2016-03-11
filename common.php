@@ -115,6 +115,13 @@ if ($result->num_rows < 1) {
     if (($config['admin_pass'] == '') && !isset($editingConfig)) {
         redirectTo('/edit_config.php');
     }
+
+    # If the config row exists but is running an old version of the database, run the migrations
+    # TODO: this will have to be more complicated when we add more migrations later
+    if (!isset($config['schema_version'])) {
+        define('PERFORMING_MIGRATION', true);
+        require_once 'migrations/migrate_1.php';
+    }
 }
 
 # Bad, but useful, hackery
