@@ -33,6 +33,10 @@ if ((!isset($_SERVER['HTTPS'])) || ((strtolower($_SERVER['HTTPS'])) == "off")) {
     $siteURL = "https://" . $_SERVER['SERVER_NAME'];
 }
 
+# Timezone's don't really matter for this app, but we have to set one since older
+#   versions of CentOS often don't provide a default
+date_default_timezone_set('America/Los_Angeles');
+
 # Set the responder directory
 $directory_array = explode('/', $_SERVER['SCRIPT_NAME']);
 if (sizeof($directory_array) <= 2) {
