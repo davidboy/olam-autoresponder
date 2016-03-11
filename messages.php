@@ -123,10 +123,16 @@ if ($action == "create") {
 
     # Process the uploaded file
     if (!empty($_FILES['attachment']['name'])) {
+        # Ensure the uploads directory exists
+        $upload_directory = __DIR__ . '/storage/';
+        if (!file_exists($upload_directory)) {
+            mkdir($upload_directory);
+        }
+
         $attachment_filename = basename($_FILES['attachment']['name']);
         $attachment_storage_filename = uniqid(rand());
 
-        move_uploaded_file($_FILES['attachment']['tmp_name'], __DIR__ . '/storage/' . $attachment_storage_filename);
+        move_uploaded_file($_FILES['attachment']['tmp_name'], $upload_directory . $attachment_storage_filename);
     }
 
     # Prep data
