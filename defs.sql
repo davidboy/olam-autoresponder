@@ -32,7 +32,9 @@ CREATE TABLE IF NOT EXISTS `InfResp_messages` (
    `absMins` int NOT NULL default '0',
    `absHours` int NOT NULL default '0',
    `BodyText` text NOT NULL,
-   `BodyHTML` text NOT NULL
+   `BodyHTML` text NOT NULL,
+   `attachmentName` varchar(255),
+   `attachmentStorageName` varchar(255)
 ) ENGINE=InnoDB CHARACTER SET utf8;
 -- End command --
 

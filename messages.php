@@ -42,7 +42,6 @@ if ($action == "create") {
 } elseif ($action == "update") {
     getMsgInfo($M_ID);
 
-
     # Do the math
     $T_minutes = intval($DB_MsgSeconds / 60);
     $T_seconds = $DB_MsgSeconds - ($T_minutes * 60);
@@ -103,7 +102,7 @@ if ($action == "create") {
     # print "  MsgHTML $DB_MsgBodyHTML<br>\n";
 
     # Display template
-    include('templates/update.messages.php');   
+    include('templates/update.messages.php');
 } elseif ($action == "delete") {
     getMsgInfo($M_ID);
 
@@ -119,10 +118,16 @@ if ($action == "create") {
     $T_months = $DB_MsgMonths;
 
     # Display template
-    include('templates/delete.messages.php');   
+    include('templates/delete.messages.php');
 } elseif ($action == "do_create") {
 
-    move_uploaded_file($_FILES['attachment']['tmp_name'], __DIR__ ."/storage/".$name = basename($_FILES['attachment']['name']));  
+    # Process the uploaded file
+    if (!empty($_FILES['attachment']['name'])) {
+        $attachment_filename = basename($_FILES['attachment']['name']);
+        $attachment_storage_filename = uniqid(rand());
+
+        move_uploaded_file($_FILES['attachment']['tmp_name'], __DIR__ . '/storage/' . $attachment_storage_filename);
+    }
 
     # Prep data
     $P_subj = makeSemiSafe($_REQUEST['shbj']);
@@ -171,8 +176,8 @@ if ($action == "create") {
     $Time_stamp = $TempDay_Seconds + $TempHour_Seconds + $TempMin_Seconds;
 
     # Add row to database
-    $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML, Attachment)
-            VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml', '$name')";
+    $query = "INSERT INTO InfResp_messages (Subject, SecMinHoursDays, Months, absDay, absMins, absHours, BodyText, BodyHTML, attachmentName, attachmentStorageName)
+              VALUES('$P_subj', '$Time_stamp', '$P_months', '$P_absday', '$P_absmin', '$P_abshours', '$P_bodytext', '$P_bodyhtml', '$attachment_filename', '$attachment_storage_filename')";
     $DB_result = mysql_query($query)
     or die("Invalid query: " . mysql_error());
 
