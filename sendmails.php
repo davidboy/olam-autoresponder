@@ -263,11 +263,18 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         $mail->addAddress($DB_EmailAddress);
                         $mail->Subject = $Send_Subject;
 
-                        if ($CanReceiveHTML) {
-                            $mail->msgHTML($DB_MsgBodyHTML);
-                        }
-
+                        $mail->msgHTML($DB_MsgBodyHTML);
                         $mail->AltBody = $DB_MsgBodyText;
+
+                        if (
+                            !empty($msg_data['attachmentName']) &&
+                            !empty($msg_data['attachmentStorageName']) &&
+                            file_exists(__DIR__ . '/storage/' . $msg_data['attachmentStorageName'])
+                        ) {
+                            $mail->addAttachment(__DIR__ . '/storage/' . $msg_data['attachmentStorageName'], $msg_data['attachmentName']);
+                        } else {
+                            echo '<br />NO ATTACHMENT<br />';
+                        }
 
                         if ($mail->send()) {
                             # Verbose
@@ -288,8 +295,6 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                         } else {
                             // TODO: handle mail errors
                         }
-
-
                     }
                 }
             }
