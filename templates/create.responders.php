@@ -36,7 +36,7 @@ include_once('popup_js.php');
                                                 <form action="responders.php" method=POST>
                                                     <strong><br>Responder Name:</strong>
                                             </td>
-                                            <td><input name=Resp_Name size=55 maxlength=250 class="fields"></td
+                                            <td><input name=Resp_Name size=55 maxlength=250 class="fields"></td>
                                         </tr>
                                         <tr>
                                             <td width="200"><strong>Opt-In Level:</strong></td>
