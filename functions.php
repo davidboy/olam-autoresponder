@@ -825,7 +825,7 @@ function getFieldNames($table)
     or die("Invalid query: " . $DB->error);
     $i = 0;
     $FieldNameStr = "";
-    while ($meta = $result->fetch_field($i)) {
+    while ($meta = $result->fetch_field()) {
         $FieldNameStr = $FieldNameStr . trim($meta->name) . ",";
     }
     $FieldNameStr = trim((trim($FieldNameStr)), ",");
@@ -1005,6 +1005,7 @@ function addCustomFields()
 
     $CustomFieldsArray = getFieldNames('InfResp_customfields');
     $CustomFieldsExist = FALSE;
+    
     foreach ($CustomFieldsArray as $key => $value) {
         $blah = "cf_" . $value;
         $reqblah = trim($_REQUEST[$blah]);
