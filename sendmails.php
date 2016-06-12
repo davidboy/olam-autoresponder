@@ -406,10 +406,7 @@ if (($Send_Count <= $max_send_count) && ($config['daily_count'] <= $config['dail
                 $mail->addAddress($DB_EmailAddress);
                 $mail->Subject = $Send_Subject;
 
-                if ($CanReceiveHTML) {
-                    $mail->msgHTML($DB_MsgBodyHTML);
-                }
-
+                $mail->msgHTML($DB_MsgBodyHTML);
                 $mail->AltBody = $DB_MsgBodyText;
 
                 if ($mail->send()) {
