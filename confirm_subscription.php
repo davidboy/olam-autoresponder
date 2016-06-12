@@ -126,40 +126,64 @@ if ($type == "s") {
         die();
     }
 } elseif ($type == "u") {
-    # Send mail
-    sendMessageTemplate('templates/unsubscribe.complete.txt');
-    if ($DB_NotifyOnSub == "1") {
-        sendMessageTemplate('templates/subscriber_left.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
-    }
-
-    # Set the user's status to unsubscribed, but leave them in the database if they want to resubscribe later
-    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$DB_SubscriberID'";
-    $DB_result = $DB->query($query)
-    or die("Invalid query: " . $DB->error);
-
-    $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID'";
-    $result = $DB->query($query)
-    or die("Invalid query: " . $DB->error);
-
-    # Redirect or template
-    if ((trim($DB_OptOutRedir)) == "") {
-        # Display the page
-        if ($SilentMode != 1) {
-            include('templates/open.page.php');
-            include('templates/unsub_complete.subhandler.php');
-            copyright();
-            include('templates/close.page.php');
-        }
-        die();
-    } else {
-        if ($SilentMode != 1) {
-            header("Location: $DB_OptOutRedir");
-            print "<br>\n";
-            print "Now redirecting you to a new page...<br>\n";
-            print "<br>\n";
-            print "If your browser doesn't support redirects then you'll need to <A HREF=\"$DB_OptOutRedir\">click here.</A><br>\n";
-            print "<br>\n";
-        }
-        die();
-    }
+    
+	# check if the user has verified
+	$Unsub_Verified = makeSafe($_REQUEST['unsub_verify']);
+	
+	if (Empty($Unsub_Verified) || $Unsub_Verified <> 1) 
+	{
+		# Get responder name
+		$query = "SELECT Name from infresp_responders  WHERE ResponderID = '$Responder_ID'";
+		$DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+		$this_row = $DB_result->fetch_assoc();
+		$This_Resp_Name = $this_row['Name'];
+		
+		# Display the page to ask them to verify
+		if ($SilentMode != 1) {
+			include('templates/open.page.php');
+			include('templates/unsub_verify.subhandler.php');
+			copyright();
+			include('templates/close.page.php');
+		}
+		die();
+	}
+	else  # they have verified, let's continue
+	{
+		# Send mail
+	    sendMessageTemplate('templates/unsubscribe.complete.txt');
+	    if ($DB_NotifyOnSub == "1") {
+	        sendMessageTemplate('templates/subscriber_left.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
+	    }
+	
+	    # Set the user's status to unsubscribed, but leave them in the database if they want to resubscribe later
+	    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$DB_SubscriberID'";
+	    $DB_result = $DB->query($query)
+	    or die("Invalid query: " . $DB->error);
+	
+	    $query = "DELETE FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID'";
+	    $result = $DB->query($query)
+	    or die("Invalid query: " . $DB->error);
+	
+	    # Redirect or template
+	    if ((trim($DB_OptOutRedir)) == "") {
+	        # Display the page
+	        if ($SilentMode != 1) {
+	            include('templates/open.page.php');
+	            include('templates/unsub_complete.subhandler.php');
+	            copyright();
+	            include('templates/close.page.php');
+	        }
+	        die();
+	    } else {
+	        if ($SilentMode != 1) {
+	            header("Location: $DB_OptOutRedir");
+	            print "<br>\n";
+	            print "Now redirecting you to a new page...<br>\n";
+	            print "<br>\n";
+	            print "If your browser doesn't support redirects then you'll need to <A HREF=\"$DB_OptOutRedir\">click here.</A><br>\n";
+	            print "<br>\n";
+	        }
+	        die();
+	    }
+	}
 }
