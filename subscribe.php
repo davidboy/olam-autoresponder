@@ -84,35 +84,56 @@ if ($result->num_rows > 0) {
             include('templates/close.page.php');
         }
         die();
-    # Are they confirmed but unsubscribed?
+    # Are they confirmed but unsubscribed? (this is a resubscription request)
     } else if ($DB_Confirmed == "1" AND $DB_IsSubscribed == "0") {
-        $Timestamper = time();
-        $query = "UPDATE InfResp_subscribers SET TimeJoined = '$Timestamper', Real_TimeJoined = '$Timestamper', CanReceiveHTML = '$CanReceiveHTML', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', Confirmed = '0', IsSubscribed = '1' WHERE EmailAddress = '$Email_Address'";
-        $DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
-
-        # Send confirmation msg
-        sendMessageTemplate('templates/subscribe.reconfirm.txt');
-
-        # Display from the DB or the template
-        if ((trim($DB_OptInDisplay)) == "") {
-            # Display the template
-            if ($SilentMode != 1) {
-                include('templates/open.page.php');
-                include('templates/sub_confirm.subhandler.php');
-                copyright();
-                include('templates/close.page.php');
-            }
-            die();
-        } else {
-            # Display from the DB
-            if ($SilentMode != 1) {
-                include('templates/open.page.php');
-                print $DB_OptInDisplay;
-                copyright();
-                include('templates/close.page.php');
-            }
-            die();
-        }
+    	
+    		# get LastActivity and TimeJoined
+    		$Timestamper = time();
+    		$query = "SELECT LastActivity, TimeJoined from InfResp_subscribers  WHERE ResponderID = '$Responder_ID' AND EmailAddress = '$Email_Address'";
+    		$DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    		$this_row = $DB_result->fetch_assoc();
+    		
+    		# use lastactivity and timejoined to calculate what date to use for resuming responder messages
+    		$Time_Subscribed = $this_row['LastActivity'] - $this_row['TimeJoined'];
+    		$Resume_Messages_Date = $Timestamper - $Time_Subscribed;
+    		
+    		$query = "UPDATE InfResp_subscribers SET TimeJoined = '$Resume_Messages_Date', CanReceiveHTML = '$CanReceiveHTML', LastActivity = '$Timestamper', FirstName = '$FirstNameArray[$i]', LastName = '$LastNameArray[$i]', Confirmed = '1', IsSubscribed = '1' WHERE ResponderID = '$Responder_ID' AND EmailAddress = '$Email_Address'";
+    		$DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
+    		
+    		# Send mail and notify
+		    sendMessageTemplate('templates/subscribe.complete.txt');
+		    if ($DB_NotifyOnSub == "1") {
+		        sendMessageTemplate('templates/new_subscriber.notify.txt', $DB_OwnerEmail, $DB_OwnerEmail);
+		    }
+		
+		    # Autocall sendmails on subscribe?
+		    if ($config['autocall_sendmails'] == "1") {
+		        $silent = TRUE;
+		        include('sendmails.php');
+		    }
+		
+		    # Template or redirect
+		    if ((trim($DB_OptInRedir)) == "") {
+		        # Display the page
+		        if ($SilentMode != 1) {
+		            include('templates/open.page.php');
+		            include('templates/sub_complete.subhandler.php');
+		            copyright();
+		            include('templates/close.page.php');
+		        }
+		        die();
+		    } else {
+		        if ($SilentMode != 1) {
+		            header("Location: $DB_OptInRedir");
+		            print "<br>\n";
+		            print "Now redirecting you to a new page...<br>\n";
+		            print "<br>\n";
+		            print "If your browser doesn't support redirects then you'll need to <A HREF=\"$DB_OptInRedir\">click here.</A><br>\n";
+		            print "<br>\n";
+		        }
+		        die();
+		    }
+		    
     } else {
         # Send confirmation msg
         sendMessageTemplate('templates/subscribe.confirm.txt');
