@@ -7,13 +7,20 @@ $db_migrations = array(
 
     "ALTER TABLE `InfResp_responders` ADD `StartDate` date",
 
-    "ALTER TABLE `InfResp_subscribers` ADD `TimeJoined` int NOT NULL default '0'",
-    "ALTER TABLE `InfResp_subscribers` ADD `Real_TimeJoined` int NOT NULL default '0'",
+    #"ALTER TABLE `InfResp_subscribers` ADD `TimeJoined` int NOT NULL default '0'",
+    #"ALTER TABLE `InfResp_subscribers` ADD `Real_TimeJoined` int NOT NULL default '0'",
 
     "ALTER TABLE `InfResp_config` ADD `schema_version` int NOT NULL default '1'",
 
     "ALTER TABLE `InfResp_config` DROP `random_str_1`",
-    "ALTER TABLE `InfResp_config` DROP `random_str_2`"
+    "ALTER TABLE `InfResp_config` DROP `random_str_2`",
+
+    "ALTER TABLE `InfResp_messages`  ADD `attachmentName` varchar(255)",
+    "ALTER TABLE `InfResp_messages`  ADD `attachmentStorageName` varchar(255)",
+    
+    "update infresp_messages set bodytext = concat(substring(bodytext,12),'\n%unsub_msg%') where bodytext like '\%unsub_msg\%%';",
+    "update infresp_messages set bodyhtml = concat(substring(bodyhtml,19),'<p>%unsub_msg%</p>') where bodyhtml like '<p>\%unsub_msg\%</p>%';"
+    		
 );
 
 foreach ($db_migrations as $query) {
