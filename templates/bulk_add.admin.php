@@ -1,6 +1,6 @@
 <br/>
 <center>
-    <table width="750" bgcolor="#660000" cellpadding="0" cellspacing="3" style="border: 1px solid #000000;">
+    <table width="750" bgcolor="#3366cc" cellpadding="0" cellspacing="3" style="border: 1px solid #000000;">
         <tr>
             <td>
                 <p align="center" style="font-size: 200%"><font color="#FFFFFF">-- Add a List of Addresses --</font></p>

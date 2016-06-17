@@ -25,7 +25,7 @@ include_once('popup_js.php');
     <table width="700">
         <tr>
             <td>
-                <table width="100%" bgcolor="#660000" style="border: 1px solid #000000;">
+                <table width="100%" bgcolor="#3366cc" style="border: 1px solid #000000;">
                     <tr>
                         <td>
                             <p class="white_header">-- Edit Responder --</p>

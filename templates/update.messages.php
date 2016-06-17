@@ -1,6 +1,6 @@
 <center>
     <FORM action="messages.php" method=POST>
-        <table width="750" cellpadding="0" cellspacing="5" bgcolor="#660000" style="border: 1px solid #000000;">
+        <table width="750" cellpadding="0" cellspacing="5" bgcolor="#3366cc" style="border: 1px solid #000000;">
             <tr>
                 <td>
                     <p class="white_header">-- Change a Message --</p>

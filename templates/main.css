@@ -1,6 +1,8 @@
 body {
-     background-color: #000066;
-     background-image: url('../images/background.gif');
+     background-color: white;
+     background-image: url('../images/bg.png');
+     
+    background-repeat: repeat-x;
 }
 
 form {
@@ -82,13 +84,13 @@ td {
     border-width: 2px;
     border-color: #000000; 
     font-family: arial,helvetica;
-    color: #FFFFFF; 
-    background-color : #000066;
+    color: black 
+    background-color : white;
 }
 
 .big_header {
     font-size: 25px;
-    color: #660000;
+    color: #3366CC;
     text-align: center;
 }
 
@@ -96,6 +98,7 @@ td {
     font-size: 25px;
     color: #FFFFFF;
     text-align: center;
+    background-color: #3366cc;
 }
 
 .err_msg {
@@ -126,11 +129,11 @@ td {
 }
 
 .row_color_1 {
-    background-color : #FFFFCC;
+    background-color : #5c83d2;
 }
 
 .row_color_2 {
-    background-color : #CCCC99;
+    background-color : #a1aec8;
 }
 
 body.tagref {

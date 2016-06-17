@@ -1,6 +1,6 @@
 <form action="login.php" method="POST">
     <center>
-        <table width="300" bgcolor="#E7E7CE" style="border: 1px solid #000000;">
+        <table width="300" bgcolor="#CCCCCC" style="border: 1px solid #000000;">
             <tr>
                 <td>
                     <table align="center" width="400" cellspacing="2">
