@@ -2,7 +2,7 @@
 <table width="750" border="0">
     <tr>
         <td>
-            <table width="750" bgcolor="#660000" style="border: 1px solid #000000;">
+            <table width="750" bgcolor="#3366cc" style="border: 1px solid #000000;">
                 <tr>
                     <td>
                         <p align="center" style="font-size: 200%; margin: 3px;">

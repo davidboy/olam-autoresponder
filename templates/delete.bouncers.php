@@ -22,7 +22,7 @@ if ($data['NotifyOwner'] == "1") {
 
 <br/>
 <center>
-    <table border="0" cellspacing="2" cellpadding="0" width="750" bgcolor="#660000" style="border: 1px solid #000000;">
+    <table border="0" cellspacing="2" cellpadding="0" width="750" bgcolor="#3366cc" style="border: 1px solid #000000;">
         <tr>
             <td>
                 <p class="white_header">

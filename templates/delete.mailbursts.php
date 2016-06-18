@@ -3,7 +3,7 @@
     <table width="750">
         <tr>
             <td>
-                <table width="750" bgcolor="#660000" style="border: 1px solid #000000;" cellspacing="0" cellpadding="0">
+                <table width="750" bgcolor="#3366cc" style="border: 1px solid #000000;" cellspacing="0" cellpadding="0">
                     <tr>
                         <td>
                             <p class="white_header"><?php echo $heading; ?></p>

@@ -10,7 +10,7 @@ if ($DB_Confirmed == "1") {
 <br>
 <center>
     <FORM action="admin.php" method=POST>
-        <table border="0" width="650" cellspacing="5" cellpadding="0" bgcolor="#660000"
+        <table border="0" width="650" cellspacing="5" cellpadding="0" bgcolor="#3366cc"
                style="border: 1px solid #000000;">
             <tr>
                 <td>

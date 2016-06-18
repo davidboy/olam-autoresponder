@@ -1,9 +1,9 @@
 <?php
        print "<br><center>\n";
        print "<table border=0 width=\"560\" cellpadding=8 style=\"border: 1px solid #000000;\">\n";
-       print "<tr><td width=\"460\" bgcolor=\"#660000\">";
+       print "<tr><td width=\"460\" bgcolor=\"#3366cc\">";
        print "<font size=4 color=\"#CCCCCC\">Name:</font> <font color=\"#FFFFFF\">$DB_ResponderName</font></td>\n";
-       print "<td valign=\"middle\" width=\"60\" bgcolor=\"#660000\"><center>\n";
+       print "<td valign=\"middle\" width=\"60\" bgcolor=\"#3366cc\"><center>\n";
             print "<form action=\"list.php\" method=POST>\n";
             print "<input type=\"hidden\" name=\"action\" value=\"subscribe\">\n";
             print "<input type=\"hidden\" name=\"r_ID\" value=\"$DB_ResponderID\">\n";
