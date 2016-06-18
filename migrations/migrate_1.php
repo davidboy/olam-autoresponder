@@ -18,8 +18,11 @@ $db_migrations = array(
     "ALTER TABLE `InfResp_messages`  ADD `attachmentName` varchar(255)",
     "ALTER TABLE `InfResp_messages`  ADD `attachmentStorageName` varchar(255)",
     
-    "update infresp_messages set bodytext = concat(substring(bodytext,12),'\n%unsub_msg%') where bodytext like '\%unsub_msg\%%';",
-    "update infresp_messages set bodyhtml = concat(substring(bodyhtml,19),'<p>%unsub_msg%</p>') where bodyhtml like '<p>\%unsub_msg\%</p>%';"
+    "update infresp_messages set bodytext = concat(substring(bodytext,12),'\n%unsub_msg%') where bodytext like '\%unsub_msg\%%' and bodytext not like '%\%unsub_msg\%';",
+    "update infresp_messages set bodyhtml = concat(substring(bodyhtml,19),'<p>%unsub_msg%</p>') where bodyhtml like '<p>\%unsub_msg\%</p>%' and bodyhtml not like '%<p>\%unsub_msg\%</p>';",
+	
+	"update infresp_messages set bodytext = substring(bodytext,12) where bodytext like '\%unsub_msg\%%' and bodytext like '%\%unsub_msg\%';",
+	"update infresp_messages set bodyhtml = substring(bodyhtml,12) where bodyhtml like '\%unsub_msg\%%' and bodyhtml like '%\%unsub_msg\%';"
     		
 );
 
