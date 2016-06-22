@@ -133,7 +133,7 @@ if ($type == "s") {
 	if (Empty($Unsub_Verified) || $Unsub_Verified <> 1) 
 	{
 		# Get responder name
-		$query = "SELECT Name from infresp_responders  WHERE ResponderID = '$Responder_ID'";
+		$query = "SELECT Name from InfResp_responders  WHERE ResponderID = '$Responder_ID'";
 		$DB_result = $DB->query($query) or die("Invalid query: " . $DB->error);
 		$this_row = $DB_result->fetch_assoc();
 		$This_Resp_Name = $this_row['Name'];
@@ -156,7 +156,7 @@ if ($type == "s") {
 	    }
 	
 	    # Set the user's status to unsubscribed, but leave them in the database if they want to resubscribe later
-	    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$DB_SubscriberID'";
+	    $query = "UPDATE InfResp_subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$DB_SubscriberID'";
 	    $DB_result = $DB->query($query)
 	    or die("Invalid query: " . $DB->error);
 	
