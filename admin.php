@@ -332,7 +332,7 @@ if ($action == "edit_users") {
     include('templates/back_button.admin.php');
 } elseif ($action == "sub_delete_do") {
     # Set the user's status to unsubscribed, but leave them in the database if they want to resubscribe
-    $query = "UPDATE InfResp_Subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
+    $query = "UPDATE InfResp_subscribers SET IsSubscribed = '0' WHERE SubscriberID = '$Subscriber_ID'";
     $DB_result = $DB->query($query)
     or die("Invalid query: " . $DB->error);
 
