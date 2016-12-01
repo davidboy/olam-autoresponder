@@ -658,7 +658,7 @@ function processMessageTags()
     $query = "SELECT * FROM InfResp_customfields WHERE user_attached = '$DB_SubscriberID' LIMIT 1";
     $result = $DB->query($query) or die("Invalid query: " . $DB->error);
     if ($result->num_rows > 0) {
-        $data = $result->fetch_asoc();
+        $data = $result->fetch_assoc();
         foreach ($data as $name => $value) {
             $Pattern = "/%cf_$name%/i";
             $DB_MsgBodyHTML = preg_replace($Pattern, $data[$name], $DB_MsgBodyHTML);
